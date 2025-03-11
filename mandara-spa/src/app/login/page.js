@@ -34,7 +34,7 @@ function SignIn() {
                     <input onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password" placeholder="password" />
                 </label>
                 <button type="submit">Log in</button>
-                <button type="button" onClick={() => router.push("/signup")}>Sign up</button>
+                <button type="button" onClick={() => router.push("/login/signup")}>Sign up</button>
             </form>
         </div>
 
