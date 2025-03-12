@@ -4,10 +4,13 @@ import React, { useState } from "react";
 import { getFirestore } from "firebase/firestore";
 import { addDoc, collection } from "firebase/firestore"; 
 import firebase_app from "../firebase/config";
+import { getAuth } from 'firebase/auth';
 
 const BookingForm = ({ onClose }) => {
     const app = firebase_app
     const db = getFirestore(app);
+    const auth = getAuth(firebase_app);
+    console.log(" auth", auth.uid);
 
     const [formData, setFormData] = useState({
         date: "",
@@ -26,9 +29,12 @@ const BookingForm = ({ onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        
         
         try {
             const docRef = await addDoc(collection(db, "bookings"), {
+                customer_id: auth.uid,
                 time: formData.time,
                 date: formData.date,
                 pax: formData.pax,

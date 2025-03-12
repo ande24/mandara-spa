@@ -26,29 +26,26 @@ function SignIn() {
         console.log("Booking successful with ID:", docRef.id);
 
         console.log(result)
-        return router.push("/home")
+        return router.push("/login")
     }
-    return (<div className="flex justify-center">
-        <div className="flex flex-col items-center justify-center border-2">
-            <h1 className="mt-60 mb-30">Sign Up</h1>
-            <form onSubmit={handleForm} className="form">
-                <label htmlFor="number">
-                    <p>Phone Number</p>
-                    <input onChange={(e) => setNumber(e.target.value)} required type="tel" name="number" id="number" />
-                </label>
+    return (
+    <div className="flex h-screen w-screen justify-center items-center">
+        <div className="flex flex-col items-center justify-center rounded-3xl p-5 bg-yellow-100">
+            <h1 className="text-xl font-bold">Sign Up</h1>
+            <form onSubmit={handleForm} className="form my-3">
                 <label htmlFor="email">
                     <p>Email</p>
-                    <input onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email"/>
+                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email"/>
                 </label>
                 <label htmlFor="password">
                     <p>Password</p>
-                    <input onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password"/>
+                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password"  />
                 </label>
-                <button type="submit">Sign Up</button>
             </form>
+            <button className="p-2 px-3 m-1 bg-amber-200 rounded-2xl" type="submit">Sign Up</button>
         </div>
-
-    </div>);
+    </div>
+    );
 }
 
 export default SignIn;
