@@ -21,8 +21,8 @@ function SignIn() {
         console.log(result)
         return router.push("/home")
     }
-    return (<div className="wrapper">
-        <div className="form-wrapper">
+    return (<div className="flex justify-center">
+        <div className="flex flex-col items-center justify-center border-2">
             <h1 className="mt-60 mb-30">Admin Log in</h1>
             <form onSubmit={handleForm} className="form">
                 <label htmlFor="email">
