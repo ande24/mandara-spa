@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import signIn from "@/firebase/auth/signin";
+import signInAdmin from "@/firebase/auth/signin";
 import { useRouter } from 'next/navigation'
 
 function SignIn() {
@@ -11,7 +11,7 @@ function SignIn() {
     const handleForm = async (event) => {
         event.preventDefault()
 
-        const { result, error } = await signIn(email, password);
+        const { result, error } = await signInAdmin(email, password);
 
         if (error) {
             return console.log(error)

@@ -11,8 +11,8 @@ const actionCodeSettings = {
 export default async function forgotPassword(email) {
     try {
         await sendPasswordResetEmail(auth, email, actionCodeSettings);
-        return { success: true, message: "Password reset email sent!" };
+        return 
     } catch (error) {
-        return { success: false, message: error.message };
+        return error.message;
     }
 }

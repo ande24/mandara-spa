@@ -9,17 +9,16 @@ const actionCodeSettings = {
   };
 
 export default async function signUp(email, password) {
-    let result = null,
-        error = null;
+    let res = null,
+        err = null;
     try {
-        result = await createUserWithEmailAndPassword(auth, email, password);
+        res = await createUserWithEmailAndPassword(auth, email, password);
 
-        await sendEmailVerification(result.user, actionCodeSettings);
-        console.log("Verification email sent!");
-        
+        await sendEmailVerification(res.user, actionCodeSettings);
+
     } catch (e) {
-        error = e;
+        err = e;
     }
 
-    return { result, error };
+    return { res, err };
 }

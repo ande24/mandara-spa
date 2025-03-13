@@ -1,12 +1,19 @@
 "use client"
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
+import LoadingPage from "@/components/ui/loading";
 
 export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/user/login"); 
+    setTimeout(() => {
+      router.push("/user/login"); 
+    }, 3000);
   }, []);
+
+  return (
+    <LoadingPage />
+  )
 }

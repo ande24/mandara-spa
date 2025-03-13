@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 const auth = getAuth(firebase_app);
 
-export default async function signUpAdmin(email, password) {
+export default async function signInAdmin(email, password) {
     let result = null,
         error = null;
     try {
