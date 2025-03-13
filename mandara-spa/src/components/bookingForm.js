@@ -7,10 +7,8 @@ import firebase_app from "../firebase/config";
 import { getAuth } from 'firebase/auth';
 
 const BookingForm = ({ onClose }) => {
-    const app = firebase_app
-    const db = getFirestore(app);
+    const db = getFirestore(firebase_app);
     const auth = getAuth(firebase_app);
-    console.log(" auth", auth.uid);
 
     const [formData, setFormData] = useState({
         date: "",
@@ -34,7 +32,7 @@ const BookingForm = ({ onClose }) => {
         
         try {
             const docRef = await addDoc(collection(db, "bookings"), {
-                customer_id: auth.uid,
+                customer_id: auth.currentUser.uid,
                 time: formData.time,
                 date: formData.date,
                 pax: formData.pax,
@@ -161,9 +159,9 @@ const BookingForm = ({ onClose }) => {
                             <option value="Greenhills">Greenhills</option>
                             <option value="BF Paranaque">BF Paranaque</option>
                             <option value="S Maison">S Maison at Conrad Manila, MOA Complex</option>
-                            <option value="Park inn">Park Inn by Radisson, North Edsa</option>
+                            <option value="Park Inn North Edsa">Park Inn by Radisson, North Edsa</option>
                             <option value="Venice Grand Canal">Venice Grand Canal, Mckinley Hill, Taguig</option>
-                            <option value="Park Inn">Park Inn by Radisson, Clark, Pampanga</option>
+                            <option value="Park Inn Clark">Park Inn by Radisson, Clark, Pampanga</option>
                             <option value="Tagaytay Hillcrest">Tagaytay Hillcrest</option>
                         </select>
 

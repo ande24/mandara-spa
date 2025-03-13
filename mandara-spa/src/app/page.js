@@ -7,8 +7,6 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/login"); // Redirect homepage to /dashboard
+    router.push("/user/login"); 
   }, []);
-
-  return <h1>Welcome to The Mandara Spa, Redirecting you...</h1>;
 }

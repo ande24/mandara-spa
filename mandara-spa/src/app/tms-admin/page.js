@@ -17,26 +17,25 @@ function SignIn() {
             return console.log(error)
         }
 
-        // else successful
         console.log(result)
         return router.push("/home")
     }
-    return (<div className="flex justify-center">
-        <div className="flex flex-col items-center justify-center border-2">
-            <h1 className="mt-60 mb-30">Admin Log in</h1>
-            <form onSubmit={handleForm} className="form">
+    return (
+    <div className="flex h-screen w-screen justify-center items-center">
+        <div className="flex flex-col items-center justify-center rounded-3xl p-5 bg-yellow-100">
+            <h1 className="text-xl font-bold">Admin Log in</h1>
+            <form className="form my-3">
                 <label htmlFor="email">
                     <p>Email</p>
-                    <input onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email" placeholder="example@mail.com" />
+                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email"/>
                 </label>
                 <label htmlFor="password">
                     <p>Password</p>
-                    <input onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password" placeholder="password" />
+                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password"  />
                 </label>
-                <button type="submit">Log in</button>
             </form>
+            <button className="p-2 px-3 m-1 bg-amber-200 rounded-2xl" type="submit" onSubmit={handleForm}>Log in</button>
         </div>
-
     </div>);
 }
 
