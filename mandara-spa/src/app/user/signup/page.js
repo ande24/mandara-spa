@@ -28,10 +28,10 @@ function SignIn() {
         
         try {
             await setDoc(doc(db, "users", res.user.uid), {
-                role: "customer",
-                name: name, 
-                number: number,
-                email: email,
+                user_role: "customer",
+                user_name: name, 
+                user_number: number,
+                user_email: email,
             });
     
             console.log(res)

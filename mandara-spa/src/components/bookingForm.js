@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getFirestore } from "firebase/firestore";
 import { addDoc, collection } from "firebase/firestore"; 
 import firebase_app from "../firebase/config";
@@ -9,6 +9,13 @@ import { getAuth } from 'firebase/auth';
 const BookingForm = ({ onClose }) => {
     const db = getFirestore(firebase_app);
     const auth = getAuth(firebase_app);
+    const [minDate, setMinDate] = useState("");
+
+    useEffect(() => {
+        const today = new Date();
+        today.setDate(today.getDate() + 1); // Set to tomorrow
+        setMinDate(today.toISOString().split("T")[0]); // Format YYYY-MM-DD
+    }, []);
 
     const [formData, setFormData] = useState({
         date: "",
@@ -76,7 +83,9 @@ const BookingForm = ({ onClose }) => {
                             className="w-full p-2 mb-4 border rounded"
                         >
                             <option value=""></option>
-                            <option value="The Mandara Signature Massage">The Mandara Signature Massage</option>
+                            <option value="s1">The Mandara Signature Massage (1 hr & 15 mins) - ₱1500</option>
+                            <option value="s2">The Mandara Signature Massage (1 hr & 30 mins) - ₱1800</option>
+                            <option value="s3">The Mandara Signature Massage (2 hrs) - ₱2300</option>
                             <option value="The Mandara Signature Scrub, Wrap & Massage">The Mandara Signature Scrub, Wrap & Massage</option>
                             <option value="The Mandara Signature Scrub">The Mandara Signature Scrub</option>
                             <option value="The Mandara Signature Scrub and Massage">The Mandara Signature Scrub and Massage</option>
@@ -138,7 +147,7 @@ const BookingForm = ({ onClose }) => {
                         />
                         <label>Date</label>
                         <input 
-                            type="date" name="date"
+                            type="date" name="date" min={minDate}
                             value={formData.date} onChange={handleChange} required
                             className="w-full p-2 mb-2 border rounded"
                         />

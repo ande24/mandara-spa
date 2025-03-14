@@ -13,9 +13,8 @@ export default async function signUp(email, password) {
         err = null;
     try {
         res = await createUserWithEmailAndPassword(auth, email, password);
-
         await sendEmailVerification(res.user, actionCodeSettings);
-
+        console.log("res: ", res);
     } catch (e) {
         err = e;
     }

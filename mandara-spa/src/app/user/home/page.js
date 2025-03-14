@@ -14,14 +14,14 @@ export default function Page() {
         if (user == null) router.push("/")
     }, [user])
 
-    return (
-      <div className="flex h-screen border-amber-200 justify-center items-center">
-        <button className="bg-yellow-100 rounded-3xl h-auto p-5"
-                onClick={() => setShowForm(true)}>
-                  Book now
-        </button>
+  return (
+    <div className="flex h-screen border-amber-200 justify-center items-center">
+      <button className="bg-yellow-100 rounded-3xl h-auto p-5"
+              onClick={() => setShowForm(true)}>
+                Book now
+      </button>
 
-        {showForm && <BookingForm onClose={() => setShowForm(false)} />}
-      </div>
+      {showForm && <BookingForm onClose={() => setShowForm(false)} />}
+    </div>
   );
 }

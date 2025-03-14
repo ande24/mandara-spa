@@ -35,8 +35,7 @@ function SignIn() {
         const { res, err } = await signIn(email, password);
 
         if (err) {
-            setError(err);
-            return;
+            return setError(err);
         }
 
         setError('')
