@@ -15,11 +15,14 @@ const ManageService = () => {
         name: "",
         duration: "",
         price: "", 
+        desc: "",
+        category: ""
     });
 
     const [services, setServices] = useState([]);
     const [selectedService, setSelectedService] = useState(null);
-    
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState(null);
 
@@ -83,7 +86,10 @@ const ManageService = () => {
                         .map(doc => ({
                             id: doc.id,
                             name: doc.data().service_name,
-                            price: doc.data().service_price
+                            price: doc.data().service_price,
+                            desc: doc.data().service_desc,
+                            duration: doc.data().service_duration,
+                            category: doc.data().service_category
                         }));
     
                     console.log("services: ", serviceList);
@@ -107,6 +113,9 @@ const ManageService = () => {
                 service_name: formData.name,
                 service_duration: formData.duration,
                 service_price: formData.price,
+                service_status: "available",
+                service_desc: formData.desc,
+                service_category: selectedCategory
             });
     
             const newService = {
@@ -114,6 +123,8 @@ const ManageService = () => {
                 name: formData.name,
                 duration: formData.duration,
                 price: formData.price,
+                desc: formData.desc,
+                category: selectedCategory
             };
 
             setServices(prevServices => [...prevServices, newService]);
@@ -122,8 +133,10 @@ const ManageService = () => {
             setFormData({
                 name: "",
                 duration: "",
-                price: ""
+                price: "",
+                desc: "",
             });
+            //setSelectedCategory(null);
         } catch (error) {
             setMessage("Error adding service: " + error.message);
         }
@@ -162,7 +175,9 @@ const ManageService = () => {
         setFormData({
             name: data.service_name,
             duration: data.service_duration,
-            price: data.service_price
+            price: data.service_price,
+            desc: data.service_desc,
+            category: data.service_category
         });
     }
 
@@ -173,8 +188,16 @@ const ManageService = () => {
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
             const serviceRef = doc(branchRef, "services", selectedService);
+
+            const data = {
+                service_name: formData.name,
+                service_price: formData.price,
+                service_desc: formData.desc,
+                service_duration: formData.duration,
+                service_category: selectedCategory
+            }
         
-            await updateDoc(serviceRef, formData);
+            await updateDoc(serviceRef, data);
             alert("Service details updated successfully!");
 
             setServices(prevServices => 
@@ -186,10 +209,13 @@ const ManageService = () => {
     
             setSaving(false);
             setFormData({
-                service_name: "",
-                service_duration: "",
-                service_price: ""
+                name: "",
+                duration: "",
+                price: "",
+                desc: "",
             });
+
+            setSelectedCategory(null);
         } catch (error) {
             setMessage("Error updating service: " + error.message);
             alert("Failed to update service.");
@@ -232,10 +258,30 @@ const ManageService = () => {
                     <input name="name" className="border p-2 rounded" type="text" value={formData.name} onChange={(e) => setFormData((prevData) => ({ ...prevData, name: e.target.value }))} required />
 
                     <label>Duration (Minutes):</label>
-                    <input name="duration" className="border p-2 rounded" type="number" min="1" value={formData.duration} onChange={(e) => setFormData((prevData) => ({ ...prevData, duration: e.target.value }))} required />
+                    <input name="duration" className="border p-2 rounded" type="number" min="1" value={formData.duration} onChange={(e) => setFormData((prevData) => ({ ...prevData, duration: e.target.value }))} />
 
                     <label>Price (Php):</label>
-                    <input name="price" className="border p-2 rounded" type="number" min="1" value={formData.price} onChange={(e) => setFormData((prevData) => ({ ...prevData, price: e.target.value }))} required />
+                    <input name="price" className="border p-2 rounded" type="number" min="1" value={formData.price} onChange={(e) => setFormData((prevData) => ({ ...prevData, price: e.target.value }))}  />
+
+                    <label>Description:</label>
+                    <input name="desc" className="border p-2 rounded" type="text" value={formData.desc} onChange={(e) => setFormData((prevData) => ({ ...prevData, desc: e.target.value }))} />
+
+                    <label>Category:</label>
+                    <select
+                        name="category"
+                        className="border p-1 rounded"
+                        value={selectedCategory || ""} 
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                        <option value=""></option>
+                        <option value="signature">The Mandara Spa Signature Rituals</option>
+                        <option value="massage_therapy">The Mandara Spa Body Rituals (Massage Therapy)</option>
+                        <option value="body_scrub">The Mandara Spa Body Rituals (Body Scrub and Wraps)</option>
+                        <option value="hand_and_foot">The Mandara Spa Hand and Foot Rituals</option>
+                        <option value="facial">The Mandara Spa Facial Rituals</option>
+                        <option value="other">Other Mandara Treats</option>
+                        <option value="special">Special Offers</option>
+                    </select>
 
                     <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Service</button>
                 </form>
@@ -246,13 +292,33 @@ const ManageService = () => {
                 {message  && <p className="mb-2 text-green-500">{message}</p>}
                 <form onSubmit={handleEditService} className="flex flex-col space-y-3">
                     <label>Service Name:</label>
-                    <input name="name" disabled className="border p-2 rounded" type="text" value={formData.name} onChange={(e) => setFormData((prevData) => ({ ...prevData, name: e.target.value }))} required />
+                    <input name="name" className="border p-2 rounded" type="text" value={formData.name} onChange={(e) => setFormData((prevData) => ({ ...prevData, name: e.target.value }))} required />
 
                     <label>Duration (Minutes):</label>
                     <input name="duration" className="border p-2 rounded" type="number" min="1" value={formData.duration} onChange={(e) => setFormData((prevData) => ({ ...prevData, duration: e.target.value }))} required />
 
                     <label>Price (Php):</label>
                     <input name="price" className="border p-2 rounded" type="number" min="1" value={formData.price} onChange={(e) => setFormData((prevData) => ({ ...prevData, price: e.target.value }))} required />
+
+                    <label>Description:</label>
+                    <input name="desc" className="border p-2 rounded" type="text" value={formData.desc} onChange={(e) => setFormData((prevData) => ({ ...prevData, desc: e.target.value }))} required />
+
+                    <label>Category:</label>
+                    <select
+                        name="category"
+                        className="border p-1 rounded"
+                        value={ selectedCategory || ""} 
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                        <option value=""></option>
+                        <option value="signature">The Mandara Spa Signature Rituals</option>
+                        <option value="massage_therapy">The Mandara Spa Body Rituals (Massage Therapy)</option>
+                        <option value="body_scrub">The Mandara Spa Body Rituals (Body Scrub and Wraps)</option>
+                        <option value="hand_and_foot">The Mandara Spa Hand and Foot Rituals</option>
+                        <option value="facial">The Mandara Spa Facial Rituals</option>
+                        <option value="other">Other Mandara Treats</option>
+                        <option value="special">Special Offers</option>
+                    </select>
 
                     <button type="submit" disabled={saving} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Edit Service</button>
                 </form>
