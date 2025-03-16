@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export default function LoadingPage() {
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-[#3C1F1D] text-gold">
+        <div className="flex flex-col items-center justify-center h-screen bg-mandara-gradient text-gold">
             {/* Logo */}
             <div className="flex flex-col items-center mb-6">
                 <svg className="w-20 h-20 text-[#D4AF37]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">

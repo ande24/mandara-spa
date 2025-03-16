@@ -20,6 +20,7 @@ const EditBranch = ({onClose}) => {
         branch_location: "",
         branch_location_link: "",
         branch_mobile: "",
+        branch_hours: "",
     });
 
     useEffect(() => {
@@ -66,6 +67,7 @@ const EditBranch = ({onClose}) => {
                             branch_location: data.branch_location || "",
                             branch_location_link: data.branch_location_link || "",
                             branch_mobile: data.branch_mobile || "",
+                            branch_hours: data.branch_hours ||  "",
                         });
                     } else {
                         console.log("No branch data found");
@@ -90,11 +92,9 @@ const EditBranch = ({onClose}) => {
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
             await updateDoc(branchRef, formData);
-            alert("Branch details updated successfully!");
             onClose();
         } catch (error) {
             console.error("Error updating branch:", error);
-            alert("Failed to update branch details.");
         } finally {
             setSaving(false);
         }
@@ -103,11 +103,11 @@ const EditBranch = ({onClose}) => {
     if (!user) return <p className="text-center text-red-500 mt-10">Please log in as an admin.</p>;
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Edit Branch Details</h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex flex-col items-center justify-center rounded-lg">
+            <div className="fixed top-0 left-0 w-full h-full rounded-lg flex items-center justify-center bg-gray-300 bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Edit Branch Details</h2>
+                    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg">
                         <div>
                             <label className="block text-gray-700 font-semibold">Branch Location:</label>
                             <input
@@ -136,6 +136,16 @@ const EditBranch = ({onClose}) => {
                             <textarea
                                 name="branch_desc"
                                 value={formData.branch_desc}
+                                onChange={handleChange}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-gray-700 font-semibold">Operating Hours:</label>
+                            <input
+                                name="branch_hours"
+                                value={formData.branch_hours}
                                 onChange={handleChange}
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
@@ -180,10 +190,13 @@ const EditBranch = ({onClose}) => {
                             className={`w-full p-3 rounded-lg text-white font-semibold transition ${
                                 saving
                                     ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-blue-500 hover:bg-blue-600"
+                                    : "bg-blue-400 border border-blue-600 hover:bg-blue-600"
                             }`}
                         >
                             {saving ? "Saving..." : "Save Changes"}
+                        </button>
+                        <button  onClick={() => {onClose()}}className="w-full p-3 rounded-lg text-white font-semibold bg-red-400 border border-red-600 hover:bg-red-600">
+                            Close
                         </button>
                     </form>
                 </div>

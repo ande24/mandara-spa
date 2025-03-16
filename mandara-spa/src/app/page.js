@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, Suspense } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LoadingPage from "@/components/ui/loading";
 

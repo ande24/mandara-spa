@@ -37,6 +37,7 @@ function resetPassword() {
 
         try {
             await confirmPasswordReset(auth, oobCode, password1);
+
             setError(false);
             setSuccess(true);
             setTimeout(() => router.push("/user/login"), 3000);

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 export default function emailVerified () {
     const router = useRouter();
 
+
     useEffect(() => {
         setTimeout(() => {router.push("/user/login")}, 3000);
     }, []);

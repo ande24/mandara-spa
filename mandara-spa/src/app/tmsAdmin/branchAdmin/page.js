@@ -1,11 +1,14 @@
 "use client";
 
-import EditBranch from "@/components/editBranchForm";
+import EditBranch from "@/components/detailsForm";
 import firebase_app from "@/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getDoc, getFirestore, doc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import ManageService from "@/components/serviceForm";
+import ManageInv from "@/components/inventoryForm";
+import ManageBookings from "@/components/bookingList";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -14,8 +17,12 @@ export default function () {
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
-    const [branchData, setBranchData] = useState(null);
-    const [showEdit, setShowEdit] = useState(false);
+    const [showEditBranch, setShowEditBranch] = useState(false);
+    const [showEditService, setShowEditService] = useState(false);
+    const [showEditItem, setShowEditItem] = useState(false);
+    const [showBooking, setShowBooking] = useState(false);
+    const [isBusinessAdmin, setIsBusinessAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -29,6 +36,17 @@ export default function () {
 
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (userData) {
+            if (userData.user_role === "business_admin") {
+                setIsBusinessAdmin(true);
+            }
+            else {
+                setIsBusinessAdmin(false);
+            }
+        }
+    }, [userData])
 
     useEffect(() => {
         if (user) {
@@ -51,56 +69,36 @@ export default function () {
     }, [user]);
 
     useEffect(() => {
-        if (user) {
-            const fetchBranchData = async () => {
-                try {
-                    console.log(userData)
-                    const branchRef = doc(db, "branches", userData.branch_id); 
-                    const branchSnap = await getDoc(branchRef);
-                    setBranchData(branchSnap.data());
-                    if (branchSnap.exists()) {
-                        const data = branchSnap.data();
-                        setFormData({
-                            branch_address: data.branch_address || "",
-                            branch_desc: data.branch_desc || "",
-                            branch_landline: data.branch_landline || "",
-                            branch_location: data.branch_location || "",
-                            branch_location_link: data.branch_location_link || "",
-                            branch_mobile: data.branch_mobile || "",
-                        });
-                    } else {
-                        console.log("No branch data found");
-                    }
-                } catch (error) {
-                    console.error("Error fetching branch data:", error);
-                } 
-            };
-
-            fetchBranchData();
+        if (userData) {
+          if (userData.user_role === "customer") {
+            return router.push("/tmsAdmin");
+          }
+          else {
+            setIsAdmin(true)
+          }
         }
-    }, [userData]);
+      }, [userData]);
 
     return (
         <div className="flex h-screen justify-center items-center">
-            {user ? (
+            {isBusinessAdmin && (<button onClick={() => {router.push("/tmsAdmin/businessAdmin")}}className="fixed top-10 left-10 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Home</button>)}
+            {user && userData && isAdmin? (
                 <div className="flex flex-col justify-center items-center">
-                    <h2>Welcome, {user.displayName || "User"}</h2>
-                    <p>Email: {user.email}</p>
-                    <p>User ID: {user.uid}</p>
-                    {userData && (
-                        <div>
-                            <h3>Branch Details from Firestore:</h3>
-                            <pre>{JSON.stringify(branchData, null, 2)}</pre>
-                        </div>
-                    )}
-                    <button className="text-red-500 my-4" onClick={() => {setShowEdit(true)}}>Edit branch details</button>
-                    <button className="text-red-500 my-4" onClick={() => {router.push("/tmsAdmin/branchAdmin/manageService")}}>Add/Remove branch services</button>
+                    <h2>Welcome, {user.email}</h2>
+                    <p>Branch: {userData.branch_location}</p>
+                    <button className="text-red-500 my-4" onClick={() => {setShowEditBranch(true)}}>Edit branch details</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowEditItem(true)}}>Manage Inventory</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowEditService(true)}}>Edit service details</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowBooking(true)}}>Manage Bookings</button>
                 </div>
             ) : (
                 <p>Loading or No User Logged In...</p>
             )}
 
-            {showEdit && <EditBranch onClose={() => setShowEdit(false)} />}
+            {showEditBranch && (<EditBranch onClose={() => setShowEditBranch(false)} />)}
+            {showEditService && <ManageService onClose={() => setShowEditService(false)} />}
+            {showEditItem && <ManageInv onClose={() => setShowEditItem(false)} />}
+            {showBooking && <ManageBookings onClose={() => setShowBooking(false)} />}
         </div>
     );
 }

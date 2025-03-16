@@ -1,21 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getFirestore } from "firebase/firestore";
-import { addDoc, collection } from "firebase/firestore"; 
+import { getFirestore, query, orderBy } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, getDoc } from "firebase/firestore"; 
 import firebase_app from "../firebase/config";
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const BookingForm = ({ onClose }) => {
     const db = getFirestore(firebase_app);
     const auth = getAuth(firebase_app);
     const [minDate, setMinDate] = useState("");
 
-    useEffect(() => {
-        const today = new Date();
-        today.setDate(today.getDate() + 1); // Set to tomorrow
-        setMinDate(today.toISOString().split("T")[0]); // Format YYYY-MM-DD
-    }, []);
+    const [user, setUser] = useState(null);
+    const [userData, setUserData] = useState(null);
+    const [branchData, setBranchData] = useState(null);
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState(null);
+
+    const [services, setServices] = useState([]);
+    const [serviceData, setServiceData] = useState(null);
+    const [selectedService, setSelectedService] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const [bookings, setBookings] = useState([]);
+    const [bookingData, setBookingData] = useState(null);
+    const [selectedBooking, setSelectedBooking] = useState(null);
 
     const [formData, setFormData] = useState({
         date: "",
@@ -23,7 +32,110 @@ const BookingForm = ({ onClose }) => {
         pax: "", 
         service: "",
         branch: "",
+        category: "", 
     });
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        if (user) {
+            const fetchUserData = async () => {
+                try {
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        setUserData(docSnap.data());
+                    } else {
+                        console.log("No user data found in Firestore");
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            };
+    
+            fetchUserData();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (userData && selectedBranch) {
+            const fetchBranchData = async () => {
+                try {
+                    const branchRef = doc(db, "branches", selectedBranch); 
+                    const branchSnap = await getDoc(branchRef);
+                    if (branchSnap.exists()) {
+                        setBranchData(branchSnap.data());
+                    } else {
+                        console.log("No branch data found");
+                    }
+                } catch (error) {
+                    console.error("Error fetching branch data:", error);
+                } 
+            };
+
+            fetchBranchData();
+        }
+    }, [userData]);
+
+    useEffect(() => {
+        const fetchBranches = async () => {
+            const branchCollection = collection(db, "branches");
+            const branchSnapshot = await getDocs(branchCollection);
+            const branchList = branchSnapshot.docs
+            .filter(doc => doc.id !== "schema")
+            .map(doc => ({
+                id: doc.id,
+                name: doc.data().branch_location,
+                hours: doc.data().branch_hours
+            }));
+            console.log(branchList);
+            setBranches(branchList);
+        };
+        fetchBranches();
+    }, []);
+
+    useEffect(() => {
+        if (selectedBranch) {
+            const fetchServices = async () => {
+                try {
+                    const branchRef = doc(db, "branches", selectedBranch);
+                    console.log(branchRef)
+                    const serviceCollection = query(collection(branchRef, "services"), orderBy("service_name"));
+                    console.log(serviceCollection)
+                    const serviceSnapshot = await getDocs(serviceCollection);
+                    const serviceList = serviceSnapshot.docs
+                        .filter(doc => doc.id !== "placeholder")
+                        .map(doc => ({
+                            id: doc.id,
+                            name: doc.data().service_name,
+                            price: doc.data().service_price,
+                            desc: doc.data().service_desc,
+                            duration: doc.data().service_duration,
+                            category: doc.data().service_category,
+                            status: doc.data().service_status
+                        }));
+    
+                    console.log("services: ", serviceList);
+                    setServices(serviceList);
+                } catch (error) {
+                    console.error("Error fetching services:", error);
+                }
+            };
+            fetchServices();
+        }
+    }, [selectedBranch]);
+
+    useEffect(() => {
+        const today = new Date();
+        today.setDate(today.getDate() + 1); 
+        setMinDate(today.toISOString().split("T")[0]); 
+    }, []);
 
     const [showSuccess, setShowSuccess] = useState(false)
     const [showError, setShowError] = useState(false)
@@ -32,19 +144,40 @@ const BookingForm = ({ onClose }) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleCategoryChange = async (e) => {
+        const selectedCat = e.target.value;
+        setSelectedCategory(selectedCat);
+
+        setFormData((prev) => ({ ...prev, category: selectedCat }))
+    };
+
+    const handleServiceChange = async (e) => {
+        const selectedId = e.target.value;
+        setSelectedService(selectedId);
+        setFormData((prev) => ({ ...prev, service: selectedId }))
+      };
+
+    const handleBranchChange = async (e) => {
+        const selectedB = e.target.value;
+        setSelectedBranch(selectedB);
+
+        setFormData((prev) => ({ ...prev, branch: selectedB }))
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        
+        console.log(formData)
         
         try {
-            const docRef = await addDoc(collection(db, "bookings"), {
+            const branchRef = doc(db, "branches", selectedBranch)
+            const docRef = await addDoc(collection(branchRef, "bookings"), {
                 customer_id: auth.currentUser.uid,
-                time: formData.time,
-                date: formData.date,
-                pax: formData.pax,
-                service: formData.service,
-                branch: formData.branch,
+                booked_time: formData.time,
+                booked_date: formData.date,
+                no_of_customers: formData.pax,
+                service_id: formData.service,
+                booking_status: "pending"
             });
             console.log("Booking successful with ID:", docRef.id);
             
@@ -52,7 +185,10 @@ const BookingForm = ({ onClose }) => {
             
             setTimeout(() => {
                 setShowSuccess(false);
-                setFormData({ pax: "", date: "", time: "", service: "", branch: ""}); 
+                setFormData({ pax: "", date: "", time: "", service: "", branch: "", category: ""});
+                setSelectedCategory(null) 
+                setSelectedBranch(null)
+                setSelectedService(null)
                 onClose();
             }, 2000);
             
@@ -64,81 +200,68 @@ const BookingForm = ({ onClose }) => {
             
             setTimeout(() => {
                 setShowError(false);
-                setFormData({ pax: "", date: "", time: "", service: "", branch: ""}); 
+                setSelectedCategory(null) 
+                setSelectedBranch(null)
+                setSelectedService(null)
+                setFormData({ pax: "", date: "", time: "", service: "", branch: "", category: ""}); 
             }, 2000);
         }
     };
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
                 <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full">
                     <h2 className="text-2xl font-bold mb-4 text-center">Book an Appointment</h2>
 
                     <form onSubmit={handleSubmit}>
-                        
-                        <label>Service</label>
+                        <label>Branch:</label>
                         <select 
-                            name="service" value={formData.service} onChange={handleChange} required
-                            className="w-full p-2 mb-4 border rounded"
+                            className="border p-2 rounded w-full mb-2"
+                            value={selectedBranch ? selectedBranch.id : ""}
+                            onChange={handleBranchChange}
                         >
-                            <option value=""></option>
-                            <option value="s1">The Mandara Signature Massage (1 hr & 15 mins) - ₱1500</option>
-                            <option value="s2">The Mandara Signature Massage (1 hr & 30 mins) - ₱1800</option>
-                            <option value="s3">The Mandara Signature Massage (2 hrs) - ₱2300</option>
-                            <option value="The Mandara Signature Scrub, Wrap & Massage">The Mandara Signature Scrub, Wrap & Massage</option>
-                            <option value="The Mandara Signature Scrub">The Mandara Signature Scrub</option>
-                            <option value="The Mandara Signature Scrub and Massage">The Mandara Signature Scrub and Massage</option>
-                            <option value="The Mandara Signature Foot Spa and Pedicure">The Mandara Signature Foot Spa and Pedicure</option>
-                            <option value="The Mandara Signature Hand Spa and Manicure">The Mandara Signature Hand Spa and Manicure</option>
-                            <option value="Ultimate Mandara Experience Scrub + Wrap + Massage + Foot Spa + Facial or Ear Candling">Ultimate Mandara Experience Scrub + Wrap + Massage + Foot Spa + Facial or Ear Candling</option>
-                            <option value="Swedish Aromatherapy">Swedish Aromatherapy</option>
-                            <option value="Shiatsu Dry Massage">Shiatsu Dry Massage</option>
-                            <option value="Combination Aromatherapy">Combination Aromatherapy</option>
-                            <option value="Hot Stone Massage">Hot Stone Massage</option>
-                            <option value="Four Hands Therapy">Four Hands Therapy</option>
-                            <option value="Ventosa Cupping with Hilot">Ventosa Cupping with Hilot</option>
-                            <option value="Ventosa with Signature Massage">Ventosa with Signature Massage</option>
-                            <option value="The Scrub Ritual">The Scrub Ritual</option>
-                            <option value="Body Scrub and Massage">Body Scrub and Massage</option>
-                            <option value="Body Scrub, Wrap and Massage">Body Scrub, Wrap and Massage</option>
-                            <option value="Hand Spa">Hand Spa</option>
-                            <option value="Foot Spa">Foot Spa</option>
-                            <option value="Xiamen Foot Massage">Xiamen Foot Massage</option>
-                            <option value="Chair Massage">Chair Massage</option>
-                            <option value="Nail Care: Green Tea Manicure">Nail Care: Green Tea Manicure</option>
-                            <option value="Nail Care: Green Tea Pedicure">Nail Care: Green Tea Pedicure</option>
-                            <option value="Nail Care: Gel Manicure">Nail Care: Gel Manicure</option>
-                            <option value="Nail Care: Gel Pedicure">Nail Care: Gel Pedicure</option>
-                            <option value="Nail Care: Hand Paraffin">Nail Care: Hand Paraffin</option>
-                            <option value="Nail Care: Foot Paraffin">Nail Care: Foot Paraffin</option>
-                            <option value="Diamond Peel with Machine">Diamond Peel with Machine</option>
-                            <option value="Non-Abrasive Diamond Peel">Non-Abrasive Diamond Peel</option>
-                            <option value="Collagen Gold Mask">Collagen Gold Mask</option>
-                            <option value="Non-Surgical Face Lift">Non-Surgical Face Lift</option>
-                            <option value="Ageloc Galvanic Facial Spa">Ageloc Galvanic Facial Spa</option>
-                            <option value="Radiance Facial Spa Package">Radiance Facial Spa Package</option>
-                            <option value="Organic Honey Wax Services: Upper Lip">Organic Honey Wax Services: Upper Lip</option>
-                            <option value="Organic Honey Wax Services: Underarms">Organic Honey Wax Services: Underarms</option>
-                            <option value="Organic Honey Wax Services: Half-leg">Organic Honey Wax Services: Half-leg</option>
-                            <option value="Organic Honey Wax Services: Full Leg">Organic Honey Wax Services: Full Leg</option>
-                            <option value="Organic Honey Wax Services: Bikini">Organic Honey Wax Services: Bikini</option>
-                            <option value="Organic Honey Wax Services: Brazilian">Organic Honey Wax Services: Brazilian</option>
-                            <option value="Semi-Permanent Eyelash Extension">Semi-Permanent Eyelash Extension</option>
-                            <option value="Ear Candling">Ear Candling</option>
-                            <option value="Threading Services: Eyebrow">Threading Services: Eyebrow</option>
-                            <option value="Threading Services: Upper Lip">Threading Services: Upper Lip</option>
-                            <option value="Threading Services: Forehead">Threading Services: Forehead</option>
-                            <option value="Threading Services: Cheeks">Threading Services: Cheeks</option>
-                            <option value="Threading Services: Underarms">Threading Services: Underarms</option>
-                            <option value="Special Offers: On-The-Go Recharge">Special Offers: On-The-Go Recharge</option>
-                            <option value="Special Offers: Stress Buster">Special Offers: Stress Buster</option>
-                            <option value="Special Offers: Foot Break">Special Offers: Foot Break</option>
-                            <option value="Special Offers: Wellness Ritual">Special Offers: Wellness Ritual</option>
-                            <option value="Special Offers: Personal Retreat">Special Offers: Personal Retreat</option>
-                            <option value="Special Offers: Couple's Retreat">Special Offers: Couple's Retreat</option>
-                            <option value="Special Offers: Ultimate Mandara Experience">Special Offers: Ultimate Mandara Experience</option>
+                            <option value="">Select Branch</option>
+                            {branches
+                            .filter(branch => branch.name !== "Camaya Coast, Bataan" && branch.name !== "BGC One Serendra")
+                            .map(branch => (
+                                <option key={branch.id} value={branch.id}>{branch.name} - {branch.hours}</option>
+                            ))}
                         </select>
+
+                        <label>Service Category:</label>
+                        <select
+                            name="category"
+                            className="border p-2 rounded w-full mb-2"
+                            value={selectedCategory || ""} 
+                            onChange={handleCategoryChange}
+                        >
+                            <option value="">Select Category</option>
+                            <option value="signature">The Mandara Spa Signature Rituals</option>
+                            <option value="massage_therapy">The Mandara Spa Body Rituals (Massage Therapy)</option>
+                            <option value="body_scrub">The Mandara Spa Body Rituals (Body Scrub and Wraps)</option>
+                            <option value="healing">The Mandara Spa Body Rituals (Traditional Healing Massage)</option>
+                            <option value="hand_and_foot">The Mandara Spa Hand and Foot Rituals</option>
+                            <option value="facial">The Mandara Spa Facial Rituals</option>
+                            <option value="other">Other Mandara Treats</option>
+                            <option value="special">Special Offers</option>
+                        </select>
+                        
+                        <label>Service:</label>
+                        <select 
+                            className="border p-2 rounded w-full mb-2"
+                            value={selectedService ? selectedService.id : ""}
+                            onChange={handleServiceChange}
+                        >
+                            <option value="">Select Service</option>
+                            {services
+                            .filter(service => service.status !== "unavailable" && service.category === selectedCategory)
+                            .map(service => (
+                                <option key={service.id} value={service.id}>{service.name} - ₱{service.price}</option>
+                            ))}
+                            
+                        </select>
+
                         <label>Number of Customers</label>
                         <input 
                             type="number" name="pax" min="1"
@@ -153,28 +276,12 @@ const BookingForm = ({ onClose }) => {
                         />
                         <label>Time</label>
                         <input 
-                            type="time" name="time"
+                            type="time" name="time" step="1800"
                             value={formData.time} onChange={handleChange} required
-                            className="w-full p-2 mb-2 border rounded"
+                            className="w-full p-2 mb-5 border rounded"
                         />
-                        <label>Branch</label>
-                        <select 
-                            name="branch" value={formData.branch} onChange={handleChange} required
-                            className="w-full p-2 mb-4 border rounded"
-                        >
-                            <option value=""></option>
-                            <option value="BGC 3rd Avenue">BGC 3rd Avenue</option>
-                            <option value="BGC One Serendra">BGC One Serendra</option>
-                            <option value="Greenhills">Greenhills</option>
-                            <option value="BF Paranaque">BF Paranaque</option>
-                            <option value="S Maison">S Maison at Conrad Manila, MOA Complex</option>
-                            <option value="Park Inn North Edsa">Park Inn by Radisson, North Edsa</option>
-                            <option value="Venice Grand Canal">Venice Grand Canal, Mckinley Hill, Taguig</option>
-                            <option value="Park Inn Clark">Park Inn by Radisson, Clark, Pampanga</option>
-                            <option value="Tagaytay Hillcrest">Tagaytay Hillcrest</option>
-                        </select>
 
-                        <div className="flex justify-between">
+                        <div className="flex justify-around">
                             <button 
                                 type="submit"
                                 className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-700 transition"

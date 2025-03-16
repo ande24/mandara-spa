@@ -15,10 +15,10 @@ export default async function signIn(email, password) {
     try {
         res = await signInWithEmailAndPassword(auth, email, password);
 
-        if (!res.user.emailVerified) {
-            await sendEmailVerification(res.user, actionCodeSettings)
-            throw new Error("Please check your inbox and verify your email before logging in.");
-        }
+        // if (!res.user.emailVerified) {
+        //     await sendEmailVerification(res.user, actionCodeSettings)
+        //     throw new Error("Please check your inbox and verify your email before logging in.");
+        // }
     } catch (e) {
         err = e;
     }
