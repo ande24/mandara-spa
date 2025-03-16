@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, addDoc, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc, updateDoc, onSnapshot, query, getDocs } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 
 const ManageInv = ({onClose}) => {
@@ -74,29 +74,28 @@ const ManageInv = ({onClose}) => {
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
-            const fetchItems = async () => {
-                try {
-                    const branchRef = doc(db, "branches", userData.branch_id);
-                    const itemCollection = collection(branchRef, "inventory");
-                    const itemSnapshot = await getDocs(itemCollection);
-                    const itemList = itemSnapshot.docs
-                        .filter(doc => doc.id !== "placeholder")
-                        .map(doc => ({
-                            id: doc.id,
-                            name: doc.data().item_name,
-                            price: doc.data().item_price,
-                            quantity: doc.data().item_quantity
-                        }));
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const itemCollection = collection(branchRef, "inventory");
     
-                    console.log("items: ", itemList);
-                    setItems(itemList);
-                } catch (error) {
-                    console.error("Error fetching images:", error);
-                }
-            };
-            fetchItems();
+            const unsubscribe = onSnapshot(itemCollection, (snapshot) => {
+                const itemList = snapshot.docs
+                    .filter(doc => doc.id !== "placeholder")
+                    .map(doc => ({
+                        id: doc.id,
+                        name: doc.data().item_name,
+                        price: doc.data().item_price,
+                        quantity: doc.data().item_quantity
+                    }));
+    
+                console.log("Updated items: ", itemList);
+                setItems(itemList);
+            }, (error) => {
+                console.error("Error fetching items:", error);
+            });
+    
+            return () => unsubscribe();
         }
-    }, [branchData]);
+    }, [branchData, userData?.branch_id]);
 
     useEffect(() => {
         const fetchItemData = async () => {
@@ -125,20 +124,18 @@ const ManageInv = ({onClose}) => {
         const itemRef = collection(branchRef, "inventory");
 
         try {
+            const existingItem = items.find(item => item.name.toLowerCase() === formData.name.toLowerCase());
+
+            if (existingItem) {
+                alert("Item with the same name already exists")
+                return
+            }
+            
             const docRef = await addDoc(itemRef, {
                 item_name: formData.name,
                 item_price: formData.price,
                 item_quantity: formData.quantity
             });
-    
-            const newItem = {
-                id: docRef.id,
-                name: formData.name,
-                price: formData.price,
-                quantity: formData.quantity,
-            };
-
-            setItems(prevItems => [...prevItems, newItem]);
 
             setMessage("Item added successfully!");
             setFormData({

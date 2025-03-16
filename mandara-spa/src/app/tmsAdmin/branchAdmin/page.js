@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import ManageService from "@/components/serviceForm";
 import ManageInv from "@/components/inventoryForm";
 import ManageBookings from "@/components/bookingList";
+import ManageTransactions from "@/components/transactionList";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -21,6 +22,7 @@ export default function () {
     const [showEditService, setShowEditService] = useState(false);
     const [showEditItem, setShowEditItem] = useState(false);
     const [showBooking, setShowBooking] = useState(false);
+    const [showTransactions, setShowTransactions] = useState(false);
     const [isBusinessAdmin, setIsBusinessAdmin] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -86,10 +88,11 @@ export default function () {
                 <div className="flex flex-col justify-center items-center">
                     <h2>Welcome, {user.email}</h2>
                     <p>Branch: {userData.branch_location}</p>
-                    <button className="text-red-500 my-4" onClick={() => {setShowEditBranch(true)}}>Edit branch details</button>
-                    <button className="text-red-500 my-4" onClick={() => {setShowEditItem(true)}}>Manage Inventory</button>
-                    <button className="text-red-500 my-4" onClick={() => {setShowEditService(true)}}>Edit service details</button>
-                    <button className="text-red-500 my-4" onClick={() => {setShowBooking(true)}}>Manage Bookings</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowEditBranch(true)}}>Branch</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowEditItem(true)}}>Inventory</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowEditService(true)}}>Services</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowBooking(true)}}>Bookings</button>
+                    <button className="text-red-500 my-4" onClick={() => {setShowTransactions(true)}}>Transactions</button>
                 </div>
             ) : (
                 <p>Loading or No User Logged In...</p>
@@ -99,6 +102,7 @@ export default function () {
             {showEditService && <ManageService onClose={() => setShowEditService(false)} />}
             {showEditItem && <ManageInv onClose={() => setShowEditItem(false)} />}
             {showBooking && <ManageBookings onClose={() => setShowBooking(false)} />}
+            {showTransactions && <ManageTransactions onClose={() => setShowTransactions(false)} />}
         </div>
     );
 }

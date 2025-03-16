@@ -19,7 +19,7 @@ export default async function signInAdmin(email, password) {
     try {
         res = await signInWithEmailAndPassword(auth, email, password);
         console.log(res)
-
+        await res.user.reload();
         // if (!res.user.emailVerified) {
         //     await sendEmailVerification(res.user, actionCodeSettings)
         //     throw new Error("Please check your inbox and verify your email before logging in.");

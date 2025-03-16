@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import signUp from "@/firebase/auth/signup";
 import { setDoc, doc, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
+import { useRouter } from "next/navigation";
 
-function SignIn() {
+function SignUp() {
     const db = getFirestore(firebase_app)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -12,6 +13,7 @@ function SignIn() {
     const [number, setNumber] = useState ('')
     const [showVerify, setShowVerify] = useState(false)
     const [error, setError] = useState('');
+    const router = useRouter();
 
     const handleForm = async (event) => {
         event.preventDefault()
@@ -37,6 +39,12 @@ function SignIn() {
             console.log(res)
 
             setShowVerify(true)
+
+            setTimeout(() => {
+                setShowVerify(false);
+            }, 3000);
+            
+            router.push("/user/home");
 
         } catch (dbError) {
             setError(dbError.message);
@@ -70,8 +78,9 @@ function SignIn() {
         {showVerify && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                    <h2 className="text-2xl font-bold mb-4">Almost there!</h2>
-                    <p>Please check your email and click the link to verify your email, then log into your account.</p>
+                    <h2 className="text-2xl font-bold mb-4">Account created!</h2>
+                    <p>Check your email soon for a verification link.</p>
+                    <p>Signing you in for now.</p>
                 </div>
             </div>
         )}
@@ -79,4 +88,4 @@ function SignIn() {
     );
 }
 
-export default SignIn;
+export default SignUp;

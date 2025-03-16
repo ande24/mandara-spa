@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, addDoc, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, doc, getDocs, getDoc, updateDoc, addDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 
-const ManageInv = ({onClose}) => {
+const ManageInv = ({onClose, bookingData}) => {
     const auth = getAuth(firebase_app)
     const db = getFirestore(firebase_app);
     const [user, setUser] = useState(null);
@@ -17,7 +17,6 @@ const ManageInv = ({onClose}) => {
     });
 
     const [items, setItems] = useState([]);
-    const [itemData, setItemData] = useState(null);
     const [usedItems, setUsedItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
 
@@ -28,6 +27,8 @@ const ManageInv = ({onClose}) => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
+
+        console.log("DATA", bookingData)
 
         return () => unsubscribe();
     }, []);
@@ -132,7 +133,10 @@ const ManageInv = ({onClose}) => {
                     id: selectedItemData.id,
                     name: selectedItemData.name,
                     quantity: parseInt(formData.quantity, 10),
+                    price: selectedItemData.price
                 };
+
+                console.log("new item", newItem)
 
                 usedItems.push(newItem);
             }
@@ -159,7 +163,7 @@ const ManageInv = ({onClose}) => {
         }
     };
 
-    const handleSubmitTransaction = async (e, bookingData) => {
+    const handleSubmitTransaction = async (e) => {
         e.preventDefault();
         setSaving(true);
 
@@ -179,37 +183,48 @@ const ManageInv = ({onClose}) => {
                     });
                 }
 
-                const newTransaction = {
-                    bookingId: bookingData.,
-                    customerId: "",
-                    customerName: "",
-                    items_used: usedItems,
-                    net_revenue: "",
-                    service_income: "",
-                    service_cost: "",
-                    no_of_customers: "",
-                };
-
                 setItems(prevItems => 
                     prevItems.map(item => 
                         item.id === selectedItem ? 
                             { ...item, name: formData.name, price: formData.price, quantity: formData.quantity} : item
                     )
                 );
-        
-                setSaving(false);
-                setFormData({
-                    name: "",
-                    quantity: "",
-                });
-
-                setUsedItems(null)
             }
 
-            console.log("yeah")
+            const userSnap = await getDoc(doc(db, "users", bookingData.customer_id))
+            const serviceSnap = await getDoc(doc(branchRef, "services", bookingData.service_id))
+
+            const income = Number(bookingData.no_of_customers) * Number(serviceSnap.data().service_price)
+            const cost = usedItems 
+            ? usedItems.reduce((total, item) => total + (Number(item.price) * Number(item.quantity)), 0) 
+            : 0;
+            const rev = income - cost
+
+            const transactionsRef = collection(branchRef, "transactions");
+
+            await addDoc(transactionsRef, {
+                bookingId: bookingData.id,
+                customerId: bookingData.customer_id,
+                customerName: userSnap.data()?.user_name,
+                items_used: usedItems,
+                net_revenue: rev,
+                service_income: income,
+                service_cost: cost,
+                no_of_customers: bookingData.no_of_customers,
+            });
+
+            setSaving(false);
+            setFormData({
+                name: "",
+                quantity: "",
+            });
+
+            setUsedItems([])
+
+            onClose();
         } catch (error) {
             setMessage("Error updating item: " + error.message);
-            alert("Failed to update item.");
+            alert(error.message);
             setSaving(false);
         }
     };

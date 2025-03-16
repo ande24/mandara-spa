@@ -1,5 +1,6 @@
 'use client'
 
+import { Img } from "@react-email/components";
 import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -20,7 +21,10 @@ export default function Page() {
               onClick={() => setShowForm(true)}>
                 Book now
       </button>
-
+      <Img
+        width={620}
+        src="/images/bgc_3rd/bgc-branch-img5.png"
+      />
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
     </div>
   );

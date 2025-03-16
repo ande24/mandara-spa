@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, addDoc, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, getDocs, getDoc, deleteDoc, updateDoc, orderBy, query } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 
 const ManageService = ({onClose}) => {
@@ -79,7 +79,7 @@ const ManageService = ({onClose}) => {
             const fetchServices = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id);
-                    const serviceCollection = collection(branchRef, "services");
+                    const serviceCollection = query(collection(branchRef, "services"), orderBy("service_name"));
                     const serviceSnapshot = await getDocs(serviceCollection);
                     const serviceList = serviceSnapshot.docs
                         .filter(doc => doc.id !== "placeholder")
@@ -305,7 +305,6 @@ const ManageService = ({onClose}) => {
                                             min="1" 
                                             value={formData.duration} 
                                             onChange={handleChange}  
-                                            required
                                         />
                                     </div>
                     
@@ -318,7 +317,6 @@ const ManageService = ({onClose}) => {
                                             min="1" 
                                             value={formData.price} 
                                             onChange={handleChange}  
-                                            required
                                         />
                                     </div>
                     

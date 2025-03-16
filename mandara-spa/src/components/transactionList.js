@@ -6,16 +6,14 @@ import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, 
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import AddTransaction from "./transactionForm";
 
-const ManageBookings = ({onClose}) => {
+const ManageTransactions = ({onClose}) => {
     const auth = getAuth(firebase_app)
     const db = getFirestore(firebase_app);
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
     const [branchData, setBranchData] = useState(null);
-    const [showTransaction, setShowTransaction] = useState(false);
 
-    const [bookings, setBookings] = useState([]);
-    const [selectedBooking, setSelectedBooking] = useState(null);
+    const [transactions, setTransactions] = useState([]);
     const [services, setServices] = useState([]);
 
     const [message, setMessage] = useState(null);
@@ -101,27 +99,21 @@ const ManageBookings = ({onClose}) => {
         if (!userData?.branch_id || !branchData || !services) return;
 
         const branchRef = doc(db, "branches", userData.branch_id);
-        const bookingCollection = collection(branchRef, "bookings");
+        const transactionCollection = collection(branchRef, "transactions");
 
-        const unsubscribe = onSnapshot(bookingCollection, async (snapshot) => {
-            const bookingList = await Promise.all(
+        const unsubscribe = onSnapshot(transactionCollection, async (snapshot) => {
+            const transactionList = await Promise.all(
                 snapshot.docs
                     .filter(docu => docu.id !== "placeholder")
                     .map(async (docu) => {
                         const data = docu.data();
-                        
-                        let customerName = "", customerEmail = "";
-                        if (data.customer_id) {
-                            const customerSnap = await getDoc(doc(db, "users", data.customer_id));
-                            if (customerSnap.exists()) {
-                                customerName = customerSnap.data().user_name; 
-                                customerEmail = customerSnap.data().user_email;
-                            }
-                        }
 
+                        const bookingRef = doc(branchRef, "bookings", data.bookingId);
+                        const bookingSnap = await getDoc(bookingRef);
+                        
                         let serviceName = "", servicePrice = "";
-                        if (data.service_id) {
-                            const serviceRef = doc(branchRef, "services", data.service_id);
+                        if (bookingSnap.data().service_id) {
+                            const serviceRef = doc(branchRef, "services", bookingSnap.data().service_id);
                             const serviceSnap = await getDoc(serviceRef);
                             if (serviceSnap.exists()) {
                                 serviceName = serviceSnap.data().service_name;
@@ -129,127 +121,81 @@ const ManageBookings = ({onClose}) => {
                             }
                         }
 
-                        let total = data.no_of_customers * Number(servicePrice)
-
                         return {
+
                             id: docu.id,
-                            date: data.booked_date,
-                            time: data.booked_time,
-                            status: data.booking_status,
-                            customer: customerName,
-                            total: total,
-                            price: servicePrice,
-                            email: customerEmail,
+                            date: bookingSnap.data().booked_date,
+                            time: bookingSnap.data().booked_time,
+                            booking: data.bookingId,
                             pax: data.no_of_customers,
-                            service: serviceName,
+                            serviceName: serviceName,
+                            servicePrice: servicePrice,
+                            revenue: data.net_revenue,
+                            items: data.items_used
+                                ? data.items_used.map(item => ({
+                                    id: item.id,
+                                    name: item.name,
+                                    price: item.price,  
+                                    quantity: item.quantity 
+                                }))
+                                : []  
                         };
                     })
             );
 
-            console.log("Updated bookings:", bookingList);
-            setBookings(bookingList);
+            console.log("Updated transactions:", transactionList);
+            setTransactions(transactionList);
         });
 
         return () => unsubscribe();
     }, [userData?.branch_id, !!branchData, !!services]);
 
-    const toggleStatus = async (bookingId, newStatus) => {
-        try {
-            const branchRef = doc(db, "branches", userData.branch_id);
-            const bookingRef = doc(branchRef, "bookings", bookingId);
-
-            await updateDoc(bookingRef, {
-                booking_status: newStatus
-            });
-
-            setBookings(prevBookings => 
-                prevBookings.map(booking => 
-                    booking.id === bookingId ? { ...booking, status: newStatus } : booking
-                )
-            );
-
-            
-
-            if (newStatus === "completed") {
-                const bookingSnap = await getDoc(bookingRef);
-                const bookingData = { id: bookingSnap.id, ...bookingSnap.data() };
-                setSelectedBooking(bookingData)
-
-                setTimeout(() => setShowTransaction(true), 0);
-            }
-
-            setMessage("Service status updated!");
-        } catch (error) {
-            console.error("Error updating service status:", error);
-            setMessage("Error updating service status: " + error.message);
-        }
-    }
-
-    const handleRemoveBooking = async (e, bookingId) => {
+    const handleRemoveTransaction = async (e, transactionId) => {
         e.preventDefault();
 
-        const confirmDelete = window.confirm("Are you sure you want to remove this booking?");
+        const confirmDelete = window.confirm("Are you sure you want to delete this transaction?");
         if (!confirmDelete) return;
 
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
-            const bookingRef = doc(branchRef, "bookings", bookingId);
+            const transactionRef = doc(branchRef, "transactions", transactionId);
         
-            await deleteDoc(bookingRef);
+            await deleteDoc(transactionRef);
 
-            setBookings((prevBookings) => prevBookings.filter(booking => booking.id !== bookingId));
+            setTransactions((prevTransactions) => prevTransactions.filter(transaction => transaction.id !== transactionId));
 
-            setMessage("Booking removed successfully!");
+            setMessage("Transaction removed successfully!");
         } catch (error) {
-            setMessage("Error removing booking: " + error.message);
+            setMessage("Error removing transaction: " + error.message);
         }
     };
 
     return (
         <div className="flex justify-center items-center ">
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
-            {showTransaction && selectedBooking ? (<AddTransaction bookingData={selectedBooking} onClose={() => setShowTransaction(false)} />) : (
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl  w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">
-                            <h3 className="text-lg font-bold">Booking List</h3>
-                            {bookings.length > 0 ? (
+                            <h3 className="text-lg font-bold">Transaction List</h3>
+                            {transactions.length > 0 ? (
                                 <ul className="flex flex-col space-y-2 max-h-[400px] overflow-y-auto m-2 rounded p-2 w-full">
-                                    {bookings.map((booking) => (
+                                    {transactions.map((transaction) => (
                                         <li 
-                                            key={booking.id} 
-                                            className={`flex justify-between items-center border p-3 rounded w-full ${
-                                                booking.status === "pending" 
-                                                    ? "bg-yellow-100 border-yellow-400" 
-                                                    : booking.status === "canceled" 
-                                                        ? "bg-red-100 border-red-400" 
-                                                        : "bg-green-100 border-green-400"
-                                            }`}
+                                            key={transaction.id} 
+                                            className="flex justify-between items-center border p-3 rounded w-full bg-gray-200 border-gray-400"
                                         >
                                             <div className="flex flex-col">
-                                                <p className="font-semibold">{booking.id} : {booking.customer} : {booking.email}</p>
-                                                <p>{booking.service}</p>
-                                                <p>No. of customers: {booking.pax} {booking.price ? `x ₱${booking.price} = ₱${booking.total}` : ""}</p>
-                                                <p className="text-sm text-gray-600">{booking.date} | {booking.time} | {booking.status}</p>
+                                                <p className="font-semibold">Booking {transaction.booking}</p>
+                                                <p>{transaction.serviceName} {transaction.servicePrice ? `(₱${transaction.servicePrice}) x ${transaction.pax}` : ""}</p>
+                                                {transaction.items.map((item) => (
+                                                    <p key={item.id}>- {item.name} (₱{item.price}) x {item.quantity}</p>
+                                                ))}
+                                                <p>{transaction.servicePrice ?`= ₱${transaction.revenue} Net Revenue` : "" }</p>
+                                                <p className="text-sm text-gray-600">{transaction.date} | {transaction.time}</p>
                                             </div>
                                             <div className="flex items-center">
-                                                <select
-                                                    className="border p-1 mx-1 rounded-lg bg-white "
-                                                    value={booking.status || "pending"} 
-                                                    onChange={(e) => toggleStatus(booking.id, e.target.value)}
-                                                >
-                                                    <option value="pending">Pending</option>
-                                                    <option value="completed">Completed</option>
-                                                    <option value="canceled">Canceled</option>
-                                                </select>
                                                 <button 
-                                                    className="bg-red-400 border border-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-600 mx-1 transition"
-                                                    onClick={(e) => toggleStatus(booking.id, "completed")}
-                                                >
-                                                    Log Transaction
-                                                </button>
-                                                <button 
-                                                    className="bg-red-400 border border-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-600 mx-1 transition"
-                                                    onClick={(e) => handleRemoveBooking(e, booking.id)}
+                                                    className="bg-red-400 border border-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-600 mx-2 transition"
+                                                    onClick={(e) => handleRemoveTransaction(e, transaction.id)}
                                                 >
                                                     Remove
                                                 </button>
@@ -270,10 +216,9 @@ const ManageBookings = ({onClose}) => {
                             </button>
                         </div>
                     </div>
-                )}
             </div>
         </div>
     );
 };
 
-export default ManageBookings;
+export default ManageTransactions;

@@ -13,18 +13,12 @@ const BookingForm = ({ onClose }) => {
 
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
-    const [branchData, setBranchData] = useState(null);
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState(null);
 
     const [services, setServices] = useState([]);
-    const [serviceData, setServiceData] = useState(null);
     const [selectedService, setSelectedService] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
-
-    const [bookings, setBookings] = useState([]);
-    const [bookingData, setBookingData] = useState(null);
-    const [selectedBooking, setSelectedBooking] = useState(null);
 
     const [formData, setFormData] = useState({
         date: "",
@@ -257,7 +251,7 @@ const BookingForm = ({ onClose }) => {
                             {services
                             .filter(service => service.status !== "unavailable" && service.category === selectedCategory)
                             .map(service => (
-                                <option key={service.id} value={service.id}>{service.name} - ₱{service.price}</option>
+                                <option key={service.id} value={service.id}>{service.name} {service.price ? `- ₱${service.price}` : ""}</option>
                             ))}
                             
                         </select>
