@@ -5,7 +5,7 @@ import { setDoc, doc, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
 import { useRouter } from "next/navigation";
 
-function SignUp() {
+function SignUpUser() {
     const db = getFirestore(firebase_app)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -88,4 +88,4 @@ function SignUp() {
     );
 }
 
-export default SignUp;
+export default SignUpUser;
