@@ -235,7 +235,6 @@ const ManageInv = ({onClose, bookingData}) => {
     
         if (selectedItemData) {
             setSelectedItem(selectedId);
-            setItemData(selectedItemData);
             setFormData({
                 name: selectedItemData.name || "",
                 quantity: "",
@@ -252,7 +251,7 @@ const ManageInv = ({onClose, bookingData}) => {
 
     return (
         <div className="flex justify-center items-center ">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
                 <div className="bg-white p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
                     <h2 className="text-2xl font-bold text-gray-800 mb-3 text-center">Log Items Used</h2>
 

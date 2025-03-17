@@ -5,6 +5,7 @@ import firebase_app from "@/firebase/config";
 import { getFirestore, collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const BranchSelect = ({ onClose }) => {
     const router = useRouter();
@@ -64,36 +65,38 @@ const BranchSelect = ({ onClose }) => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen w-screen">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
-                <div className="p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg">
-                    <h2 className="text-xl font-bold mb-4">View a branch</h2>
-                    {message  && <p className="mb-2 text-green-500">{message}</p>}
-                    <form onSubmit={directBranch} className="flex flex-col space-y-3">
-                        <select 
-                            className="border p-2 rounded-lg"
-                            value={selectedBranch ? selectedBranch.id : ""}
-                            onChange={(e) => {
-                                const branch = branches.find(b => b.id === e.target.value);
-                                setSelectedBranch(branch);
-                            }}
-                        >
-                            <option value="">Select Branch</option>
-                            {branches.map(branch => (
-                                <option key={branch.id} value={branch.id}>{branch.name}</option>
-                            ))}
-                        </select>
+        <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
+            <div className="fixed flex justify-center w-screen h-50 z-10 inset-0 top-00 bg-[#502424]">
+                <Image className="fixed top-[-60]" src={"/images/mandara_mtn.png"} width={400} height={400} alt={"The Mandara Spa Logo"} />
+            </div>
 
-                        <button type="submit" className="bg-blue-400 text-white p-2 font-semibold rounded-lg border border-blue-600 hover:bg-blue-600">Continue</button>
+            <div className="flex flex-col justify-around p-4 z-10 mt-10 min-w-lg min-h-80 mx-auto bg-[#e0d8ad] shadow-lg rounded-lg">
+                <h2 className="text-xl font-bold text-center">View a branch</h2>
+                {/* {message  && <p className="mb-2 text-green-500">{message}</p>} */}
+                <form onSubmit={directBranch} className="flex flex-col space-y-5">
+                    <select 
+                        className="border input-field rounded-lg"
+                        value={selectedBranch ? selectedBranch.id : ""}
+                        onChange={(e) => {
+                            const branch = branches.find(b => b.id === e.target.value);
+                            setSelectedBranch(branch);
+                        }}
+                    >
+                        <option value="">Select Branch</option>
+                        {branches.map(branch => (
+                            <option key={branch.id} value={branch.id}>{branch.name}</option>
+                        ))}
+                    </select>
 
-                        <button 
-                                    className="bg-red-400 text-white p-2 rounded-lg font-semibold  border border-red-600 hover:bg-red-600"
-                                    onClick={() => {onClose()}}
-                                >
-                                    Close
-                                </button>
-                    </form>
-                </div>
+                    <button type="submit" className="mandara-btn p-2 py-5">Continue</button>
+
+                    <button 
+                                className="mandara-btn p-2 py-5"
+                                onClick={() => {onClose()}}
+                            >
+                                Close
+                            </button>
+                </form>
             </div>
         </div>
     );

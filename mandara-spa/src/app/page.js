@@ -7,13 +7,13 @@ import LoadingPage from "@/components/ui/loading";
 export default function Home() {
   const router = useRouter();
 
-  useEffect(() => {
-    setTimeout(() => {
+  // useEffect(() => {
+  //   setTimeout(() => {
       router.push("/user/login"); 
-    }, 3000);
-  }, []);
+  //   }, 3000);
+  // }, []);
 
-  return (
-    <LoadingPage />
-  )
+  // return (
+  //   <LoadingPage />
+  // )
 }

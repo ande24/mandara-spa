@@ -164,6 +164,7 @@ const BookingForm = ({ onClose }) => {
         console.log(formData)
         
         try {
+            console.log("select", selectedBranch)
             const branchRef = doc(db, "branches", selectedBranch)
             const docRef = await addDoc(collection(branchRef, "bookings"), {
                 customer_id: auth.currentUser.uid,
@@ -174,6 +175,31 @@ const BookingForm = ({ onClose }) => {
                 booking_status: "pending"
             });
             console.log("Booking successful with ID:", docRef.id);
+
+            console.log(formData)
+
+            const serviceRef = doc(branchRef, "services", formData.service);
+            const serviceSnap = await getDoc(serviceRef);
+
+            const branchSnap = await getDoc(branchRef);
+
+            const newData = {
+                date: formData.date,
+                time: formData.time,
+                pax: formData.pax,
+                service: serviceSnap.data().service_name,
+                location: branchSnap.data().branch_location,
+                name: userData.user_name,
+                id: selectedBranch,
+            }
+
+            const response = await fetch('/api/send', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newData),
+              });
             
             setShowSuccess(true);
             

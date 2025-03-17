@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, setDoc, doc, getDoc, getDocs, arrayUnion, updateDoc, arrayRemove, } from "firebase/firestore";
 import signUp from "@/firebase/auth/signup";
+import Image from "next/image";
 
 const EditAdmins = ({ onClose }) => {
     const db = getFirestore(firebase_app);
@@ -141,99 +142,109 @@ const EditAdmins = ({ onClose }) => {
     };
     
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 p-4">
-            <div className="bg-white w-full max-w-3xl p-6 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold mb-4 text-gray-700">Manage Branch Admins</h2>
+        <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
+            <div className="fixed flex justify-center w-screen h-50 z-10 inset-0 top-0 bg-[#502424]">
+                <Image className="fixed top-[-60]" src={"/images/mandara_mtn.png"} width={400} height={400} alt={"The Mandara Spa Logo"} />
+            </div>
+
+            <div className="fixed flex flex-col justify-center items-center bottom-25 bg-[#e0d8ad] w-full z-50 max-w-3xl p-6 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4 text-black text-">Manage Branch Admins</h2>
                 
                 {message && <p className="text-center mb-3 text-green-600 font-medium">{message}</p>}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 bg-gray-100 rounded-lg">
-                        <h3 className="text-lg font-semibold mb-3">Add Branch Admin</h3>
-                        <form onSubmit={handleAddAdmin} className="flex flex-col space-y-3">
-                            <label className="text-sm font-medium text-gray-600">Select Branch:</label>
-                            <select 
-                                className="border p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
-                                value={selectedBranch ? selectedBranch.id : ""}
-                                onChange={(e) => {
-                                    const branch = branches.find(b => b.id === e.target.value);
-                                    setSelectedBranch(branch);
-                                }}
-                            >
-                                <option value="">-- Choose Branch --</option>
-                                {branches.map(branch => (
-                                    <option key={branch.id} value={branch.id}>{branch.name}</option>
-                                ))}
-                            </select>
+                <div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-4 bg-[#e0d8ad] rounded-lg">
+                            <h3 className="text-lg font-semibold mb-3">Add Branch Admin</h3>
+                            <form onSubmit={handleAddAdmin} className="flex flex-col space-y-3">
+                                <label className="text-sm font-medium text-gray-600">Select Branch:</label>
+                                <select 
+                                    className="border p-2 rounded-lg bg-gray-200 focus:ring-2 focus:ring-red-400"
+                                    value={selectedBranch ? selectedBranch.id : ""}
+                                    onChange={(e) => {
+                                        const branch = branches.find(b => b.id === e.target.value);
+                                        setSelectedBranch(branch);
+                                    }}
+                                >
+                                    <option value="">Choose Branch</option>
+                                    {branches.map(branch => (
+                                        <option key={branch.id} value={branch.id}>{branch.name}</option>
+                                    ))}
+                                </select>
 
-                            <label className="text-sm font-medium text-gray-600">Email:</label>
-                            <input 
-                                className="border p-2 rounded-lg focus:ring-2 focus:ring-blue-400" 
-                                type="email" 
-                                value={adminEmail} 
-                                onChange={(e) => setAdminEmail(e.target.value)} 
-                                required 
-                            />
+                                <label className="text-sm font-medium text-gray-600">Email:</label>
+                                <input 
+                                    className="border p-2 rounded-lg bg-gray-200 focus:ring-2 focus:ring-red-400" 
+                                    type="email" 
+                                    value={adminEmail} 
+                                    onChange={(e) => setAdminEmail(e.target.value)} 
+                                    required 
+                                />
 
-                            <label className="text-sm font-medium text-gray-600">Password:</label>
-                            <input 
-                                className="border p-2 rounded-lg focus:ring-2 focus:ring-blue-400" 
-                                type="password" 
-                                value={adminPassword} 
-                                onChange={(e) => setAdminPassword(e.target.value)} 
-                                required 
-                            />
+                                <label className="text-sm font-medium text-gray-600">Password:</label>
+                                <input 
+                                    className="border p-2 rounded-lg bg-gray-200 focus:ring-2 focus:ring-red-400" 
+                                    type="password" 
+                                    value={adminPassword} 
+                                    onChange={(e) => setAdminPassword(e.target.value)} 
+                                    required 
+                                />
+
+                                <button 
+                                    type="submit" 
+                                    className="w-full p-3 mandara-btn"
+                                >
+                                    Add Admin
+                                </button>
+                            </form>
+                        </div>
+
+                        <div className="p-4 bg-[#e0d8ad]  rounded-lg flex flex-col justify-between">
+                            <h3 className="text-lg font-semibold mb-3">Remove Branch Admin</h3>
+                            <div className="flex flex-col">
+                                <label className="text-sm mb-3 font-medium text-gray-600">Select Branch:</label>
+                                <select 
+                                    className="border p-2 rounded-lg bg-gray-200 w-full focus:ring-2 focus:ring-red-400"
+                                    value={selectedBranch ? selectedBranch.id : ""}
+                                    onChange={(e) => {
+                                        const branch = branches.find(b => b.id === e.target.value);
+                                        setSelectedBranch(branch);
+                                    }}
+                                >
+                                    <option value="">Choose Branch</option>
+                                    {branches.map(branch => (
+                                        <option key={branch.id} value={branch.id}>{branch.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label className="text-sm mb-3 font-medium text-gray-600">Select Admin to Remove:</label>
+                                <select 
+                                    className="border p-2 rounded-lg bg-gray-200 w-full focus:ring-2 focus:ring-red-400"
+                                    value={selectedAdmin || ""}
+                                    onChange={(e) => setSelectedAdmin(e.target.value)}
+                                >
+                                    <option value="">Choose Admin</option>
+                                    {branchAdmins.map(admin => (
+                                        <option key={admin.uid} value={admin.uid}>{admin.email}</option>
+                                    ))}
+                                </select>
+                            </div>
 
                             <button 
-                                type="submit" 
-                                className="w-full p-3 bg-green-400 border border-green-600 text-white font-semibold rounded-lg hover:bg-green-600 transition"
+                                className="w-full p-3 mandara-btn mt-3"
+                                onClick={handleRemoveAdmin}
                             >
-                                Add Admin
+                                Remove Admin
                             </button>
-                        </form>
-                    </div>
-
-                    <div className="p-4 bg-gray-100 rounded-lg flex flex-col justify-between">
-                        <h3 className="text-lg font-semibold mb-3">Remove Branch Admin</h3>
-
-                        <label className="text-sm font-medium text-gray-600">Select Branch:</label>
-                        <select 
-                            className="border p-2 rounded-lg  w-full focus:ring-2 focus:ring-red-400"
-                            value={selectedBranch ? selectedBranch.id : ""}
-                            onChange={(e) => {
-                                const branch = branches.find(b => b.id === e.target.value);
-                                setSelectedBranch(branch);
-                            }}
-                        >
-                            <option value="">-- Choose Branch --</option>
-                            {branches.map(branch => (
-                                <option key={branch.id} value={branch.id}>{branch.name}</option>
-                            ))}
-                        </select>
-
-                        <label className="text-sm font-medium text-gray-600">Select Admin to Remove:</label>
-                        <select 
-                            className="border p-2 rounded-lg w-full focus:ring-2 focus:ring-red-400"
-                            value={selectedAdmin || ""}
-                            onChange={(e) => setSelectedAdmin(e.target.value)}
-                        >
-                            <option value="">-- Choose Admin --</option>
-                            {branchAdmins.map(admin => (
-                                <option key={admin.uid} value={admin.uid}>{admin.email}</option>
-                            ))}
-                        </select>
-
-                        <button 
-                            className="w-full p-3 bg-red-400 border border-red-600 text-white font-semibold rounded-lg hover:bg-red-600 transition mt-3"
-                            onClick={handleRemoveAdmin}
-                        >
-                            Remove Admin
-                        </button>
+                        </div>
                     </div>
                 </div>
+                
 
                 <button 
-                    className="w-full p-3 mt-5 bg-blue-400 border border-blue-600 text-white font-semibold rounded-lg hover:bg-blue-600 transition"
+                    className="w-172 p-3 mt-3 mb-3 mandara-btn"
                     onClick={onClose}
                 >
                     Close

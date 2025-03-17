@@ -261,7 +261,7 @@ const ManageService = ({onClose}) => {
     return (
         <div className="flex justify-center items-center ">
             {user && userData && branchData && services && (
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-7xl w-full max-h-[90vh] overflow-y-auto">
                         <h2 className="text-2xl font-bold text-gray-800 text-center">Manage Services</h2>
                     

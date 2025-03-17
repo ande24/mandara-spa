@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import EditAdmins from "@/components/adminForm";
 import BranchSelect from "@/components/selectBranchForm";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -64,15 +65,21 @@ export default function () {
     }, [userData]);
 
     return (
-        <div className="flex h-screen justify-center items-center">
+        <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
+            <div className="fixed flex justify-center w-screen h-50 z-0 inset-0 top-0 bg-[#502424]">
+                <Image className="fixed top-[-60]" src={"/images/mandara_mtn.png"} width={400} height={400} alt={"The Mandara Spa Logo"} />
+            </div>
             {user && userData && isBusinessAdmin ? (
-                <div className="flex flex-col justify-center items-center">
-                    <h2>Welcome, {user.email}</h2>
-                    <button className="text-red-500 my-4" onClick={() => {setShowManageAdmin(true)}}>Add/Remove Branch Admins</button>
-                    <button className="text-red-500 my-4" onClick={() => {setShowViewBranch(true)}}>Manage Branches</button>
+                <div className="mt-10 flex min-h-40 flex-col justify-around items-center">
+                    <h1 className="text-[#e0d8ad] mb-3 font-semibold text-5xl">Welcome,</h1>
+                    <h2 className="text-[#e0d8ad] font-semibold text-2xl">{user.email}</h2>
+                    <div className="flex mt-20 min-w-lg justify-around">
+                        <button className="bg-[#e0d8ad] p-2 mx-5 w-70 rounded-lg text-xl font-semibold" onClick={() => {setShowManageAdmin(true)}}>Manage Branch Admins</button>
+                        <button className="bg-[#e0d8ad] p-2 mx-5 w-70 rounded-lg text-xl font-semibold" onClick={() => {setShowViewBranch(true)}}>Manage Branches</button>
+                    </div>
                 </div>
             ) : (
-                <p>Loading or No User Logged In...</p>
+                <p></p>
             )}
 
             {showManageAdmin && (<EditAdmins onClose={() => setShowManageAdmin(false)} />)}

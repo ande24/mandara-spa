@@ -104,7 +104,7 @@ const EditBranch = ({onClose}) => {
 
     return (
         <div className="flex flex-col items-center justify-center rounded-lg">
-            <div className="fixed top-0 left-0 w-full h-full rounded-lg flex items-center justify-center bg-gray-300 bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full rounded-lg flex items-center justify-center bg-gray-800 bg-opacity-50">
                 <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl w-full max-h-[90vh] overflow-y-auto">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Edit Branch Details</h2>
                     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg">

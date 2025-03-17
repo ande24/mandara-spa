@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import BookingForm from "@/components/bookingForm";
+import Image from "next/image";
 
 export default function Page() {
     const { user } = useAuthContext()
@@ -17,14 +18,10 @@ export default function Page() {
 
   return (
     <div className="flex h-screen border-amber-200 justify-center items-center">
-      <button className="bg-yellow-100 rounded-3xl h-auto p-5"
+      <button className="bg-[#e0d8ad] p-2 w-50 rounded-lg font font-semibold"
               onClick={() => setShowForm(true)}>
                 Book now
       </button>
-      <Img
-        width={620}
-        src="/images/bgc_3rd/bgc-branch-img5.png"
-      />
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
     </div>
   );
