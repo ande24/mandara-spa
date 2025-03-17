@@ -8,7 +8,7 @@ const actionCodeSettings = {
     handleCodeInApp: true
   };
 
-export default async function forgotPassword(email) {
+export default async function ForgotPassword(email) {
     try {
         await sendPasswordResetEmail(auth, email, actionCodeSettings);
         return 

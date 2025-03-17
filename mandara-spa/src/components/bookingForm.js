@@ -324,7 +324,7 @@ const BookingForm = ({ onClose }) => {
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md text-center">
                         <h2 className="text-2xl font-bold mb-4 text-green-600">Booking Successful!</h2>
-                        <p>We'll send you a confirmation email.</p>
+                        <p>We&apos;ll send you a confirmation email.</p>
                     </div>
                 </div>
             )}

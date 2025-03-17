@@ -10,7 +10,7 @@ const actionCodeSettings = {
     handleCodeInApp: true
   };
 
-export default async function signInAdmin(email, password) {
+export default async function SignInAdmin(email, password) {
     console.log("signinadmin called")
     let res = null,
         err = null,

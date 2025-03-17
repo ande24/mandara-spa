@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import signIn from "@/firebase/auth/signin";
 import { useRouter } from 'next/navigation';
-import forgotPassword from "@/firebase/auth/forgotPassword";
+import ForgotPassword from "@/firebase/auth/forgotPassword";
 
 function SignIn() {
     const [email, setEmail] = React.useState('')
@@ -24,7 +24,7 @@ function SignIn() {
             return;
         }
 
-        await forgotPassword(email)
+        await ForgotPassword(email)
 
         setShowChange(true)
     }

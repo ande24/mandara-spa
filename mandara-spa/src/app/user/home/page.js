@@ -1,6 +1,5 @@
 'use client'
 
-import { Img } from "@react-email/components";
 import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,7 @@ export default function Page() {
 
     React.useEffect(() => {
         if (user == null) router.push("/")
-    }, [user])
+    }, [user, router])
 
   return (
     <div className="flex h-screen border-amber-200 justify-center items-center">

@@ -4,13 +4,13 @@ import { useRouter, useSearchParams  } from 'next/navigation';
 import { getAuth, confirmPasswordReset } from "firebase/auth";
 import firebase_app from "@/firebase/config";
 
-function resetPassword() {
+const ResetPassword = () => {
     const auth = getAuth(firebase_app);
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [password1, setPassword1] = React.useState('')
-    const [password2, setPassword2] = React.useState('')
+    const [password1, setPassword1] = useState('')
+    const [password2, setPassword2] = useState('')
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
 
@@ -40,7 +40,7 @@ function resetPassword() {
 
             setError(false);
             setSuccess(true);
-            setTimeout(() => router.push("/user/login"), 3000);
+            setTimeout(() => {router.push("/user/login")}, 3000);
         } catch (err) {
             setError(err.message);
         }
@@ -67,4 +67,4 @@ function resetPassword() {
     </div>);
 }
 
-export default resetPassword;
+export default ResetPassword;

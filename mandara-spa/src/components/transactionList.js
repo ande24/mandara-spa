@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import AddTransaction from "./transactionForm";
 
 const ManageTransactions = ({onClose}) => {
     const auth = getAuth(firebase_app)

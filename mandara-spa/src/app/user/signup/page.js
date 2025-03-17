@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from "react";
-import signUp from "@/firebase/auth/signup";
+import SignUp from "@/firebase/auth/signup";
 import { setDoc, doc, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ function SignUp() {
             return setError('Please provide an 11-digit mobile number.');
         }
 
-        const { res, err } = await signUp(email, password);
+        const { res, err } = await SignUp(email, password);
 
         if (err) {
             return setError(err)

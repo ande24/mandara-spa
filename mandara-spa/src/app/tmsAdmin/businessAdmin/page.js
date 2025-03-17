@@ -12,7 +12,7 @@ import Image from "next/image";
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
 
-export default function () {
+export default function BusinessAdminPage() {
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);

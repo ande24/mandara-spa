@@ -14,7 +14,7 @@ import ManageTransactions from "@/components/transactionList";
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
 
-export default function () {
+export default function BranchAdminPage() {
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);

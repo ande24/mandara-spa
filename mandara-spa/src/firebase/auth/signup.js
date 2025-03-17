@@ -8,7 +8,7 @@ const actionCodeSettings = {
     handleCodeInApp: true
   };
 
-export default async function signUp(email, password) {
+export default async function SignUp(email, password) {
     let res = null,
         err = null;
     try {
