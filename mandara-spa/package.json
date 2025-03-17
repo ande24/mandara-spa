@@ -10,7 +10,9 @@
     "email": "email dev"
   },
   "dependencies": {
+    "@next/font": "^14.2.15",
     "@react-email/components": "0.0.33",
+    "@tailwindcss/forms": "^0.5.10",
     "firebase": "^11.4.0",
     "firebase-admin": "^13.2.0",
     "framer-motion": "^12.5.0",
