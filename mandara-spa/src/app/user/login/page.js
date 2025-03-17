@@ -66,7 +66,7 @@ function SignIn() {
             return;
         }
 
-        setError('')
+        setErrorMsg('')
         setSuccess(true)
         console.log(res);
         setTimeout(() => {return router.push("/user/home")}, 2000);
@@ -208,15 +208,14 @@ function SignIn() {
                         </div>
 
                         <div className="flex items-center justify-between">
-                            <div className="flex text-sm">
-                                <p className="text-[#e0d8ad]">No account?</p>
-                                <a onClick={createAccount} className="ml-2 underline text-white hover:text-[#e0d8ad]" >Sign Up</a>
-                                <a onClick={handleForgot} className="ml-2 underline text-white hover:text-[#e0d8ad]" >Forgot Password?</a>
+                            <div className="flex flex-col text-sm">
+                                <p onClick={createAccount} className="ml-1 text-white hover:text-[#e0d8ad]" >Sign Up</p>
+                                <p onClick={handleForgot} className="mt-1 ml-1 text-white hover:text-[#e0d8ad]" >Forgot Password?</p>
                             </div>
 
                             <button
                             type="submit"
-                            className=" rounded-lg bg-[#e0d8ad] px-5 py-3 text-sm font-medium text-black"
+                            className=" rounded-lg bg-[#e0d8ad] w-1/2 px-5 py-3 text-sm font-medium text-black"
                             >
                             Sign in
                             </button>
@@ -228,11 +227,10 @@ function SignIn() {
             <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
                 <img
                 alt=""
-                src="/images/nowomannocry.jpg"
+                src="/images/sign_in.jpg"
                 className="absolute inset-0 h-full w-full object-cover"
                 />
             </div>
-            
         </section>
     )
     // <div className="flex flex-col h-screen w-screen justify-center items-center">

@@ -56,6 +56,15 @@ function SignUpUser() {
     return (
     <section className="relative flex flex-wrap lg:h-screen lg:items-center">
         {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
+            
+        <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
+            <img
+            alt=""
+            src="/images/sign_up.jpg"
+            className="absolute inset-0 h-full w-full object-cover"
+            />
+        </div>
+
         <div className="flex flex-col justify-center w-full h-screen px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24 bg-[#502424]">
             <div className="flex flex-col justify-center items-center">
                 <Image 
@@ -185,24 +194,16 @@ function SignUpUser() {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-center">
                         <button
                         type="submit"
-                        className=" rounded-lg bg-[#e0d8ad] px-5 py-3 text-sm font-medium text-black"
+                        className=" rounded-lg bg-[#e0d8ad] w-full px-5 py-3 text-sm font-medium text-black"
                         >
                         Sign up
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
-
-        <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
-            <img
-            alt=""
-            src="/images/sign_up.jpg"
-            className="absolute inset-0 h-full w-full object-cover"
-            />
         </div>
     </section>
     );
