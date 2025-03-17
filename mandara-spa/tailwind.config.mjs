@@ -11,7 +11,7 @@ export default {
           'light-yellow': '#e0d8ad'
         },
         fontFamily: {
-          ptsans: ['PT_Sans', 'sans-serif'],
+          pt_sans: ['var(--font-pt_sans)', 'sans-serif'],
         },
       },
     },

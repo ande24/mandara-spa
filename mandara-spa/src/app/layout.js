@@ -1,9 +1,7 @@
 'use client'
 import './globals.css'
 import { AuthContextProvider } from '@/context/AuthContext'
-import { PT_Sans } from 'next/font/google'
-
-const ptSans = PT_Sans({ subsets: ['latin'], weight: ['400', '700']})
+import { pt_sans } from './util/font'
 
 export default function RootLayout({ children }) {
   return (
@@ -11,7 +9,7 @@ export default function RootLayout({ children }) {
         <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </head>
-      <body className={ptSans.className}>
+      <body className={pt_sans.className}>
         <AuthContextProvider>
           {children}
         </AuthContextProvider>
