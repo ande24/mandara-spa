@@ -19,7 +19,7 @@ export default function NavBar1 ({currPage}) {
                 <nav className="-mb-px flex gap-6" aria-label="Tabs">
                     <a
                         href="/user/home"
-                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium  hover:text-gray-200 ${currPage === "home" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "home" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         HOME
                     </a>
@@ -27,7 +27,7 @@ export default function NavBar1 ({currPage}) {
                     <div className="relative group flex flex-col">
                         <a
                             href="/user/locations"
-                            className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium  hover:text-gray-200 ${currPage === "locations" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                            className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "locations" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                             >
                             LOCATIONS
                         </a>
@@ -131,9 +131,9 @@ export default function NavBar1 ({currPage}) {
                     <div className="relative group flex flex-col">
                         <a
                             href="/user/signature"
-                            className={` shrink-0 border-b-2 px-1 pb-4 text-xs font-medium  hover:text-gray-200 ${currPage === "signature" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                            className={` shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "signature" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                             >
-                            SIGNATURE
+                            SERVICES
                         </a>
 
                         <div

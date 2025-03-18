@@ -36,13 +36,15 @@ export default function Page() {
             <NavBar1 currPage={"signature"}/>
           </div>
           <div>
-            <Image
-              src="/images/mandara_gold.png"
-              alt=""
-              height={85}
-              width={194}
-              className="mb-2 object-contain scale-50"
+            <a href="/user/home">
+              <Image
+                src="/images/mandara_gold.png"
+                alt=""
+                height={85}
+                width={194}
+                className="mb-2 object-contain scale-50 hover:scale-60 transition-all"
             />
+            </a>
           </div>
           <div>
             <NavBar2 currPage={"signature"}/>

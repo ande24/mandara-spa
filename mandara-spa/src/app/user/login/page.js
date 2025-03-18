@@ -129,9 +129,9 @@ function SignIn() {
                     />
 
                     <div className="mx-auto max-w-lg text-center">
-                        <h1 className="text-xl text-dark-brown font-semibold text-[#e0d8ad] sm:text-3xl">Sign in to Your Account</h1>
+                        <h1 className="text-xl text-dark-brown font-serif text-[#e0d8ad] sm:text-3xl">Sign in to Your Account</h1>
 
-                        <p className="mt-4 text-[#e0d8ad]">
+                        <p className="mt-4 font-serif text-[#e0d8ad]">
                             To experience relaxation at The Mandara Spa
                         </p>
                     </div>
@@ -145,7 +145,7 @@ function SignIn() {
                                 id="email"
                                 name="email"
                                 type="email"
-                                className="w-full bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+                                className="w-full font-serif bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                                 placeholder="Enter email"
                                 onChange={(e) => setEmail(e.target.value)}
                             />
@@ -177,7 +177,7 @@ function SignIn() {
                                 id="password"
                                 name="password"
                                 type="password"
-                                className="w-full bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+                                className="w-full font-serif bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                                 placeholder="Enter password"
                                 onChange={(e) => setPassword(e.target.value)}
                             />
@@ -209,13 +209,13 @@ function SignIn() {
 
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col text-sm">
-                                <p onClick={createAccount} className="ml-1 text-white hover:text-[#e0d8ad]" >Sign Up</p>
-                                <p onClick={handleForgot} className="mt-1 ml-1 text-white hover:text-[#e0d8ad]" >Forgot Password?</p>
+                                <p onClick={createAccount} className="ml-1 font-serif text-white hover:text-[#e0d8ad]" >Sign Up</p>
+                                <p onClick={handleForgot} className="mt-1 font-serif ml-1 text-white hover:text-[#e0d8ad]" >Forgot Password?</p>
                             </div>
 
                             <button
                             type="submit"
-                            className=" rounded-lg bg-[#e0d8ad] w-1/2 px-5 py-3 text-sm font-medium text-black"
+                            className="font-serif rounded-lg bg-[#e0d8ad] w-1/2 px-5 py-3 text-sm font-medium text-black"
                             >
                             Sign in
                             </button>

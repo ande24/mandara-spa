@@ -21,7 +21,7 @@ export default function NavBar2 ({currPage}) {
                     <div className="relative group flex flex-col">
                         <a
                         href="/user/body"
-                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium  hover:text-gray-200 ${currPage === "body" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "body" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         BODY
                         </a>
@@ -126,7 +126,7 @@ export default function NavBar2 ({currPage}) {
                     <div className="relative group flex flex-col">
                         <a
                         href="/user/hand_and_foot"
-                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium  hover:text-gray-200 ${currPage === "hand" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "hand" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         HAND AND FOOT
                         </a>
@@ -182,7 +182,7 @@ export default function NavBar2 ({currPage}) {
                     <div className="relative group flex flex-col">
                         <a
                         href="/user/face"
-                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium  hover:text-gray-200 ${currPage === "face" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "face" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         FACE
                         </a>

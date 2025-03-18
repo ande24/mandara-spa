@@ -36,13 +36,15 @@ return (
           <NavBar1 currPage={"home"}/>
         </div>
         <div>
-          <Image
-            src="/images/mandara_gold.png"
-            alt=""
-            height={85}
-            width={194}
-            className="mb-2 object-contain scale-50"
+          <a href="/user/home">
+            <Image
+              src="/images/mandara_gold.png"
+              alt=""
+              height={85}
+              width={194}
+              className="mb-2 object-contain scale-50 hover:scale-60 transition-all"
           />
+          </a>
         </div>
         <div>
           <NavBar2 currPage={"home"}/>
@@ -63,8 +65,8 @@ return (
 
     <div className="absolute inset-x-0 bottom-0 w-full h-28 bg-[#502424] opacity-80">
       <div className="flex justify-center items-center flex-col w-full h-full">
-        <h1 className="text-3xl mb-2 font-bold text-[#e0d8ad] text-center ">WELCOME TO THE MANDARA SPA</h1>
-        <p className="text-gray-100 text-xs">Elevating the spa experience to a new art form.</p>
+        <h1 className="text-3xl font-serif mb-2 font-bold text-[#e0d8ad] text-center ">WELCOME TO THE MANDARA SPA</h1>
+        <p className="text-gray-100 font-serif text-xs">Elevating the spa experience to a new art form.</p>
       </div>
     </div>
   </div>
