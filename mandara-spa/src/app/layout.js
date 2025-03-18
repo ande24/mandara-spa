@@ -4,6 +4,7 @@ import { AuthContextProvider } from '@/context/AuthContext'
 import { pt_sans } from './util/font'
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="en">
         <head>
@@ -11,7 +12,7 @@ export default function RootLayout({ children }) {
         </head>
       <body className={pt_sans.className}>
         <AuthContextProvider>
-          {children}
+            {children} 
         </AuthContextProvider>
       </body>
     </html>

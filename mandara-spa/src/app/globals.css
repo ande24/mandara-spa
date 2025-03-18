@@ -17,3 +17,8 @@
         cursor: pointer;
     }
 }
+
+html, body {
+    background-color: #502424; /* Same as your app background */
+    color: #502424; /* Match your text color */
+}

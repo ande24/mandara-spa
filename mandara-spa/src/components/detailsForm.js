@@ -152,7 +152,7 @@ const EditBranch = ({onClose}) => {
                         </div>
 
                         <div>
-                            <label className="block text-gray-700 font-semibold">Google Maps Link:</label>
+                            <label className="block text-gray-700 font-semibold">Google Maps Embed Link:</label>
                             <input
                                 type="text"
                                 name="branch_location_link"

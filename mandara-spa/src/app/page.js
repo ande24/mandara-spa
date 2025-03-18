@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import LoadingPage from "@/components/ui/loading";
+import LoadingPage from "@/app/loading";
 
 export default function Home() {
   const router = useRouter();

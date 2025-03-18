@@ -1,10 +1,14 @@
-'use client';
-import { motion } from 'framer-motion';
+"use client"
+import { motion } from "framer-motion";
 
-export default function LoadingPage() {
+export default function Loading() {
     return (
+        // <div className="h-screen flex items-center justify-center bg-red-500 text-white text-3xl">
+        //     LOADING...
+        // </div>
+        
         <div className="flex flex-col items-center justify-center h-screen bg-mandara-gradient text-gold">
-            {/* Logo */}
+            
             <div className="flex flex-col items-center mb-6">
                 <svg className="w-20 h-20 text-[#D4AF37]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 45L26 30L43 42L62 25" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
@@ -13,7 +17,6 @@ export default function LoadingPage() {
                 <p className="text-lg text-[#CBAA6F] tracking-widest">RELAXATION</p>
             </div>
 
-            {/* Loading Animation */}
             <motion.div 
                 className="flex space-x-2"
                 initial={{ opacity: 0.5 }}
