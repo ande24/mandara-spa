@@ -19,7 +19,7 @@ export default function NavBar1 ({currPage}) {
                 <nav className="-mb-px flex gap-6" aria-label="Tabs">
                     <a
                         href="/user/home"
-                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "home" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "home" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         HOME
                     </a>
@@ -27,18 +27,18 @@ export default function NavBar1 ({currPage}) {
                     <div className="relative group flex flex-col">
                         <a
                             href="/user/locations"
-                            className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "locations" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                            className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "locations" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                             >
                             LOCATIONS
                         </a>
 
                         <div
-                            className="absolute group-hover:block hidden  rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
+                            className="absolute group-hover:block hidden z-10  rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
                             role="menu"
                             >
                             <div className="p-2">
                                 <a
-                                href="#"
+                                href="/user/locations"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -46,7 +46,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=9"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -54,7 +54,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=7"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -62,7 +62,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=5"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -70,7 +70,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=6"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -78,7 +78,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=8"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -86,7 +86,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=10"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -94,7 +94,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=3"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -102,7 +102,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=1"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -110,7 +110,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=2"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -118,7 +118,7 @@ export default function NavBar1 ({currPage}) {
                                 </a>
 
                                 <a
-                                href="#"
+                                href="/user/locations?idx=4"
                                 className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 role="menuitem"
                                 >
@@ -130,71 +130,53 @@ export default function NavBar1 ({currPage}) {
 
                     <div className="relative group flex flex-col">
                         <a
-                            href="/user/signature"
-                            className={` shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-110 transition-all  hover:text-gray-200 ${currPage === "signature" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                            className={` shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "services" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                             >
                             SERVICES
                         </a>
 
                         <div
-                            className="absolute group-hover:block hidden  rounded-md left-0 mt-7 w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
+                            className="absolute group-hover:block hidden z-10 rounded-md left-0 mt-7 w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
                             role="menu"
                             >
                             <div className="p-2">
                                 <a
-                                    href="#"
+                                    href="/user/services/signature"
                                     className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                     role="menuitem"
                                 >
-                                    MASSAGE
+                                    SIGNATURE RITUALS
                                 </a>
 
                                 <a
-                                    href="#"
                                     className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                     role="menuitem"
                                 >
-                                    SCRUB, WRAP, MASSAGE
+                                    BODY RITUALS
                                 </a>
 
                                 <a
-                                    href="#"
+                                    href="/user/services/hand_and_foot"
                                     className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                     role="menuitem"
                                 >
-                                    SCRUB
+                                    HAND AND FOOT RITUALS
                                 </a>
 
                                 <a
-                                    href="#"
+                                    href="/user/services/face"
                                     className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                     role="menuitem"
                                 >
-                                    BODY SCRUB & MASSAGE
+                                    FACE RITUALS
                                 </a>
 
                                 <a
-                                    href="#"
+                                    href="/user/services/other"
                                     className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                     role="menuitem"
                                 >
-                                    FOOT SPA WITH PEDICURE
-                                </a>
-
-                                <a
-                                    href="#"
-                                    className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-                                    role="menuitem"
-                                >
-                                    HAND SPA WITH MANICURE
-                                </a>
-
-                                <a
-                                    href="#"
-                                    className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-                                    role="menuitem"
-                                >
-                                    ULTIMATE MANDARA EXPERIENCE
+                                   OTHER TREATS
                                 </a>
                             </div>
                         </div>

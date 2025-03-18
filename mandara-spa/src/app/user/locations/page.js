@@ -21,7 +21,7 @@ export default function Page() {
   const [branchData, setBranchData] = useState('')
   const [currentImage, setCurrentImage] = useState(0);
   const [branchIndex, setBranchIndex] = useState(0);
-
+  
   useEffect (() => {
     if (redirect) router.push("/user/login");
   }, [redirect]);
@@ -37,7 +37,6 @@ export default function Page() {
             name: doc.data().branch_location
         }));
         console.log("branchlist: ", branchList)
-        setBranchIndex(0);
         setBranches(branchList);
     }
 
@@ -89,14 +88,14 @@ export default function Page() {
 
         <button
           onClick={prevBranch}
-          className="fixed scale-80 left-0 top-1/2 h-1/5 w-16 bg-black opacity-30 hover:opacity-50 hover:scale-90 text-white text-3xl flex items-center justify-center z-50 transition-all"
+          className="fixed rounded-lg scale-80 left-0 top-1/2 h-1/5 w-16 bg-black opacity-30 hover:opacity-50 hover:scale-90 text-white text-3xl flex items-center justify-center z-50 transition-all"
         >
           ❮
         </button>
 
         <button
           onClick={nextBranch}
-          className="fixed scale-80 top-1/2 right-0 h-1/5 w-16 bg-black opacity-30 hover:opacity-50 hover:scale-90 text-white text-3xl flex items-center justify-center z-50 transition-all"
+          className="fixed rounded-lg scale-80 top-1/2 right-0 h-1/5 w-16 bg-black opacity-30 hover:opacity-50 hover:scale-90 text-white text-3xl flex items-center justify-center z-50 transition-all"
         >
           ❯
         </button>
@@ -113,7 +112,7 @@ export default function Page() {
                   alt=""
                   height={85}
                   width={194}
-                  className="mb-2 object-contain scale-50 hover:scale-60 transition-all"
+                  className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
               />
               </a>
             </div>
@@ -133,18 +132,21 @@ export default function Page() {
               <img
                 src={branchData.branch_images[currentImage]}
                 alt="Spa Gallery"
-                className="w-full h-auto max-h-[500] object-cover rounded-lg"
+                key={currentImage} 
+                className="w-full h-auto max-h-[500px] object-cover rounded-lg 
+                          opacity-0 transition-opacity duration-500 ease-in-out"
+                onLoad={(e) => e.target.classList.add("opacity-100")}
               />
               
               <button
                 onClick={prevImage}
-                className="absolute left-[-40] top-1/2 transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-110 transition-all text-white p-2 rounded-full"
+                className="absolute left-[-60] top-1/2 transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-105 transition-all text-white p-2 rounded-full"
               >
                 <FaChevronLeft />
               </button>
               <button
                 onClick={nextImage}
-                className="absolute right-[-40] top-1/2 transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-110 transition-all text-white p-2 rounded-full"
+                className="absolute right-[-60] top-1/2 transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-105 transition-all text-white p-2 rounded-full"
               >
                 <FaChevronRight />
               </button>

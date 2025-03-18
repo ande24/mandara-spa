@@ -1,0 +1,144 @@
+'use client'
+
+import React, { useEffect, useState } from "react";
+import { useAuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import BookingForm from "@/components/bookingForm";
+import Image from "next/image";
+import NavBar1 from "@/components/navbar1";
+import NavBar2 from "@/components/navbar2";
+import { getFirestore } from "firebase/firestore";
+import firebase_app from "@/firebase/config";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
+
+export default function Page() {
+  useEffect(() => {
+    const swiperInstance = document.querySelector(".swiper")?.swiper;
+    if (swiperInstance) {
+      swiperInstance.params.navigation.prevEl = ".custom-prev";
+      swiperInstance.params.navigation.nextEl = ".custom-next";
+      swiperInstance.navigation.init();
+      swiperInstance.navigation.update();
+    }
+  }, []);
+
+  const db = getFirestore(firebase_app)
+  const { user } = useAuthContext()
+  const router = useRouter()
+  const [showForm, setShowForm] = useState(false)
+  const [redirect, setRedirect] = useState(false)
+  const services = [
+    { title: "The Mandara Signature Massage", 
+      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      desc: "Our relaxing and healing strokes, combined with head pad therapy and our signature blend of healing olive oil and all-organic aromatic oils, will take you into a trance. This massage will loosen tight muscles, leaving you feeling rejuvenated and reconnected—mind, body, and soul."
+    },
+    { title: "The Mandara Signature Scrub, Wrap, Massage", 
+      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      desc: "Deeply hydrate your skin and awaken your senses with our signature aromatic scrub, followed by our unique blend of healing olive oil and aromatic oils. A 15-minute wrap allows the masque to deeply nourish and replenish your skin while calming your mind and body. Finally, drift into a trance with a 75-minute signature massage, enhanced by heat pad therapy to loosen tight muscles and take you to a deeper level of relaxation."
+    },
+    { title: "The Mandara Signature Scrub", 
+      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      desc: "Achieve silky-smooth skin with our signature body polish, featuring a premium organic scrub and a blend of healing olive oil and aromatic oils. First, your skin is gently brushed with our Body Brush to exfoliate dead skin and stimulate lymph flow. Next, an aromatic body scrub is applied to further exfoliate and soften your skin while calming your mind and body. Finally, a soothing butter is massaged in to deeply hydrate, leaving your skin soft, smooth, and revitalized."
+    },
+    { title: "The Mandara Signature Body Scrub & Massage", 
+      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      desc: "Feel pampered and rejuvenated with a body scrub made from organic olive ingredients, known for their healing benefits, followed by our most-raved-about 75-minute signature massage, featuring heat pads to help loosen tight muscles."
+    },
+    { title: "The Mandara Signature Foot Spa with Pedicure", 
+      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      desc: "This special signature foot spa refreshes and enlivens tired feet. Relax as we immerse your feet in a warm, aromatic foot soak before softening the skin with herbal exfoliation. Feel the healing and refreshing effects of an olive and peppermint-infused foot masque as it revitalizes your feet. Then, enjoy nail nurturing, cuticle care, and a perfect polish to complete the experience."
+    },
+    { title: "The Mandara Signature Hand Spa with Manicure", 
+      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      desc: "Restore the glory and suppleness of your hands with this special signature hand spa. Our herbal exfoliation will rid your hands of dead skin before they are wrapped in nourishing Dead Sea mud. Feel your stress melt away with a hot towel wrap, followed by a soothing hand massage using olive and vitamin E butter. Finish off with the application of your favorite imported polish."
+    },
+    { title: "Ultimate Mandara Experience Scrub + Wrap + Massage + Footspa + Facial or Ear Candling", 
+      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      desc: "Indulge in the best and most luxurious pampering retreat. Experience the royal treatment as we pamper you from head to toe with Mandara’s most-loved rituals, using only the finest organic ingredients. This will surely leave you feeling enlivened—body, mind, and soul. It’s everything your body could ask for."
+    },
+  ];
+
+  useEffect (() => {
+    if (redirect) router.push("/user/login");
+  }, [redirect]);
+
+  const handleBooking = () => {
+    if (user) {
+      setShowForm(true)
+    }
+    else {
+      setRedirect(true);
+    }
+  }
+  return (
+    <div className="relative flex flex-col h-screen overflow-y-auto bg-gray-100">
+      {showForm && <BookingForm onClose={() => setShowForm(false)} />}
+
+      <div className="flex justify-center items-center w-full h-24 bg-[#502424]">
+        <NavBar1 currPage={"services"} />
+        <a href="/user/home">
+          <Image
+            src="/images/mandara_gold.png"
+            alt=""
+            height={85}
+            width={194}
+            className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
+          />
+        </a>
+        <NavBar2 currPage={"services"} />
+      </div>
+
+      <div className="flex flex-col justify-center pt-8 mb-10">
+        <h1 className="text-4xl mb-6 text-center font-serif">The Mandara Spa Signature Rituals</h1>
+          <div className="flex justify-center relative">
+            <button className="custom-prev absolute rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+              ❮
+            </button>
+
+            <div className="relative flex justify-center items-center max-w-7xl w-full mx-auto px-4">
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={50}
+                slidesPerView={3}
+                loop={true} 
+                loopAddBlankSlides={true}
+                navigation={{
+                  nextEl: ".custom-next",
+                  prevEl: ".custom-prev",
+                }}
+                breakpoints={{
+                  640: { slidesPerView: 1 },
+                  1024: { slidesPerView: 3 },
+                }}
+              >
+              {services.map((service, index) => (
+                <SwiperSlide key={index}>
+                  <a href="#" className="block hover:scale-100 scale-95 transition-all mt-3 mb-15">
+                    <img
+                      alt=""
+                      src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                      className="h-80 w-150 object-cover rounded-lg"
+                    />
+
+                    <h3 className="mt-4 text-lg font-serif text-gray-900 ">{service.title}</h3>
+
+                    <p className="mt-2 max-w-sm font-serif text-xs leading-relaxed text-gray-700">
+                      {service.desc}
+                    </p>
+                  </a>
+                </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+
+            <button className="custom-next absolute rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+                ❯
+            </button>
+        </div>
+      </div>
+    </div>
+  );
+}

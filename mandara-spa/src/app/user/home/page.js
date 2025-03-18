@@ -42,7 +42,7 @@ return (
               alt=""
               height={85}
               width={194}
-              className="mb-2 object-contain scale-50 hover:scale-60 transition-all"
+              className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
           />
           </a>
         </div>
