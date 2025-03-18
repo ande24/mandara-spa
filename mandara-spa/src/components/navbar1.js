@@ -33,7 +33,7 @@ export default function NavBar1 ({currPage}) {
                         </a>
 
                         <div
-                            className="absolute group-hover:block hidden z-10  rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
+                            className="absolute group-hover:opacity-100 group-hover:scale-100 transition-all opacity-0 scale-0 z-10   rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
                             role="menu"
                             >
                             <div className="p-2">
@@ -136,7 +136,7 @@ export default function NavBar1 ({currPage}) {
                         </a>
 
                         <div
-                            className="absolute group-hover:block hidden z-10 rounded-md left-0 mt-7 w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
+                            className="absolute group-hover:opacity-100 group-hover:scale-100 transition-all opacity-0 scale-0 z-10 rounded-md left-0 mt-7 w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
                             role="menu"
                             >
                             <div className="p-2">
@@ -148,13 +148,44 @@ export default function NavBar1 ({currPage}) {
                                     SIGNATURE RITUALS
                                 </a>
 
-                                <a
-                                    className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-                                    role="menuitem"
-                                >
-                                    BODY RITUALS
-                                </a>
+                                <div className="relative flex group/body ">
+                                    <a
+                                        className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                                        role="menuitem"
+                                    >
+                                        BODY RITUALS
+                                    </a>
+                                    
+                                    <div
+                                        className=" absolute text-xs transition-all group-hover/body:scale-100 group-hover/body:opacity-100 opacity-0 scale-0 font-semibold top-[-30] left-full rounded-md mt-7 w-56 divide-y divide-gray-100  border border-gray-100 bg-white shadow-lg"
+                                        role="menu"
+                                    >
+                                        <a
+                                            href="/user/services/body/massage_therapy"
+                                            className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                                            role="menuitem"
+                                        >
+                                            MASSAGE THERAPY
+                                        </a>
 
+                                        <a
+                                            href="/user/services/body/scrub_and_wraps"
+                                            className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                                            role="menuitem"
+                                        >
+                                            SCRUB AND WRAPS
+                                        </a>
+
+                                        <a
+                                            href="/user/services/body/healing_massage"
+                                            className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                                            role="menuitem"
+                                        >
+                                            TRADITIONAL HEALING MASSAGE
+                                        </a>
+                                    </div>
+                                </div>
+                               
                                 <a
                                     href="/user/services/hand_and_foot"
                                     className="block rounded-lg px-4 py-2  text-gray-500 hover:bg-gray-50 hover:text-gray-700"

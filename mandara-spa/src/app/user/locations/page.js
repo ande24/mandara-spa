@@ -122,7 +122,7 @@ export default function Page() {
           </div>
         </div>
   
-        <div className="flex flex-col justify-center items-center max-w-2xl mx-auto mt-165 p-4">
+        <div className="absolute flex flex-col justify-center items-center max-w-2xl mx-auto mt-165 p-4">
           <h1 className="text-5xl mb-8 text-center font-serif">
             {branchData.branch_location}
           </h1>
@@ -163,7 +163,7 @@ export default function Page() {
               width="290"
               height="290"
               loading="lazy"
-              className="rounded-lg w-2xl"
+              className="rounded-lg w-2xl shadow-md shadow-black"
             ></iframe>
           </div>
   
