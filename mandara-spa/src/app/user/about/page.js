@@ -138,53 +138,55 @@ export default function Page() {
             </a>
           </div>
           <div>
-            <NavBar2 currPage={"info"}/>
+            <NavBar2 onBook={handleBooking} currPage={"info"}/>
           </div>
         </div>
       </div>
 
       <div className="flex relative top-22 min-h-screen w-screen">
-        <div className="relative min-h-screen md:w-1/3 rounded-lg w-full">
-          <div className="absolute top-0 bg-[#301414] opacity-100 h-full w-full z-10 transition-all hover:scale-101 hover:shadow-lg rounded-r-lg shadow-[#301414]"></div>
+        <div className="md:hidden lg:block h-full w-1/7 "></div>
 
-          <div className="flex flex-col text-[#e0d8ad] p-13 justify-center items-center">
-            <div className="flex flex-col justify-center items-center">
-              <h3 className=" mb-3 font-semibold text-2xl z-20">MANA + DARA</h3>
-              <p className="indent-8 text-sm mb-3 text-justify z-20">Derived from the words mana (mind) and dara (single line), Mandara refers to a sacred mountain in Hindu mythology. This mountain, unlike fragmented rock formations, is a single, unified structure. It played a significant role as the churning rod used by the gods to stir the ocean of milk.</p> 
-              <p className="indent-8 text-sm mb-3 text-justify z-20">The Mandara Relaxation Spa Co. introduced the Boutique Spa concept to the Philippines, offering customized, high-end treatments from head to toe at competitive prices. As a leader in the mid-priced spa industry, The Mandara Spa has garnered multiple accolades and is recognized among the country’s top spas, standing alongside luxury hotel spas. It is the ideal destination for guests seeking a serene retreat with essential amenities and world-class massage techniques—all without the premium cost.</p>
-              <p className="indent-8 text-sm mb-3 text-justify z-20">Established in 2011, its first branch in BGC quickly gained a reputation as “BGC’s best-kept secret.” Today, The Mandara Spa continues to expand, making its signature experience more accessible to communities. Franchise and investment opportunities are available for qualified investors.</p>
+        <div className="relative min-h-screen md:w-3/7 lg:w-2/7 w-full transition-all hover:scale-101 hover:shadow-lg shadow-[#301414]">
+          <div className="absolute top-0 bg-[#301414] opacity-100 h-full w-full z-10  rounded-r-lg "></div>
+
+          <div className="flex flex-col text-[#e0d8ad] p-10 justify-center items-center">
+            <div className="flex flex-col justify-center items-center z-10">
+              <h3 className=" mb-3 font-semibold text-2xl ">MANA + DARA</h3>
+              <p className="indent-8 text-sm mb-3 text-justify ">Derived from the words mana (mind) and dara (single line), Mandara refers to a sacred mountain in Hindu mythology. This mountain, unlike fragmented rock formations, is a single, unified structure. It played a significant role as the churning rod used by the gods to stir the ocean of milk.</p> 
+              <p className="indent-8 text-sm mb-3 text-justify ">The Mandara Relaxation Spa Co. introduced the Boutique Spa concept to the Philippines, offering customized, high-end treatments from head to toe at competitive prices. As a leader in the mid-priced spa industry, The Mandara Spa has garnered multiple accolades and is recognized among the country’s top spas, standing alongside luxury hotel spas. It is the ideal destination for guests seeking a serene retreat with essential amenities and world-class massage techniques—all without the premium cost.</p>
+              <p className="indent-8 text-sm mb-3 text-justify ">Established in 2011, its first branch in BGC quickly gained a reputation as “BGC’s best-kept secret.” Today, The Mandara Spa continues to expand, making its signature experience more accessible to communities. Franchise and investment opportunities are available for qualified investors.</p>
             </div>
 
-            <div className="flex mt-5 flex-col justify-center items-center text-center">
-              <h3 className=" font-semibold text-2xl z-20">MISSION</h3>
-              <p className="text-sm leading-relaxed text-center mt-2 z-20">At the Mandara Spa, we aim to continuously excel in providing superior relaxing experience and luxurious services at the best value-for-money rates.</p>
+            <div className="flex flex-col justify-center items-center text-center z-10">
+              <h3 className=" font-semibold text-2xl">MISSION</h3>
+              <p className="text-sm leading-relaxed text-center mt-2 ">At the Mandara Spa, we aim to continuously excel in providing superior relaxing experience and luxurious services at the best value-for-money rates.</p>
               
             </div>
             
-            <div className="flex flex-col mt-5 justify-center items-center text-center">
-              <h3 className=" font-semibold text-2xl z-20">AWARDS</h3>
-              <p className="text-sm mt-2 z-20">Global Excellence Awards, Most Outstanding Spa 2015</p>
-              <p className="text-sm z-20">Manila’s Top 10 Spas – Spot.ph</p>
-              <p className="text-sm z-20">Top Luxury Spas in Philippines – getspabulous.com</p>
+            <div className="flex flex-col mt-5 justify-center items-center text-center z-10">
+              <h3 className=" font-semibold text-2xl">AWARDS</h3>
+              <p className="text-sm mt-2 ">Global Excellence Awards, Most Outstanding Spa 2015</p>
+              <p className="text-sm ">Manila’s Top 10 Spas – Spot.ph</p>
+              <p className="text-sm ">Top Luxury Spas in Philippines – getspabulous.com</p>
               
             </div>
             
-            <div className="flex flex-col mt-5 justify-center items-center text-center">
-              <h3 className=" font-semibold text-2xl z-20">CAREERS</h3>
-              <p className="text-sm mt-2 z-20">At The Mandara Spa, we aim to continuously help people by providing a workplace with a good working environment and work-life balance.</p>
-              <p className="text-sm z-20">For interested applicants, please email your resume to careers@themandaraspa.com.</p>
+            <div className="flex flex-col mt-5 justify-center items-center text-center z-10">
+              <h3 className=" font-semibold text-2xl ">CAREERS</h3>
+              <p className="text-sm mt-2 ">At The Mandara Spa, we aim to continuously help people by providing a workplace with a good working environment and work-life balance.</p>
+              <p className="text-sm ">For interested applicants, please email your resume to careers@themandaraspa.com.</p>
             </div>
           </div>
         </div>
       
-    <div className=" hidden md:flex flex-col h-fit justify-center items-center relative h-sm w-2/3 ">
+    <div className="md:flex flex-col h-fit justify-center items-center relative h-sm lg:w-3/7 mg:w-4/7">
         <h3 className="text-[#502424] my-10 font-semibold text-3xl z-20">EVENTS</h3>
         
         <div className="flex w-auto justify-center items-center">
-          <button className="custom-prev-1 mr-3 rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+          <button className="custom-prev-1 mr-3 rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-40 transition-all">
             ❮
           </button>
-          <div className="xl:max-w-4xl md:max-w-sm">
+          <div className="xl:max-w-xl md:max-w-md">
             <Swiper
               modules={[Navigation]}
               spaceBetween={50}
@@ -195,6 +197,7 @@ export default function Page() {
                 nextEl: ".custom-next-1",
                 prevEl: ".custom-prev-1",
               }}
+              className="hover:scale-105 hover:shadow-md shadow-black rounded-lg transition-all"
             >
             {events.map((event, index) => (
               <SwiperSlide key={index}>
@@ -222,7 +225,7 @@ export default function Page() {
               ))}
             </Swiper>
           </div>
-          <button className="custom-next-1 ml-3 rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+          <button className="custom-next-1 ml-3 rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-40 transition-all">
               ❯
           </button>
         </div>
@@ -231,10 +234,11 @@ export default function Page() {
         <h3 className="text-[#502424] my-8 font-semibold text-3xl z-20">BLOGS</h3>
 
         <div className=" flex w-auto justify-center items-center">
-          <button className="custom-prev-2 mr-3 rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+          <button className="custom-prev-2 mr-3 rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
             ❮
           </button>
-          <div className="xl:max-w-4xl md:max-w-sm">
+
+          <div className="xl:max-w-xl md:max-w-md">
             <Swiper
               modules={[Navigation]}
               spaceBetween={50}
@@ -247,33 +251,34 @@ export default function Page() {
                 nextEl: ".custom-next-2",
                 prevEl: ".custom-prev-2",
               }}
+              className="hover:scale-105 transition-all hover:shadow-md shadow-black"
             >
             {blogs.map((blog, index) => (
               <SwiperSlide key={index}>
-                <article className="overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg">
-                  <a href={blog.link}>
-                    <img
-                      alt=""
-                      src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-                      className="h-36 w-full object-cover"
-                    />
+                    <a href={blog.link} className="flex flex-col ">
+                      <img
+                        alt=""
+                        src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+                        className="h-36 w-full rounded-t-lg object-cover"
+                      />
 
-                    <div className="bg-white p-4 h-30 sm:p-6">
+                    <div className="bg-white p-4 h-30 sm:p-6 rounded-b-lg">
                       <time className="block text-xs text-gray-500">{blog.date}</time>
                       <h3 className="mt-0.5 text-sm text-gray-900">{blog.title}</h3>
-                      <p className="mt-2 line-clamp-3 text-xs/tight text-gray-500">{blog.desc}</p>
+                      <p className="mt-1 line-clamp-3 text-xs/tight text-gray-500">{blog.desc}</p>
                     </div>
                   </a>
-                </article>
               </SwiperSlide>
               ))}
             </Swiper>
           </div>
-          <button className="custom-next-2 ml-3 rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+          <button className="custom-next-2 ml-3 rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
               ❯
           </button>
         </div>
       </div>
+
+      <div className="md:hidden lg:block h-full w-1/7 "></div>
     </div>
   </div>
   );

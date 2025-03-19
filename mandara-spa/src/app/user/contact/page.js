@@ -79,13 +79,13 @@ export default function Page() {
             </a>
           </div>
           <div className="">
-            <NavBar2 currPage={"contact"}/>
+            <NavBar2 onBook={handleBooking} currPage={"contact"}/>
           </div>
         </div>
       </div>
         
       <div className="flex justify-center items-center h-[calc(100vh-24px)] w-screen mt-14">
-        <div className="flex flex-col justify-center items-center p-16 shadow-lg shadow-black h-screen w-2/6 text-[#e0d8ad] bg-[#401414] z-10">
+        <div className="flex flex-col justify-center items-center p-16 shadow-lg shadow-black h-screen xl:w-1/3 lg:w-3/6 text-[#e0d8ad] bg-[#401414] z-10">
           <div className="flex flex-col w-full font-serif space-y-1 hover:shadow-lg hover:bg-[#502424] hover:scale-105 transition-all p-4 shadow-[#502424] rounded-2xl">
             <h2 className="text-xl text-center font-semibold mb-2">SM North</h2>
             <p className="flex items-center gap-4 text-sm">
@@ -170,7 +170,7 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-center shadow-lg shadow-black h-screen w-2/6 z-20 bg-[#301414]">
+        <div className="flex flex-col justify-center items-center shadow-lg shadow-black h-screen xl:w-1/3 lg:w-3/6 z-20 bg-[#301414]">
         <h3 className="text-3xl text-center text-[#e0d8ad] font-semibold mb-8">Send us a Message</h3>
         <form onSubmit={handleForm} className="flex  flex-col justify-center items-center w-full px-16 z-10 space-y-6">
                       

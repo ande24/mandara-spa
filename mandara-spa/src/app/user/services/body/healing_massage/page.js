@@ -13,6 +13,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
+import Footer from "@/components/footer";
 
 export default function Page() {
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function Page() {
     }
   }
   return (
-    <div className="relative flex flex-col h-screen overflow-y-auto bg-gray-100">
+    <div className="relative flex flex-col min-h-screen bg-gray-100">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
 
       <div className="flex justify-center items-center w-full h-24 bg-[#502424]">
@@ -75,13 +76,13 @@ export default function Page() {
             className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
           />
         </a>
-        <NavBar2 currPage={"services"} />
+        <NavBar2 onBook={handleBooking} currPage={"services"} />
       </div>
 
-      <div className="flex flex-col justify-center pt-8 mb-10">
+      <div className="flex flex-col justify-center pt-18 mb-10">
         <h1 className="text-4xl mb-6 text-center font-serif">The Mandara Spa Body Rituals: Traditional Healing Massage</h1>
           <div className="flex justify-center relative">
-            <button className="custom-prev absolute rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+            <button className="custom-prev absolute rounded-full scale-80 top-2/5 left-60 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
               ❮
             </button>
 
@@ -103,16 +104,16 @@ export default function Page() {
               >
               {services.map((service, index) => (
                 <SwiperSlide key={index}>
-                  <a href="#" className="block hover:scale-100 scale-95 transition-all mt-3 mb-15">
+                  <a onClick={handleBooking} className="block hover:scale-100 scale-95 transition-all mt-3 mb-15">
                     <img
                       alt=""
                       src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
                       className="h-80 w-150 object-cover rounded-lg"
                     />
 
-                    <h3 className="mt-4 text-lg font-serif text-gray-900 ">{service.title}</h3>
+                    <h3 className="mt-4 text-xl font-serif text-gray-900 ">{service.title}</h3>
 
-                    <p className="mt-2 max-w-sm font-serif text-xs leading-relaxed text-gray-700">
+                    <p className="mt-2 max-w-sm font-serif text-md leading-relaxed text-gray-700">
                     {service.desc.split("\n").map((line, index) => (
                       <span key={index}>
                         {line}
@@ -126,11 +127,12 @@ export default function Page() {
               </Swiper>
             </div>
 
-            <button className="custom-next absolute rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+            <button className="custom-next absolute rounded-full scale-80 top-2/5 right-60 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❯
             </button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

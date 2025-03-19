@@ -74,27 +74,27 @@ return (
 
           <ul className="mt-6 space-y-4 text-sm">
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> BGC 3rd Avenue </a>
+              <a href="/user/locations/bgc_3rd" className="text-[#e0d8ad] transition hover:opacity-75"> BGC 3rd Avenue </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> BGC One Serendra </a>
+              <a href="/user/locations/bgc_one" className="text-[#e0d8ad] transition hover:opacity-75"> BGC One Serendra </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Greenhills </a>
+              <a href="/user/locations/greenhills" className="text-[#e0d8ad] transition hover:opacity-75"> Greenhills </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> BF Parañaque </a>
+              <a href="/user/locations/bf" className="text-[#e0d8ad] transition hover:opacity-75"> BF Parañaque </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Camaya Coast, Bataan </a>
+              <a href="/user/locations/camaya" className="text-[#e0d8ad] transition hover:opacity-75"> Camaya Coast, Bataan </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> S Maison at Conrad Manila, MOA Complex </a>
+              <a href="/user/locations/s_maison" className="text-[#e0d8ad] transition hover:opacity-75"> S Maison at Conrad Manila, MOA Complex </a>
             </li>
           </ul>
         </div>
@@ -103,23 +103,23 @@ return (
 
           <ul className="mt-18 space-y-4 text-sm">
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> SM North Edsa </a>
+              <a href="/user/locations/sm" className="text-[#e0d8ad] transition hover:opacity-75"> SM North Edsa </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Park Inn by Radisson, North Edsa </a>
+              <a href="/user/locations/park_inn_north" className="text-[#e0d8ad] transition hover:opacity-75"> Park Inn by Radisson, North Edsa </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Venice Grand Canal, Mckinley Hill, Taguig </a>
+              <a href="venice" className="text-[#e0d8ad] transition hover:opacity-75"> Venice Grand Canal, Mckinley Hill, Taguig </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Park Inn by Radisson, North Edsa </a>
+              <a href="/user/locations/park_inn_clark" className="text-[#e0d8ad] transition hover:opacity-75"> Park Inn by Radisson Clark, Pampanga </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Tagaytay Hillcrest </a>
+              <a href="/user/locations/tagaytay" className="text-[#e0d8ad] transition hover:opacity-75"> Tagaytay Hillcrest </a>
             </li>
           </ul>
         </div>
@@ -129,19 +129,19 @@ return (
 
           <ul className="mt-6 space-y-4 text-sm">
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Signature Rituals </a>
+              <a href="/user/services/signature" className="text-[#e0d8ad] transition hover:opacity-75"> Signature Rituals </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Hand and Foot Services </a>
+              <a href="/user/services/hand_and_foot" className="text-[#e0d8ad] transition hover:opacity-75"> Hand and Foot Services </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Face Rituals </a>
+              <a href="/user/services/face" className="text-[#e0d8ad] transition hover:opacity-75"> Face Rituals </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Other Treats </a>
+              <a href="/user/services/other" className="text-[#e0d8ad] transition hover:opacity-75"> Other Treats </a>
             </li>
           </ul>
         </div>
@@ -150,19 +150,19 @@ return (
 
           <ul className="mt-18 space-y-4 text-sm">
             <li>
-              <a href="#" className="text-[#e0d8ad] transition hover:opacity-75"> Body Rituals </a>
+              <a  className="text-[#e0d8ad]"> Body Rituals </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] ml-4 transition hover:opacity-75"> Massage Therapy </a>
+              <a href="/user/services/body/massage_therapy" className="text-[#e0d8ad] ml-4 transition hover:opacity-75"> Massage Therapy </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] ml-4 transition hover:opacity-75"> Scrub and Wraps </a>
+              <a href="/user/services/body/scrub_and_wraps" className="text-[#e0d8ad] ml-4 transition hover:opacity-75"> Scrub and Wraps </a>
             </li>
 
             <li>
-              <a href="#" className="text-[#e0d8ad] ml-4 transition hover:opacity-75">
+              <a href="/user/services/body/healing_massage" className="text-[#e0d8ad] ml-4 transition hover:opacity-75">
                 Healing Massage
               </a>
             </li>
@@ -173,7 +173,7 @@ return (
 
     <div className="flex">
         <p className="text-sm text-[#e0d8ad]">&copy; 2025. The Mandara Spa. All rights reserved. Powered by </p>
-        <a href="https://apexeldevelopment.com/?fbclid=IwZXh0bgNhZW0CMTEAAR3hqnud5A9vvZNNDy5XGnNh6dxFkM1Z6AaH9f7nZyMDcgeQCWzCJvQ8YiI_aem_Ij_lDZZcc9U_3IjhJIrNog" className="text-sm text-[#e0d8ad] ml-1 font-semibold transition-all hover:opacity-75">Apexel Development</a>
+        <a target="_blank" rel="noreferrer" href="https://apexeldevelopment.com/?fbclid=IwZXh0bgNhZW0CMTEAAR3hqnud5A9vvZNNDy5XGnNh6dxFkM1Z6AaH9f7nZyMDcgeQCWzCJvQ8YiI_aem_Ij_lDZZcc9U_3IjhJIrNog" className="text-sm text-[#e0d8ad] ml-1 font-semibold transition-all hover:opacity-75">Apexel Development</a>
     </div>
   </div>
 </footer>

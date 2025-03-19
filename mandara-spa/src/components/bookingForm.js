@@ -19,6 +19,7 @@ const BookingForm = ({ onClose }) => {
     const [services, setServices] = useState([]);
     const [selectedService, setSelectedService] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [show, setShow] = useState(false)
 
     const [formData, setFormData] = useState({
         date: "",
@@ -28,6 +29,12 @@ const BookingForm = ({ onClose }) => {
         branch: "",
         category: "", 
     });
+
+    useEffect(() => {
+        setTimeout(() => {
+            setShow(true)
+        }, 200);
+    }, [])
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -229,10 +236,10 @@ const BookingForm = ({ onClose }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center z-50">
-            <div className="fixed top-0 left-0 w-full h-full bg-white opacity-80"></div>
+        <div className="flex flex-col items-center justify-center z-50 transition-all">
+            <div className={`fixed top-0 left-0 w-full h-full transition-all bg-white opacity-80 ${show ? "scale-100" : "scale-0"}`}></div>
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-                <div className="flex flex-col p-6 text-[#e0d8ad] rounded-lg shadow-md max-w-lg w-full bg-[#502424]">
+                <div className={`flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
                     <h2 className="text-2xl mb-2 font-bold text-center">Book an Appointment</h2>
 
                     <form onSubmit={handleSubmit} className="flex flex-col space-y-2">

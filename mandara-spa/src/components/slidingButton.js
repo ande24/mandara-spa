@@ -1,8 +1,8 @@
 "use client";
 
-export default function SlidingButton () {
+export default function SlidingButton ({ onBook }) {
     return (
-        <button
+        <button onClick={onBook}
         className="group w-70 relative hover:scale-105 transition-all inline-block overflow-hidden border-1 border-white px-8 py-3  focus:outline-hidden"
         >
             <span

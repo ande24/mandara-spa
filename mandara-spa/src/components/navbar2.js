@@ -2,16 +2,9 @@
 
 export default function NavBar2 ({currPage, onBook}) {
     return (
-    <div>
+    <div className="ml-4">
         <div className="sm:hidden">
-            <label htmlFor="Tab" className="sr-only">Tab</label>
-
-            <select id="Tab" className="w-full rounded-md border-gray-200">
-            <option>Home</option>
-            <option>Locations</option>
-            <option>Services</option>
-            <option>Notifications</option>
-            </select>
+            
         </div>
 
         <div className="hidden sm:block">

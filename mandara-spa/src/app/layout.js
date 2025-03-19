@@ -1,7 +1,6 @@
 'use client'
 import './globals.css'
 import { AuthContextProvider } from '@/context/AuthContext'
-import { pt_sans } from './util/font'
 
 export default function RootLayout({ children }) {
 

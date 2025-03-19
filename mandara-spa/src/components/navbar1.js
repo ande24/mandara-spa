@@ -2,7 +2,7 @@
 
 export default function NavBar1 ({currPage}) {
     return (
-    <div>
+    <div className="ml-9 mr-4 pr-3">
         <div className="md:hidden sm:hidden xs:hidden">
             <label htmlFor="Tab" className="sr-only">Tab</label>
 
@@ -26,19 +26,18 @@ export default function NavBar1 ({currPage}) {
 
                     <div className="relative group flex flex-col">
                     <a
-                        href="/user/locations"
                         className={`shrink-0 border-b-2 px-1 pb-4 mb-3 text-sm font-semibold hover:scale-105  transition-all  hover:text-gray-200 ${currPage === "locations" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         LOCATIONS
                     </a>
 
                     <div
-                        className="absolute group-hover:opacity-100 group-hover:scale-100 transition-all opacity-0 scale-0 z-10   rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
+                        className="absolute group-hover:opacity-100 z-50 group-hover:scale-100 transition-all opacity-0 scale-0   rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
                         role="menu"
                         >
                         <div className="p-2">
                             <a
-                            href="/user/locations"
+                            href="/user/locations/bgc_3rd"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -46,7 +45,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=9"
+                            href="/user/locations/bgc_one"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -54,7 +53,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=7"
+                            href="/user/locations/greenhills"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -62,15 +61,15 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=5"
+                            href="/user/locations/bf"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
-                            BF PARANAQUE
+                            BF PARAÑAQUE
                             </a>
 
                             <a
-                            href="/user/locations?idx=6"
+                            href="/user/locations/camaya"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -78,7 +77,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=8"
+                            href="/user/locations/s_maison"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -86,7 +85,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=10"
+                            href="/user/locations/sm"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -94,7 +93,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=3"
+                            href="/user/locations/park_inn_north"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -102,7 +101,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=1"
+                            href="/user/locations/venice"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -110,7 +109,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=2"
+                            href="/user/locations/park_inn_clark"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -118,7 +117,7 @@ export default function NavBar1 ({currPage}) {
                             </a>
 
                             <a
-                            href="/user/locations?idx=4"
+                            href="/user/locations/tagaytay"
                             className="block rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                             role="menuitem"
                             >
@@ -130,7 +129,7 @@ export default function NavBar1 ({currPage}) {
 
                     <div className="relative group flex flex-col">
                         <a
-                            className={` shrink-0 border-b-2 px-1 pb-4 mb-3 text-sm font-semibold hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "services" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                            className={` shrink-0 border-b-2 px-1 z-60 pb-4 mb-3 text-sm font-semibold hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "services" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                             >
                             SERVICES
                         </a>

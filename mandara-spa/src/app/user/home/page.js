@@ -113,13 +113,13 @@ return (
               </a>
             </div>
             <div>
-              <NavBar2 onBook={() => setShowForm(true)} currPage={"home"}/>
+              <NavBar2 onBook={handleBooking} currPage={"home"}/>
             </div>
           </div>
         </div>
 
         <div className="absolute h-min flex bottom-45 justify-center items-center z-20">
-          <SlidingButton onClick={handleBooking}/>
+          <SlidingButton onBook={handleBooking}/>
         </div>
 
         <Image
@@ -162,19 +162,21 @@ return (
                 >
                 {services.map((service, index) => (
                   <SwiperSlide key={index}>
-                    <a className="block hover:scale-100 scale-95 transition-all mt-3 mb-5">
-                      <img
-                        alt=""
-                        src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
-                        className="h-80 w-150 object-cover rounded-lg"
-                      />
-  
-                      <h3 className="mt-4 text-xl font-serif text-gray-900 ">{service.title}</h3>
-  
-                      <p className="mt-2 max-w-sm font-serif text-sm leading-relaxed text-gray-700">
-                        {service.desc}
-                      </p>
-                    </a>
+                    <button onClick={handleBooking}>
+                      <a className="block hover:scale-100 rounded-lg scale-95 hover:bg-gray-50 hover:shadow-md shadow-[#301414] transition-all p-5 mt-3 mb-5">
+                        <img
+                          alt=""
+                          src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                          className="h-80 w-150 object-cover rounded-lg"
+                        />
+    
+                        <h3 className="mt-4 text-xl font-serif text-gray-900 ">{service.title}</h3>
+    
+                        <p className="mt-2 max-w-sm font-serif text-sm leading-relaxed text-gray-700">
+                          {service.desc}
+                        </p>
+                      </a>
+                    </button>
                   </SwiperSlide>
                   ))}
                 </Swiper>
@@ -212,7 +214,7 @@ return (
                 >
                 {reviews.map((review, index) => (
                   <SwiperSlide key={index}>
-                    <blockquote className="rounded-lg bg-gray-50 p-6 shadow-xs sm:p-8">
+                    <blockquote className="hover:scale-100 rounded-lg scale-95 hover:shadow-md shadow-[#301414] transition-all hover:bg-gray-50  bg-gray-200 p-10  sm:p-8">
                       <div className="flex items-center gap-4">
                         <img
                           alt=""
@@ -221,7 +223,7 @@ return (
                         />
 
                         <div>
-                          <p className="mt-0.5 text-lg font-medium text-gray-900">{review.title}</p>
+                          <p className="mt-0.5 text-xl font-medium text-gray-900">{review.title}</p>
                         </div>
                       </div>
 
@@ -235,11 +237,10 @@ return (
               </div>
   
               <button className="custom-next-2 absolute rounded-full scale-80 top-2/5 right-[-50] h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
-                  ❯
+                ❯
               </button>
             </div>
         </div>
-
         <Footer />
     </div>
   );
