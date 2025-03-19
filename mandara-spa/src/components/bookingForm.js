@@ -229,15 +229,16 @@ const BookingForm = ({ onClose }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full">
-                    <h2 className="text-2xl font-bold mb-4 text-center">Book an Appointment</h2>
+        <div className="flex flex-col items-center justify-center z-50">
+            <div className="fixed top-0 left-0 w-full h-full bg-white opacity-80"></div>
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+                <div className="flex flex-col p-6 text-[#e0d8ad] rounded-lg shadow-md max-w-lg w-full bg-[#502424]">
+                    <h2 className="text-2xl mb-2 font-bold text-center">Book an Appointment</h2>
 
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
                         <label>Branch:</label>
                         <select 
-                            className="border p-2 rounded w-full mb-2"
+                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                             value={selectedBranch ? selectedBranch.id : ""}
                             onChange={handleBranchChange}
                         >
@@ -252,7 +253,7 @@ const BookingForm = ({ onClose }) => {
                         <label>Service Category:</label>
                         <select
                             name="category"
-                            className="border p-2 rounded w-full mb-2"
+                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                             value={selectedCategory || ""} 
                             onChange={handleCategoryChange}
                         >
@@ -269,7 +270,7 @@ const BookingForm = ({ onClose }) => {
                         
                         <label>Service:</label>
                         <select 
-                            className="border p-2 rounded w-full mb-2"
+                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
                             value={selectedService ? selectedService.id : ""}
                             onChange={handleServiceChange}
                         >
@@ -286,32 +287,32 @@ const BookingForm = ({ onClose }) => {
                         <input 
                             type="number" name="pax" min="1"
                             value={formData.pax} onChange={handleChange} required
-                            className="w-full p-2 mb-2 border rounded"
+                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
                         />
                         <label>Date</label>
                         <input 
                             type="date" name="date" min={minDate}
                             value={formData.date} onChange={handleChange} required
-                            className="w-full p-2 mb-2 border rounded"
+                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
                         />
                         <label>Time</label>
                         <input 
                             type="time" name="time" step="1800"
                             value={formData.time} onChange={handleChange} required
-                            className="w-full p-2 mb-5 border rounded"
+                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
                         />
 
-                        <div className="flex justify-around">
+                        <div className="flex justify-around mt-3">
                             <button 
                                 type="submit"
-                                className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-700 transition"
+                                className="bg-[#e0d8ad] hover:scale-105 text-black w-2/5 px-6 py-3 rounded-md hover:bg-white transition"
                             >
                                 Submit Booking
                             </button>
                             <button 
                                 type="button"
                                 onClick={onClose}
-                                className="bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-700 transition"
+                                className="bg-[#e0d8ad] text-black w-2/5 px-6 py-3 rounded-md hover:scale-105 hover:bg-white transition"
                             >
                                 Cancel
                             </button>
