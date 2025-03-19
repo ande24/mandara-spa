@@ -66,7 +66,7 @@ function SignUpUser() {
         </div>
 
         <div className="flex flex-col justify-center w-full h-screen px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24 bg-[#502424]">
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center mb-10 items-center">
                 <Image 
                 className="mb-10"
                 alt="The Mandara Spa Logo"

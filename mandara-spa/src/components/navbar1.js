@@ -3,7 +3,7 @@
 export default function NavBar1 ({currPage}) {
     return (
     <div>
-        <div className="sm:hidden">
+        <div className="md:hidden sm:hidden xs:hidden">
             <label htmlFor="Tab" className="sr-only">Tab</label>
 
             <select id="Tab" className="w-full rounded-md border-gray-200">
@@ -16,10 +16,10 @@ export default function NavBar1 ({currPage}) {
 
         <div className="hidden sm:block">
             <div className=" border-gray-200 mt-6">
-                <nav className="-mb-px flex gap-6" aria-label="Tabs">
+                <nav className="-mb-px mr-5 flex gap-15" aria-label="Tabs">
                     <a
                         href="/user/home"
-                        className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "home" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
+                        className={`shrink-0 border-b-2 px-1 pb-4 mb-3 text-sm font-semibold hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "home" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         HOME
                     </a>

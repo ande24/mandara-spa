@@ -157,7 +157,7 @@ export default function Page() {
             <p className="font-serif text-gray-800">{branchData.branch_desc}</p>
           </div>
   
-          <div className="flex rounded-lg">
+          <div className="flex rounded-lg hover:scale-105 transition-all">
             <iframe
               src={branchData.branch_location_link}
               width="290"
@@ -183,10 +183,10 @@ export default function Page() {
             </div>
             <div className="space-y-4 mr-4 flex flex-col">
               <button className="bg-[#502424] mt-2 text-xs text-white font-semibold p-2 w-full rounded-lg hover:bg-[#e0d8ad] hover:scale-105 transition-all md:ml-6">
-                SERVICES
+                Services
               </button>
               <button className="bg-[#502424] text-xs text-white font-semibold p-2 w-full rounded-lg hover:bg-[#e0d8ad] hover:scale-105 transition-all md:ml-6">
-                BOOK NOW
+                Book Now
               </button>
             </div>
           </div>

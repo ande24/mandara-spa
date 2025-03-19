@@ -16,11 +16,11 @@ export default function NavBar2 ({currPage}) {
 
         <div className="hidden sm:block">
             <div className=" border-gray-200 mt-6">
-                <nav className="-mb-px flex gap-6" aria-label="Tabs">
+                <nav className="-mb-px flex gap-15" aria-label="Tabs">
 
                     <div className="relative group flex flex-col">
                         <a
-                        href="/user/about/info"
+                        href="/user/about"
                         className={`shrink-0 border-b-2 px-1 pb-4 text-xs font-medium hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "info" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
                         ABOUT US

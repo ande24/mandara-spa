@@ -30,7 +30,7 @@ export default function Page() {
 return ( 
     <div className="relative flex h-screen justify-center items-center overflow-y-auto">
     {showForm && <BookingForm onClose={() => setShowForm(false)} />}
-    <div className="absolute flex justify-center items-center text-md inset-x-0 top-0 w-full z-20 h-30 bg-[#502424] opacity-80">
+    <div className="absolute flex justify-center items-center inset-x-0 top-0 w-full z-20 h-30 bg-[#502424] opacity-80">
       <div className="flex justify-center items-center">
         <div>
           <NavBar1 currPage={"home"}/>
@@ -52,7 +52,7 @@ return (
       </div>
     </div>
 
-    <div className="w-screen h-full relative flex pb-28 justify-center flex-col items-center z-10">
+    <div className="w-screen h-full relative flex pb-10 justify-center flex-col items-center z-10">
       <SlidingButton onClick={handleBooking}/>
     </div>
 
