@@ -1,12 +1,22 @@
 "use client"
 
+import SuccessMessage from "@/components/success"
+import Loading from "@/app/loading"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+
 export default function EmailVerified () {
+    const router = useRouter();
+    const [show, setShow] = useState(false)
+    useEffect(() => {
+        setShow(true);
+
+        router.push("/user/login");
+    })
     return (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                <h2 className="text-2xl font-bold mb-4 text-green-600">Congratulations!</h2>
-                <p>Your email has been successfully verified.</p>
-            </div>
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414]">
+            {show && <SuccessMessage message={"Email verified successfully!"} onClose={() => setShow(false)}/>}
+            <Loading />
         </div>
     )
 }

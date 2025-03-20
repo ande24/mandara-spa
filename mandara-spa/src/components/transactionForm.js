@@ -21,7 +21,6 @@ const ManageInv = ({onClose, bookingData}) => {
     const [selectedItem, setSelectedItem] = useState(null);
 
     const [saving, setSaving] = useState(false);
-    const [message, setMessage] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -119,6 +118,7 @@ const ManageInv = ({onClose, bookingData}) => {
 
     const handleAddItem = async (e) => {
         e.preventDefault();
+        setSaving(true)
 
         const selectedItemData = items.find(item => item.id === selectedItem);
 
@@ -141,26 +141,29 @@ const ManageInv = ({onClose, bookingData}) => {
                 usedItems.push(newItem);
             }
 
-            setMessage("Item added successfully!");
+            alert("Item added successfully!");
             setFormData({
                 name: "",
                 quantity: ""
             });
         } catch (error) {
-            setMessage("Error adding item: " + error.message);
+            alert("Error adding item: " + error.message);
         }
+        setSaving(false)
     };
 
     const handleRemoveItem = async (e, itemId) => {
         e.preventDefault();
+        setSaving(true)
 
         try {
             setUsedItems(prevItems => prevItems.filter(item => item.id !== itemId));
 
-            setMessage("Item removed successfully!");
+            alert("Item removed successfully!");
         } catch (error) {
-            setMessage("Error adding item: " + error.message);
+            alert("Error adding item: " + error.message);
         }
+        setSaving(false)
     };
 
     const handleSubmitTransaction = async (e) => {
@@ -223,8 +226,7 @@ const ManageInv = ({onClose, bookingData}) => {
 
             onClose();
         } catch (error) {
-            setMessage("Error updating item: " + error.message);
-            alert(error.message);
+            alert("Error updating item: " + error.message);
             setSaving(false);
         }
     };
@@ -251,8 +253,8 @@ const ManageInv = ({onClose, bookingData}) => {
 
     return (
         <div className="flex justify-center items-center ">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
+                <div className="bg-white mt-20 p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
                     <h2 className="text-2xl font-bold text-gray-800 mb-3 text-center">Log Items Used</h2>
 
                     <div className="flex flex-col md:flex-row justify-between gap-6">
@@ -301,25 +303,26 @@ const ManageInv = ({onClose, bookingData}) => {
 
                                 <div className="flex justify-between space-x-4">
                                     <button 
+                                        disabled={saving}
                                         type="submit" 
-                                        className="w-full p-3 rounded-lg text-white font-semibold transition bg-blue-400 border border-blue-600 hover:bg-blue-600"
+                                        className="w-full p-3 rounded-lg text-white font-serif transition bg-[#502424]  hover:bg-[#301414]"
                                     >
                                         Add Item
                                     </button>
                                     <button 
                                         onClick={handleSubmitTransaction} 
                                         disabled={saving} 
-                                        className={`w-full p-3 rounded-lg text-white font-semibold transition ${
-                                            saving ? "bg-gray-400 cursor-not-allowed" : "bg-green-400 border border-green-600 hover:bg-green-600"
+                                        className={`w-full p-3 rounded-lg text-white font-serif transition ${
+                                            saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#502424]  hover:bg-[#301414]"
                                         }`}
                                     >
-                                        Submit List
+                                        Update Inventory
                                     </button>
                                 </div>
 
                                 <button 
                                     onClick={() => onClose()} 
-                                    className="w-full p-3 rounded-lg text-white font-semibold bg-red-400 border border-red-600 hover:bg-red-600"
+                                    className="w-full p-3 rounded-lg text-white font-serif bg-[#502424]  hover:bg-[#301414]"
                                 >
                                     Close
                                 </button>
@@ -327,7 +330,7 @@ const ManageInv = ({onClose, bookingData}) => {
                         </div>
 
                         <div className="w-full md:w-1/2 bg-white p-6 rounded-lg">
-                            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Item List</h3>
+                            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Items Used</h3>
                             <div className="max-h-[70vh] overflow-y-auto border border-gray-300 rounded-lg p-4">
                                 {usedItems.length > 0 ? (
                                     <ul className="space-y-2">
@@ -338,7 +341,8 @@ const ManageInv = ({onClose, bookingData}) => {
                                                     <p>{item.quantity} units</p>
                                                 </div>
                                                 <button 
-                                                    className="bg-red-400 border border-red-600 text-white p-2 rounded-lg font font-semibold hover:bg-red-600"
+                                                    disabled={saving}
+                                                    className="bg-[#502424]  text-white p-2 rounded-lg font font-serif hover:bg-[#301414]"
                                                     onClick={(e) => handleRemoveItem(e, item.id)}
                                                 >
                                                     Remove

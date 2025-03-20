@@ -2,13 +2,13 @@
 
 export default function NavBar2 ({currPage, onBook}) {
     return (
-    <div className="ml-4">
+    <div className="pl-4">
         <div className="sm:hidden">
             
         </div>
 
         <div className="hidden sm:block">
-            <div className=" border-gray-200 mt-6">
+            <div className=" border-gray-200 mt-8">
                 <nav className="-mb-px  flex gap-15" aria-label="Tabs">
 
                     <div className="relative group flex flex-col">
@@ -30,12 +30,12 @@ export default function NavBar2 ({currPage, onBook}) {
                     </div>
                     
                     <div className="relative group flex flex-col">
-                        <button
-                        onClick={onBook}
+                        <a
+                        href="/user/login"
                         className={`shrink-0 border-b-2 px-1 pb-4 mb-3 text-sm font-semibold hover:scale-105 transition-all  hover:text-gray-200 ${currPage === "login" ? "border-gray-200 text-gray-200" : "border-transparent text-[#e0d8ad] hover:text-gray-200"}`}
                         >
-                        BOOK NOW
-                        </button>
+                        LOG IN
+                        </a>
                     </div>
                 </nav>
             </div>

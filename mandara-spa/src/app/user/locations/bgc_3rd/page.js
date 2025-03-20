@@ -132,7 +132,7 @@ export default function Page() {
             ></iframe>
           </div>
   
-          <div className="mt-4 w-2xl bg-gray-200 text-gray-800 p-4 text-sm rounded-lg flex transition-all hover:bg-gray-50 hover:scale-105 hover:shadow-md shadow-black md:flex-row md:items-center justify-between">
+          <div className="mt-4 w-2xl bg-gray-200 text-gray-800 p-4 text-sm rounded-lg flex transition-all hover:bg-gray-50 hover:scale-105 hover:shadow-lg shadow-gray-300 md:flex-row md:items-center justify-between">
             <div className="space-y-2 font-serif w-sm">
               <p className="flex items-center gap-2">
                 <FaMapMarkerAlt className="text-[#502424]" /> {branchData.branch_address}

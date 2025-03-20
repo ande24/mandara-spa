@@ -14,8 +14,7 @@ const BranchSelect = ({ onClose }) => {
     const [branches, setBranches] = useState([]);
     const [user, setUser] = useState("");
     const [selectedBranch, setSelectedBranch] = useState(null);
-    const [message, setMessage] = useState("");
-
+    const [saving, setSaving] = useState(false);
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -42,8 +41,10 @@ const BranchSelect = ({ onClose }) => {
 
     const directBranch = async (e) => {
         e.preventDefault();
+        setSaving(true)
         if (!selectedBranch) {
-            setMessage("Please select a branch.");
+            alert("Please select a branch.");
+            setSaving(false)
             return;
         }
 
@@ -51,31 +52,31 @@ const BranchSelect = ({ onClose }) => {
 
         try {
             const userRef = doc(db, "users", user.uid);
-
+            
             await updateDoc(userRef, {
                 branch_id: selectedBranch.id,
                 branch_location: selectedBranch.name
             });
 
             setSelectedBranch(null);
-            router.push("/tmsAdmin/branchAdmin");
+            return router.push("/tmsAdmin/branchAdmin");
         } catch (error) {
-            setMessage("Error: " + error.message);
+            alert("Error: " + error.message);
         }
+        setSaving(false)
     };
 
     return (
         <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
-            <div className="fixed flex justify-center w-screen h-50 z-10 inset-0 top-00 bg-[#502424]">
-                <Image className="fixed top-[-60]" src={"/images/mandara_mtn.png"} width={400} height={400} alt={"The Mandara Spa Logo"} />
-            </div>
+                <Image className="fixed top-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+        
 
-            <div className="flex flex-col justify-around p-4 z-10 mt-10 min-w-lg min-h-80 mx-auto bg-[#e0d8ad] shadow-lg rounded-lg">
+            <div className="flex flex-col justify-around p-4 z-10 bottom-35 min-w-lg min-h-80 mx-auto bg-white shadow-lg rounded-lg">
                 <h2 className="text-xl font-bold text-center">View a branch</h2>
                 {/* {message  && <p className="mb-2 text-green-500">{message}</p>} */}
                 <form onSubmit={directBranch} className="flex flex-col space-y-5">
                     <select 
-                        className="border input-field rounded-lg"
+                        className="border  input-field rounded-lg"
                         value={selectedBranch ? selectedBranch.id : ""}
                         onChange={(e) => {
                             const branch = branches.find(b => b.id === e.target.value);

@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import ForgotPassword from "@/firebase/auth/forgotPassword";
 import Image from "next/image";
 import ErrorMessage from "@/components/error";
+import SuccessMessage from "@/components/success";
 
 function SignIn() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [showChange, setShowChange] = useState(false);
     const [showError, setShowError] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const router = useRouter()
 
@@ -30,16 +31,23 @@ function SignIn() {
 
         await ForgotPassword(email)
 
-        setShowChange(true)
+        setSuccessMsg('Please check your email for the reset link.')
+        setShowSuccess(true)
     }
 
     const handleForm = async (event) => {
         event.preventDefault();
+        if (email === "" || password === "") {
+        setErrorMsg("Please enter your email address and password.");
+        console.log("No email/password")
+        setShowError(true);
+        return;
+        } 
 
         const { res, err } = await signIn(email, password);
 
         if (err) {
-            let message = "An unknown error occurred. Please try again.";
+            let message = "Login Failed. Please check your credentials.";
 
             if (err.code === "auth/invalid-email") {
             message = "Invalid email format. Please check your input.";
@@ -59,64 +67,28 @@ function SignIn() {
             message = "This account has been disabled. Contact support.";
             } else if (err.code === "auth/requires-recent-login") {
             message = "Please log in again to perform this action.";
+            } else if (email === "") {
+            message = "Please enter your email address.";
+            } else if (password === "") {
+            message = "Please enter your password.";
             }
 
             setErrorMsg(message);
+            console.log(message)
             setShowError(true);
             return;
         }
 
         setErrorMsg('')
-        setSuccess(true)
+        setSuccessMsg('Logged in successfully!')
+        setShowSuccess(true)
         console.log(res);
         setTimeout(() => {return router.push("/user/home")}, 2000);
     }
     return (
         <section className="relative flex flex-wrap lg:h-screen lg:items-center">
             {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
-            {showChange && ( 
-                <div role="alert" className="absolute top-4 left-4 z-50 rounded-xl border border-gray-100 bg-white p-4 animate-">
-                    <div className="flex items-start gap-4">
-                    <span className="text-green-600">
-                        <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        className="size-6"
-                        >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                        </svg>
-                    </span>
-                
-                    <div className="flex-1">
-                        <strong className="block font-medium text-gray-900"> Check your Email </strong>
-                
-                        <p className="mt-1 text-sm text-gray-700">We sent you a verification link.</p>
-                    </div>
-                
-                    <button onClick={() => {setShowChange(false)}} className="text-gray-500 transition hover:text-gray-600">
-                        <span className="sr-only">Dismiss popup</span>
-                
-                        <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        className="size-6"
-                        >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                    </div>
-                </div>
-            )}
+            {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
 
             <div className="flex flex-col justify-center w-full h-screen px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24 bg-[#502424]">
                 <div className="flex flex-col mb-10 justify-center items-center">
@@ -142,6 +114,7 @@ function SignIn() {
 
                             <div className="relative">
                             <input
+                                required
                                 id="email"
                                 name="email"
                                 type="email"
@@ -174,6 +147,7 @@ function SignIn() {
 
                             <div className="relative">
                             <input
+                                required
                                 id="password"
                                 name="password"
                                 type="password"
@@ -209,8 +183,8 @@ function SignIn() {
 
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col text-sm">
-                                <p onClick={createAccount} className="ml-1 font-serif text-white hover:text-[#e0d8ad]" >Sign Up</p>
-                                <p onClick={handleForgot} className="mt-1 font-serif ml-1 text-white hover:text-[#e0d8ad]" >Forgot Password?</p>
+                                <p onClick={createAccount} className="ml-1 font-serif hover:cursor-pointer text-white hover:text-[#e0d8ad]" >Sign Up</p>
+                                <p onClick={handleForgot} className="mt-1 font-serif ml-1 hover:cursor-pointer text-white hover:text-[#e0d8ad]" >Forgot Password?</p>
                             </div>
 
                             <button
@@ -233,44 +207,5 @@ function SignIn() {
             </div>
         </section>
     )
-    // <div className="flex flex-col h-screen w-screen justify-center items-center">
-    //     <div className="flex flex-col items-center justify-center rounded-3xl p-5 bg-yellow-100">
-    //         <h1 className="text-xl font-bold">Customer Log in</h1>
-    //         <form className="form mt-3 mb-2 flex flex-col" onSubmit={handleForm}>
-    //             <label htmlFor="email">
-    //                 <p>Email</p>
-    //                 <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email"/>
-    //             </label>
-    //             <label htmlFor="password">
-    //                 <p>Password</p>
-    //                 <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password"  />
-    //             </label>
-    //             <button type="submit" className="hover:underline">Log in</button>
-    //         </form>
-    //         <button className="mb-1 hover:underline" onClick={createAccount}>Create an Account</button>
-    //         <button className="m-1 hover:underline text-xs text-blue-500" onClick={handleForgot}>Forgot password?</button>
-    //     </div>
-    //     {error && <p className="text-red-500">{error.message || error}</p>}
-    //     {success && <p className="text-green-500">Login successful!</p>}
-    //     {showChange && (
-    //         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-    //             <div className="bg-white p-6 rounded-lg shadow-md text-center">
-    //                 <h2 className="text-2xl font-bold mb-4">We sent you a link</h2>
-    //                 <p>Please check your email and click the link to change your password, then log into your account.</p>
-    //             </div>
-    //         </div>
-    //     )}
-    // </div>);
 }
-
-export default SignIn;
-
-
-
-{/*
-  Heads up! 👋
-
-  Plugins:
-    - @tailwindcss/forms
-*/}
-
+export default SignIn

@@ -5,6 +5,8 @@ import { getFirestore, query, orderBy } from "firebase/firestore";
 import { addDoc, collection, doc, getDocs, getDoc } from "firebase/firestore"; 
 import firebase_app from "../firebase/config";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import SuccessMessage from "./success";
+import ErrorMessage from "./error";
 
 const BookingForm = ({ onClose }) => {
     const db = getFirestore(firebase_app);
@@ -20,6 +22,11 @@ const BookingForm = ({ onClose }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [show, setShow] = useState(false)
+    const [showError, setShowError] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [successMsg, setSuccessMsg] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+    const [saving, setSaving] = useState(false)
 
     const [formData, setFormData] = useState({
         date: "",
@@ -138,9 +145,6 @@ const BookingForm = ({ onClose }) => {
         setMinDate(today.toISOString().split("T")[0]); 
     }, []);
 
-    const [showSuccess, setShowSuccess] = useState(false)
-    const [showError, setShowError] = useState(false)
-
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -167,6 +171,7 @@ const BookingForm = ({ onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSaving(true)
 
         console.log(formData)
         
@@ -208,35 +213,41 @@ const BookingForm = ({ onClose }) => {
                 body: JSON.stringify(newData),
               });
             
+            setSuccessMsg("We sent you a booking confirmation email.")
             setShowSuccess(true);
             
+            
             setTimeout(() => {
-                setShowSuccess(false);
                 setFormData({ pax: "", date: "", time: "", service: "", branch: "", category: ""});
                 setSelectedCategory(null) 
                 setSelectedBranch(null)
                 setSelectedService(null)
                 onClose();
             }, 2000);
+
+            setSaving(false)
             
             return docRef.id;
         } catch (error) {
-            console.error("Error adding document: ", error);
+            setErrorMsg(error.message);
 
             setShowError(true);
             
             setTimeout(() => {
-                setShowError(false);
                 setSelectedCategory(null) 
                 setSelectedBranch(null)
                 setSelectedService(null)
                 setFormData({ pax: "", date: "", time: "", service: "", branch: "", category: ""}); 
             }, 2000);
         }
+        setSaving(false)
     };
 
     return (
         <div className="flex flex-col items-center justify-center z-50 transition-all">
+            {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
+            {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
+
             <div className={`fixed top-0 left-0 w-full h-full transition-all bg-white opacity-80 ${show ? "scale-100" : "scale-0"}`}></div>
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
                 <div className={`flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
@@ -311,8 +322,9 @@ const BookingForm = ({ onClose }) => {
 
                         <div className="flex justify-around mt-3">
                             <button 
+                                disabled={saving}
                                 type="submit"
-                                className="bg-[#e0d8ad] hover:scale-105 text-black w-2/5 px-6 py-3 rounded-md hover:bg-white transition"
+                                    className={`${saving ? "bg-gray-400" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"} text-black w-2/5 px-6 py-3 rounded-md transition`}
                             >
                                 Submit Booking
                             </button>
@@ -327,25 +339,6 @@ const BookingForm = ({ onClose }) => {
                     </form>
                 </div>
             </div>
-
-            {showSuccess && (
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h2 className="text-2xl font-bold mb-4 text-green-600">Booking Successful!</h2>
-                        <p>We&apos;ll send you a confirmation email.</p>
-                    </div>
-                </div>
-            )}
-
-            {showError && (
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h2 className="text-2xl font-bold mb-4 text-red-500">Something went wrong</h2>
-                        <p>Please try again.</p>
-                    </div>
-                </div>
-            )}          
-
         </div>
     );
 };

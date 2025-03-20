@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
+import Image from "next/image";
 
 const ManageTransactions = ({onClose}) => {
     const auth = getAuth(firebase_app)
@@ -14,8 +15,7 @@ const ManageTransactions = ({onClose}) => {
 
     const [transactions, setTransactions] = useState([]);
     const [services, setServices] = useState([]);
-
-    const [message, setMessage] = useState(null);
+    const [saving, setSaving] = useState(false)
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -99,6 +99,7 @@ const ManageTransactions = ({onClose}) => {
 
         const branchRef = doc(db, "branches", userData.branch_id);
         const transactionCollection = collection(branchRef, "transactions");
+        let bookingData = null;
 
         const unsubscribe = onSnapshot(transactionCollection, async (snapshot) => {
             const transactionList = await Promise.all(
@@ -111,20 +112,24 @@ const ManageTransactions = ({onClose}) => {
                         const bookingSnap = await getDoc(bookingRef);
                         
                         let serviceName = "", servicePrice = "";
-                        if (bookingSnap.data().service_id) {
-                            const serviceRef = doc(branchRef, "services", bookingSnap.data().service_id);
-                            const serviceSnap = await getDoc(serviceRef);
-                            if (serviceSnap.exists()) {
-                                serviceName = serviceSnap.data().service_name;
-                                servicePrice = serviceSnap.data().service_price;
+                        if (bookingSnap.exists()) {  
+                            bookingData = bookingSnap.data();
+                            if (bookingData.service_id) {  
+                                const serviceRef = doc(branchRef, "services", bookingData.service_id);
+                                const serviceSnap = await getDoc(serviceRef);
+                                if (serviceSnap.exists()) {
+                                    serviceName = serviceSnap.data().service_name;
+                                    servicePrice = serviceSnap.data().service_price;
+                                }
                             }
                         }
 
-                        return {
+                        console.log("Booking: ", bookingData)
 
+                        return {
                             id: docu.id,
-                            date: bookingSnap.data().booked_date,
-                            time: bookingSnap.data().booked_time,
+                            date: bookingData ? bookingData.booked_date : "",
+                            time: bookingData ? bookingData.booked_time : "Booking not found",
                             booking: data.bookingId,
                             pax: data.no_of_customers,
                             serviceName: serviceName,
@@ -151,6 +156,7 @@ const ManageTransactions = ({onClose}) => {
 
     const handleRemoveTransaction = async (e, transactionId) => {
         e.preventDefault();
+        setSaving(true)
 
         const confirmDelete = window.confirm("Are you sure you want to delete this transaction?");
         if (!confirmDelete) return;
@@ -163,15 +169,17 @@ const ManageTransactions = ({onClose}) => {
 
             setTransactions((prevTransactions) => prevTransactions.filter(transaction => transaction.id !== transactionId));
 
-            setMessage("Transaction removed successfully!");
+            alert("Transaction removed successfully!");
         } catch (error) {
-            setMessage("Error removing transaction: " + error.message);
+            alert("Error removing transaction: " + error.message);
         }
+        setSaving(false)
     };
 
     return (
         <div className="flex justify-center items-center ">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
+            <Image className="fixed top-30 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl  w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">
                             <h3 className="text-lg font-bold">Transaction List</h3>
@@ -193,7 +201,8 @@ const ManageTransactions = ({onClose}) => {
                                             </div>
                                             <div className="flex items-center">
                                                 <button 
-                                                    className="bg-red-400 border border-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-600 mx-2 transition"
+                                                    disabled={saving}
+                                                    className="bg-[#502424] text-white p-2 font-serif rounded-lg hover:bg-[#301414] mx-2 transition"
                                                     onClick={(e) => handleRemoveTransaction(e, transaction.id)}
                                                 >
                                                     Remove
@@ -208,7 +217,7 @@ const ManageTransactions = ({onClose}) => {
                         </div>
                         <div className="flex justify-center items-center">
                             <button 
-                                className="bg-red-400 border border-red-600 text-white p-3 m-3 mb-6 max-w-xs font-semibold w-full hover:bg-red-600 transition rounded-lg"
+                                className="bg-[#502424]  text-white p-3 m-3 mb-6 max-w-xs font-serif w-full hover:bg-[#301414] transition rounded-lg"
                                 onClick={onClose}
                             >
                                 Close

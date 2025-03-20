@@ -10,6 +10,7 @@ import NavBar2 from "@/components/navbar2";
 import { FaMapMarkerAlt, FaClock, FaPhone } from "react-icons/fa";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
+import Footer from "@/components/footer";
 
 export default function Page() {
     const db = getFirestore(firebase_app);
@@ -59,34 +60,26 @@ export default function Page() {
     }
 
   return (
-    <div className="relative flex justify-center items-center h-max w-full bg-white">
+    <div className="relative flex flex-col justify-center items-center h-max w-full bg-white">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
 
-      <div className="z-30 absolute flex justify-center items-center inset-x-0 top-0 w-full  h-24 bg-[#502424] opacity-100">
-        <div className="flex relative justify-center items-center">
-          <div className="">
-            <NavBar1 currPage={"contact"}/>
-          </div>
-          <div className="">
-            <a href="/user/home">
-              <Image
-                src="/images/mandara_gold.png"
-                alt=""
-                height={85}
-                width={194}
-                className="mb-4 object-contain scale-50 hover:scale-60 transition-all"
-              />
-            </a>
-          </div>
-          <div className="">
-            <NavBar2 onBook={handleBooking} currPage={"contact"}/>
-          </div>
-        </div>
+      <div className="flex justify-center items-center w-full h-24 z-50 bg-[#502424]">
+        <NavBar1 currPage={"contact"} />
+        <a href="/user/home">
+          <Image
+            src="/images/mandara_gold.png"
+            alt=""
+            height={85}
+            width={194}
+            className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
+          />
+        </a>
+        <NavBar2 currPage={"contact"} />
       </div>
         
-      <div className="flex justify-center items-center h-[calc(100vh-24px)] w-screen mt-14">
+      <div className="flex justify-center items-center h-full w-full mt-[-49]">
         <div className="flex flex-col justify-center items-center p-16 shadow-lg shadow-black h-screen xl:w-1/3 lg:w-3/6 text-[#e0d8ad] bg-[#401414] z-10">
-          <div className="flex flex-col w-full font-serif space-y-1 hover:shadow-lg hover:bg-[#502424] hover:scale-105 transition-all p-4 shadow-[#502424] rounded-2xl">
+          <div className="flex flex-col w-full font-serif space-y-1 hover:shadow-lg hover:bg-[#502424] hover:scale-105 transition-all p-4 shadow-[#502424] rounded-b-2xl">
             <h2 className="text-xl text-center font-semibold mb-2">SM North</h2>
             <p className="flex items-center gap-4 text-sm">
               <FaMapMarkerAlt className="m-1" /> 2nd Floor, SM North Towers, SM North Edsa Quezon City
@@ -263,6 +256,9 @@ export default function Page() {
                   </div>
             </form> 
         </div>
+      </div>
+      <div className="w-full z-50">
+        <Footer />
       </div>
     </div>
   );

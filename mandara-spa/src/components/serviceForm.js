@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, addDoc, doc, getDocs, getDoc, deleteDoc, updateDoc, orderBy, query } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
+import Image from "next/image";
 
 const ManageService = ({onClose}) => {
     const auth = getAuth(firebase_app)
@@ -24,7 +25,6 @@ const ManageService = ({onClose}) => {
     const [selectedService, setSelectedService] = useState(null);
 
     const [saving, setSaving] = useState(false);
-    const [message, setMessage] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -120,6 +120,7 @@ const ManageService = ({onClose}) => {
 
     const handleAddService = async (e) => {
         e.preventDefault();
+        setSaving(true)
 
         const branchRef = doc(db, "branches", userData.branch_id);
         const servicesRef = collection(branchRef, "services");
@@ -145,7 +146,7 @@ const ManageService = ({onClose}) => {
 
             setServices(prevServices => [...prevServices, newService]);
 
-            setMessage("Service added successfully!");
+            alert("Service added successfully!");
             setFormData({
                 name: "",
                 duration: "",
@@ -154,12 +155,14 @@ const ManageService = ({onClose}) => {
                 category: "",
             });
         } catch (error) {
-            setMessage("Error adding service: " + error.message);
+            alert("Error adding service: " + error.message);
         }
+        setSaving(false)
     };
 
     const handleRemoveService = async (e, serviceId) => {
         e.preventDefault();
+        setSaving(true)
 
         const confirmDelete = window.confirm("Are you sure you want to remove this service?");
         if (!confirmDelete) return;
@@ -172,10 +175,11 @@ const ManageService = ({onClose}) => {
 
             setServices((prevServices) => prevServices.filter(service => service.id !== serviceId));
 
-            setMessage("Service removed successfully!");
+            alert("Service removed successfully!");
         } catch (error) {
-            setMessage("Error adding admin: " + error.message);
+            alert("Error adding admin: " + error.message);
         }
+        setSaving(false)
     };
 
     const handleEditService = async (e) => {
@@ -220,6 +224,7 @@ const ManageService = ({onClose}) => {
     };
 
     const toggleDisable = async (serviceId, newStatus) => {
+        setSaving(true)
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
             const serviceRef = doc(branchRef, "services", serviceId);
@@ -234,11 +239,12 @@ const ManageService = ({onClose}) => {
                 )
             );
 
-            setMessage("Service status updated!");
+            alert("Service status updated!");
         } catch (error) {
             console.error("Error updating service status:", error);
-            setMessage("Error updating service status: " + error.message);
+            alert("Error updating service status: " + error.message);
         }
+        setSaving(false)
     }
 
     const handleServiceChange = async (e) => {
@@ -261,16 +267,15 @@ const ManageService = ({onClose}) => {
     return (
         <div className="flex justify-center items-center ">
             {user && userData && branchData && services && (
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-md max-w-7xl w-full max-h-[90vh] overflow-y-auto">
-                        <h2 className="text-2xl font-bold text-gray-800 text-center">Manage Services</h2>
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
+                    <Image className="fixed top-10 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
                     
-                        <div className="flex flex-col md:flex-row justify-between gap-6">
-                            <div className="w- md:w-1/3 bg-white p-6 rounded-lg shadow-md">
-                                <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Choose Service</h3>
-                                <form className="space-y-4">
+                        <div className="flex flex-col md:flex-row mt-20 justify-between gap-6">
+                            <div className="md:w-1/3 bg-white p-3 rounded-lg shadow-md">
+                                <h3 className="text-lg font-bold text-black mb-4 text-center">Choose Service</h3>
+                                <form onSubmit={handleAddService} className="space-y-4">
                                     <div>
-                                        <label className="block text-gray-700 font-semibold">Select a Service:</label>
+                                        <label className="block text-black font-semibold">Select a Service:</label>
                                         <select 
                                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             name="name" 
@@ -285,7 +290,7 @@ const ManageService = ({onClose}) => {
                                     </div>
                     
                                     <div>
-                                        <label className="block text-gray-700 font-semibold">Service Name:</label>
+                                        <label className="block text-black font-semibold">Service Name:</label>
                                         <input 
                                             name="name" 
                                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
@@ -297,7 +302,7 @@ const ManageService = ({onClose}) => {
                                     </div>
                     
                                     <div>
-                                        <label className="block text-gray-700 font-semibold">Duration (Minutes):</label>
+                                        <label className="block text-black font-semibold">Duration (Minutes):</label>
                                         <input 
                                             name="duration" 
                                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
@@ -309,7 +314,7 @@ const ManageService = ({onClose}) => {
                                     </div>
                     
                                     <div>
-                                        <label className="block text-gray-700 font-semibold">Price (₱):</label>
+                                        <label className="block text-black0 font-semibold">Price (₱):</label>
                                         <input 
                                             name="price" 
                                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
@@ -321,7 +326,7 @@ const ManageService = ({onClose}) => {
                                     </div>
                     
                                     <div>
-                                        <label className="block text-gray-700 font-semibold">Description:</label>
+                                        <label className="block text-black font-semibold">Description:</label>
                                         <input 
                                             name="desc" 
                                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
@@ -332,7 +337,7 @@ const ManageService = ({onClose}) => {
                                     </div>
                     
                                     <div>
-                                        <label className="block text-gray-700 font-semibold">Category:</label>
+                                        <label className="block text-black font-semibold">Category:</label>
                                         <select
                                             name="category"
                                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -353,16 +358,16 @@ const ManageService = ({onClose}) => {
                     
                                     <div className="flex justify-between space-x-4">
                                         <button 
+                                            disabled={saving}
                                             type="submit" 
-                                            className="w-full p-3 rounded-lg text-white font-semibold transition bg-green-400 border border-green-600 hover:bg-green-600"
+                                            className="w-full p-3 rounded-lg text-white font-serif bg-[#502424] hover:bg-[#301414] transition "
                                         >
                                             Add Service
                                         </button>
                                         <button 
                                             onClick={handleEditService} 
                                             disabled={saving} 
-                                            className={`w-full p-3 rounded-lg text-white font-semibold transition ${
-                                                saving ? "bg-gray-400 cursor-not-allowed" : "bg-orange-300 border border-orange-500 hover:bg-orange-500"
+                                            className={`w-full p-3 rounded-lg text-white transition font-serif bg-[#502424] hover:bg-[#301414]"
                                             }`}
                                         >
                                             Edit Service
@@ -371,15 +376,15 @@ const ManageService = ({onClose}) => {
                     
                                     <button 
                                         onClick={() => onClose()} 
-                                        className="w-full p-3 rounded-lg text-white font-semibold  bg-red-400 border border-red-600 hover:bg-red-600"
+                                        className="w-full p-3 rounded-lg text-white font-serif bg-[#502424] hover:bg-[#301414]"
                                     >
                                         Close
                                     </button>
                                 </form>
                             </div>
                     
-                            <div className="w-full md:w-2/3 bg-white p-6 rounded-lg shadow-md">
-                                <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Service List</h3>
+                            <div className="w-full md:w-2/3 bg-white p-3 rounded-lg shadow-md">
+                                <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Manage Services</h3>
                                 <div className="max-h-[70vh] overflow-y-auto border border-gray-300 rounded-lg p-4">
                                     {services.length > 0 ? (
                                         <ul className="space-y-2">
@@ -392,6 +397,7 @@ const ManageService = ({onClose}) => {
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <select
+                                                            disabled={saving}
                                                             className="border p-1 rounded-lg bg-white "
                                                             value={service.status || "available"} 
                                                             onChange={(e) => toggleDisable(service.id, e.target.value)}
@@ -400,7 +406,8 @@ const ManageService = ({onClose}) => {
                                                             <option value="unavailable">Unavailable</option>
                                                         </select>
                                                         <button 
-                                                            className="bg-red-400 border font-semibold border-red-600 text-white p-2 rounded-lg hover:bg-red-600"
+                                                            disabled={saving}
+                                                            className=" text-white p-2 rounded-lg font-serif bg-[#502424] hover:bg-[#301414]"
                                                             onClick={(e) => handleRemoveService(e, service.id)}
                                                         >
                                                             Remove
@@ -415,7 +422,6 @@ const ManageService = ({onClose}) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             )}
         </div>

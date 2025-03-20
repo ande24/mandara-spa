@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import firebase_app from "@/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import Image from "next/image";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -92,9 +93,8 @@ const EditBranch = ({onClose}) => {
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
             await updateDoc(branchRef, formData);
-            onClose();
         } catch (error) {
-            console.error("Error updating branch:", error);
+            alert("Error updating branch:", error);
         } finally {
             setSaving(false);
         }
@@ -103,101 +103,50 @@ const EditBranch = ({onClose}) => {
     if (!user) return <p className="text-center text-red-500 mt-10">Please log in as an admin.</p>;
 
     return (
-        <div className="flex flex-col items-center justify-center rounded-lg">
-            <div className="fixed top-0 left-0 w-full h-full rounded-lg flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Edit Branch Details</h2>
+        <div className="flex flex-col items-center justify-center rounded-lg overflow-auto">
+
+            <Image className="fixed top-30 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <div className="fixed top-20 left-0 w-full h-full rounded-lg flex items-center justify-center bg-[#301414] bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-md max-w-7xl w-full h-full max-h-150">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-1 text-center">Edit Branch Details</h2>
                     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg">
-                        <div>
-                            <label className="block text-gray-700 font-semibold">Branch Location:</label>
-                            <input
-                                disabled
-                                type="text"
-                                name="branch_location"
-                                value={formData.branch_location}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                    <div className="grid grid-cols-3 gap-4">
+                            <div>
+                                <label className="block text-gray-700 font-semibold">Branch Location:</label>
+                                <input disabled type="text" name="branch_location" value={formData.branch_location} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-semibold">Branch Address:</label>
+                                <input type="text" name="branch_address" value={formData.branch_address} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                            
+                            <div>
+                                <label className="block text-gray-700 font-semibold">Operating Hours:</label>
+                                <input name="branch_hours" value={formData.branch_hours} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-semibold">Google Maps Embed Link:</label>
+                                <input type="text" name="branch_location_link" value={formData.branch_location_link} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-semibold">Branch Landline Number:</label>
+                                <input type="text" name="branch_landline" value={formData.branch_landline} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-semibold">Branch Mobile Number:</label>
+                                <input type="text" name="branch_mobile" value={formData.branch_mobile} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                            <div className="col-span-2">
+                                <label className="block text-gray-700 font-semibold">Branch Description:</label>
+                                <textarea name="branch_desc" value={formData.branch_desc} onChange={handleChange} className="w-full p-3  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                            <div className="flex justify-center items-center space-x-4 mt-4 h-min">
+                                <button type="submit" disabled={saving} className="w-2/5 p-3 rounded-lg h-full text-white text-md  transition mandara-btn">Save Changes</button>
+                                <button onClick={onClose} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
+                            </div>
                         </div>
 
-                        <div>
-                            <label className="block text-gray-700 font-semibold">Branch Address:</label>
-                            <input
-                                type="text"
-                                name="branch_address"
-                                value={formData.branch_address}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-700 font-semibold">Branch Description:</label>
-                            <textarea
-                                name="branch_desc"
-                                value={formData.branch_desc}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-700 font-semibold">Operating Hours:</label>
-                            <input
-                                name="branch_hours"
-                                value={formData.branch_hours}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-700 font-semibold">Google Maps Embed Link:</label>
-                            <input
-                                type="text"
-                                name="branch_location_link"
-                                value={formData.branch_location_link}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-700 font-semibold">Branch Landline Number:</label>
-                            <input
-                                type="text"
-                                name="branch_landline"
-                                value={formData.branch_landline}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-700 font-semibold">Branch Mobile Number:</label>
-                            <input
-                                type="text"
-                                name="branch_mobile"
-                                value={formData.branch_mobile}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            className={`w-full p-3 rounded-lg text-white font-semibold transition ${
-                                saving
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-blue-400 border border-blue-600 hover:bg-blue-600"
-                            }`}
-                        >
-                            {saving ? "Saving..." : "Save Changes"}
-                        </button>
-                        <button  onClick={() => {onClose()}}className="w-full p-3 rounded-lg text-white font-semibold bg-red-400 border border-red-600 hover:bg-red-600">
-                            Close
-                        </button>
+                        
                     </form>
                 </div>
             </div>

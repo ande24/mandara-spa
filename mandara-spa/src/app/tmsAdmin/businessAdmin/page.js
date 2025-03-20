@@ -65,17 +65,15 @@ export default function BusinessAdminPage() {
     }, [userData]);
 
     return (
-        <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
-            <div className="fixed flex justify-center w-screen h-50 z-0 inset-0 top-0 bg-[#502424]">
-                <Image className="fixed top-[-60]" src={"/images/mandara_mtn.png"} width={400} height={400} alt={"The Mandara Spa Logo"} />
-            </div>
+        <div className="fixed flex-col h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
+                <Image className="" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
             {user && userData && isBusinessAdmin ? (
                 <div className="mt-10 flex min-h-40 flex-col justify-around items-center">
                     <h1 className="text-[#e0d8ad] mb-3 font-semibold text-5xl">Welcome,</h1>
-                    <h2 className="text-[#e0d8ad] font-semibold text-2xl">{user.email}</h2>
-                    <div className="flex mt-20 min-w-lg justify-around">
-                        <button className="bg-[#e0d8ad] p-2 mx-5 w-70 rounded-lg text-xl font-semibold" onClick={() => {setShowManageAdmin(true)}}>Manage Branch Admins</button>
-                        <button className="bg-[#e0d8ad] p-2 mx-5 w-70 rounded-lg text-xl font-semibold" onClick={() => {setShowViewBranch(true)}}>Manage Branches</button>
+                    <h2 className="text-[#e0d8ad]  text-2xl">{user.email}</h2>
+                    <div className="flex mt-10 min-w-lg justify-around">
+                        <button className="bg-[#e0d8ad] p-2 mx-5 w-70 rounded-lg text-xl" onClick={() => {setShowManageAdmin(true)}}>Branch Admins</button>
+                        <button className="bg-[#e0d8ad] p-2 mx-5 w-70 rounded-lg text-xl" onClick={() => {setShowViewBranch(true)}}>Branches</button>
                     </div>
                 </div>
             ) : (

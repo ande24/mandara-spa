@@ -2,7 +2,7 @@
 
 export default function NavBar1 ({currPage}) {
     return (
-    <div className="ml-9 mr-4 pr-3">
+    <div className="pr-4 ml-4">
         <div className="md:hidden sm:hidden xs:hidden">
             <label htmlFor="Tab" className="sr-only">Tab</label>
 
@@ -15,7 +15,7 @@ export default function NavBar1 ({currPage}) {
         </div>
 
         <div className="hidden sm:block">
-            <div className=" border-gray-200 mt-6">
+            <div className=" border-gray-200 mt-8">
                 <nav className="-mb-px flex gap-15" aria-label="Tabs">
                     <a
                         href="/user/home"

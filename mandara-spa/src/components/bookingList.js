@@ -5,6 +5,7 @@ import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import AddTransaction from "./transactionForm";
+import Image from "next/image";
 
 const ManageBookings = ({onClose}) => {
     const auth = getAuth(firebase_app)
@@ -18,7 +19,7 @@ const ManageBookings = ({onClose}) => {
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [services, setServices] = useState([]);
 
-    const [message, setMessage] = useState(null);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -154,6 +155,7 @@ const ManageBookings = ({onClose}) => {
     }, [userData?.branch_id, !!branchData, !!services]);
 
     const toggleStatus = async (bookingId, newStatus) => {
+        setSaving(true)
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
             const bookingRef = doc(branchRef, "bookings", bookingId);
@@ -178,15 +180,17 @@ const ManageBookings = ({onClose}) => {
                 setTimeout(() => setShowTransaction(true), 0);
             }
 
-            setMessage("Service status updated!");
+            alert("Service status updated!");
         } catch (error) {
             console.error("Error updating service status:", error);
-            setMessage("Error updating service status: " + error.message);
+            alert("Error updating service status: " + error.message);
         }
+        setSaving(false)
     }
 
     const handleRemoveBooking = async (e, bookingId) => {
         e.preventDefault();
+        setSaving(true)
 
         const confirmDelete = window.confirm("Are you sure you want to remove this booking?");
         if (!confirmDelete) return;
@@ -199,15 +203,18 @@ const ManageBookings = ({onClose}) => {
 
             setBookings((prevBookings) => prevBookings.filter(booking => booking.id !== bookingId));
 
-            setMessage("Booking removed successfully!");
+            alert("Booking removed successfully!");
         } catch (error) {
-            setMessage("Error removing booking: " + error.message);
+            alert("Error removing booking: " + error.message);
         }
+        setSaving(false)
     };
 
     return (
         <div className="flex justify-center items-center ">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
+            <Image className="fixed top-30 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
+                
             {showTransaction && selectedBooking ? (<AddTransaction bookingData={selectedBooking} onClose={() => setShowTransaction(false)} />) : (
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl  w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">
@@ -233,6 +240,7 @@ const ManageBookings = ({onClose}) => {
                                             </div>
                                             <div className="flex items-center">
                                                 <select
+                                                    disabled={saving}
                                                     className="border p-1 mx-1 rounded-lg bg-white "
                                                     value={booking.status || "pending"} 
                                                     onChange={(e) => toggleStatus(booking.id, e.target.value)}
@@ -242,13 +250,15 @@ const ManageBookings = ({onClose}) => {
                                                     <option value="canceled">Canceled</option>
                                                 </select>
                                                 <button 
-                                                    className="bg-red-400 border border-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-600 mx-1 transition"
+                                                    disabled={saving}
+                                                    className="bg-[#502424] text-white p-2 font-seri rounded-lg hover:bg-[#301414] mx-1 transition"
                                                     onClick={(e) => toggleStatus(booking.id, "completed")}
                                                 >
                                                     Log Transaction
                                                 </button>
                                                 <button 
-                                                    className="bg-red-400 border border-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-600 mx-1 transition"
+                                                    disabled={saving}
+                                                    className="bg-[#502424]  text-white p-2 font-seri rounded-lg hover:bg-[#301414] mx-1 transition"
                                                     onClick={(e) => handleRemoveBooking(e, booking.id)}
                                                 >
                                                     Remove
@@ -263,7 +273,7 @@ const ManageBookings = ({onClose}) => {
                         </div>
                         <div className="flex justify-center items-center">
                             <button 
-                                className="bg-red-400 border border-red-600 text-white p-3 m-3 mb-6 max-w-xs font-semibold w-full hover:bg-red-600 transition rounded-lg"
+                                className="bg-[#502424] text-white p-3 m-3 mb-6 max-w-xs font-serif w-full hover:bg-[#301414] transition rounded-lg"
                                 onClick={onClose}
                             >
                                 Close

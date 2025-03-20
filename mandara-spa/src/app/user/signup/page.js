@@ -6,6 +6,7 @@ import firebase_app from "@/firebase/config";
 import { useRouter } from "next/navigation";
 import ErrorMessage from "@/components/error";
 import Image from "next/image";
+import SuccessMessage from "@/components/success";
 
 function SignUpUser() {
     const db = getFirestore(firebase_app)
@@ -13,9 +14,10 @@ function SignUpUser() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [number, setNumber] = useState ('')
-    const [showVerify, setShowVerify] = useState(false)
     const [showError, setShowError] = useState(false)
-    const [error, setError] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [successMsg, setSuccessMsg] = useState('');
     const router = useRouter();
 
     const handleForm = async (event) => {
@@ -28,7 +30,36 @@ function SignUpUser() {
         const { res, err } = await SignUp(email, password);
 
         if (err) {
-            return setError(err)
+            let message = "Signup Failed. Please check your credentials.";
+
+            if (err.code === "auth/invalid-email") {
+            message = "Invalid email format. Please check your input.";
+            } else if (err.code === "auth/user-not-found") {
+            message = "No account found with this email. Please sign up first.";
+            } else if (err.code === "auth/wrong-password") {
+            message = "Incorrect password. Try again.";
+            } else if (err.code === "auth/email-already-in-use") {
+            message = "This email is already in use. Try signing in instead.";
+            } else if (err.code === "auth/weak-password") {
+            message = "Your password is too weak. Use at least 6 characters.";
+            } else if (err.code === "auth/too-many-requests") {
+            message = "Too many failed login attempts. Try again later.";
+            } else if (err.code === "auth/network-request-failed") {
+            message = "Network error. Check your internet connection.";
+            } else if (err.code === "auth/user-disabled") {
+            message = "This account has been disabled. Contact support.";
+            } else if (err.code === "auth/requires-recent-login") {
+            message = "Please log in again to perform this action.";
+            } else if (email === "") {
+            message = "Please enter your email address.";
+            } else if (password === "") {
+            message = "Please enter your password.";
+            }
+
+            setErrorMsg(message);
+            console.log("message", message);
+            setShowError(true);
+            return;
         }
         
         try {
@@ -41,21 +72,16 @@ function SignUpUser() {
     
             console.log(res)
 
-            setShowVerify(true)
-
-            setTimeout(() => {
-                setShowVerify(false);
-            }, 3000);
-            
-            router.push("/user/home");
-
+            setSuccessMsg('Almost there! Please check your email for a verification link.')
+            setShowSuccess(true)
         } catch (dbError) {
-            setError(dbError.message);
+            setErrorMsg("Database error.")
         }
     }
     return (
     <section className="relative flex flex-wrap lg:h-screen lg:items-center">
         {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
+        {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
             
         <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
             <img
@@ -88,6 +114,7 @@ function SignUpUser() {
                         <label htmlFor="name" className="sr-only">Full Name</label>
                         <div className="relative">
                             <input
+                                required
                                 id="name"
                                 name="name"
                                 type="text"
@@ -108,6 +135,7 @@ function SignUpUser() {
                         <label htmlFor="number" className="sr-only">Mobile Number</label>
                         <div className="relative">
                             <input
+                                required
                                 id="number"
                                 name="number"
                                 type="tel"
@@ -129,6 +157,7 @@ function SignUpUser() {
 
                         <div className="relative">
                         <input
+                            required
                             id="email"
                             name="email"
                             type="email"
@@ -161,6 +190,7 @@ function SignUpUser() {
 
                         <div className="relative">
                         <input
+                            required
                             id="password"
                             name="password"
                             type="password"
@@ -210,38 +240,3 @@ function SignUpUser() {
 }
 
 export default SignUpUser;
-
-{/* <div className="flex flex-col h-screen w-screen justify-center items-center">
-        <div className="flex flex-col items-center justify-center rounded-3xl p-5 bg-yellow-100">
-            <h1 className="text-xl font-bold">Sign Up</h1>
-            <form className="form my-3 flex-col flex" onSubmit={handleForm}>
-                <label htmlFor="name">
-                    <p>Full Name</p>
-                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setName(e.target.value)} required type="text" name="name" id="name"/>
-                </label>
-                <label htmlFor="email">
-                    <p>Email</p>
-                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email"/>
-                </label>
-                <label htmlFor="number">
-                    <p>Phone Number</p>
-                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setNumber(e.target.value)} required type="tel" name="number" id="number"/>
-                </label>
-                <label htmlFor="password">
-                    <p>Password</p>
-                    <input className="bg-white p-2 my-2 rounded-sm border-1" onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password"  />
-                </label>
-                <button className="m-1 hover:underline" type="submit">Sign Up</button>
-            </form>
-        </div>
-        {error && <p className="text-red-500">{error.message || error}</p>}
-        {showVerify && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                    <h2 className="text-2xl font-bold mb-4">Account created!</h2>
-                    <p>Check your email soon for a verification link.</p>
-                    <p>Signing you in for now.</p>
-                </div>
-            </div>
-        )}
-    </div> */}

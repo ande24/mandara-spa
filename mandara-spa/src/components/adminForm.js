@@ -12,7 +12,7 @@ const EditAdmins = ({ onClose }) => {
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [adminEmail, setAdminEmail] = useState("");
     const [adminPassword, setAdminPassword] = useState("");
-    const [message, setMessage] = useState("");
+    const [saving, setSaving] = useState(false);
 
     const [selectedAdmin, setSelectedAdmin] = useState(null);
     const [branchAdmins, setBranchAdmins] = useState([]);
@@ -64,7 +64,7 @@ const EditAdmins = ({ onClose }) => {
                 setBranchAdmins(adminDetails.filter(admin => admin !== null)); 
 
             } catch (error) {
-                console.error("Error fetching branch admins:", error);
+                alert("Error fetching branch admins:", error);
             };
         };
     
@@ -73,8 +73,10 @@ const EditAdmins = ({ onClose }) => {
 
     const handleAddAdmin = async (e) => {
         e.preventDefault();
+        setSaving(true)
         if (!selectedBranch) {
-            setMessage("Please select a branch.");
+            alert("Please select a branch.");
+            setSaving(false)
             return;
         }
 
@@ -82,7 +84,8 @@ const EditAdmins = ({ onClose }) => {
             const { res, err } = await signUp(adminEmail, adminPassword);
             
             if (err) {
-                return setMessage("Error adding admin: " + err.message)
+                setSaving(false)
+                return alert("Error adding admin: " + err.message)
             }
 
             await setDoc(doc(db, "users", res.user.uid), {
@@ -97,20 +100,24 @@ const EditAdmins = ({ onClose }) => {
                 branch_admins: arrayUnion(res.user.uid)
             });
 
-            setMessage("Branch admin added successfully!");
+            alert("Branch admin added successfully!");
             setAdminEmail("");
             setAdminPassword("");
             setSelectedBranch(null);
+            setSaving(false)
         } catch (error) {
-            setMessage("Error adding admin: " + error.message);
+            setSaving(false)
+            alert("Error adding admin: " + error.message);
         }
     };
 
     const handleRemoveAdmin = async () => {
         if (!selectedBranch || !selectedAdmin) {
-            setMessage("Please select a branch and an admin to remove.");
+            alert("Please select a branch and an admin to remove.");
             return;
         }
+
+        setSaving(true)
 
         const confirmDelete = window.confirm("Are you sure you want to remove this admin?");
         if (!confirmDelete) return;
@@ -132,34 +139,33 @@ const EditAdmins = ({ onClose }) => {
 
             console.log("role changed")
     
-            setMessage("Branch admin removed successfully!");
+            alert("Branch admin removed successfully!");
             
             setBranchAdmins(branchAdmins.filter(admin => admin !== selectedAdmin));
             setSelectedAdmin(null);
         } catch (error) {
-            setMessage("Error removing admin: " + error.message);
+            alert("Error removing admin: " + error.message);
         }
+        setSaving(false)
     };
     
     return (
         <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
-            <div className="fixed flex justify-center w-screen h-50 z-10 inset-0 top-0 bg-[#502424]">
-                <Image className="fixed top-[-60]" src={"/images/mandara_mtn.png"} width={400} height={400} alt={"The Mandara Spa Logo"} />
-            </div>
+           
+                <Image className="fixed top-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+          
 
-            <div className="fixed flex flex-col justify-center items-center bottom-25 bg-[#e0d8ad] w-full z-50 max-w-3xl p-6 rounded-lg shadow-lg">
+            <div className="fixed flex flex-col justify-center items-center bottom-35 bg-white w-full z-50 max-w-3xl p-6 rounded-lg shadow-lg">
                 <h2 className="text-2xl font-bold mb-4 text-black text-">Manage Branch Admins</h2>
-                
-                {message && <p className="text-center mb-3 text-green-600 font-medium">{message}</p>}
 
                 <div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="p-4 bg-[#e0d8ad] rounded-lg">
-                            <h3 className="text-lg font-semibold mb-3">Add Branch Admin</h3>
+                        <div className="p-4 bg-white rounded-lg">
+                            <h3 className="text-lg text-black font-semibold mb-3">Add Branch Admin</h3>
                             <form onSubmit={handleAddAdmin} className="flex flex-col space-y-3">
-                                <label className="text-sm font-medium text-gray-600">Select Branch:</label>
+                                <label className="text-sm  font-medium text-gray-600">Select Branch:</label>
                                 <select 
-                                    className="border p-2 rounded-lg bg-gray-200 focus:ring-2 focus:ring-red-400"
+                                    className="border  border-gray-300 p-2 rounded-lg bg-white focus:ring-2 focus:ring-red-400"
                                     value={selectedBranch ? selectedBranch.id : ""}
                                     onChange={(e) => {
                                         const branch = branches.find(b => b.id === e.target.value);
@@ -174,7 +180,7 @@ const EditAdmins = ({ onClose }) => {
 
                                 <label className="text-sm font-medium text-gray-600">Email:</label>
                                 <input 
-                                    className="border p-2 rounded-lg bg-gray-200 focus:ring-2 focus:ring-red-400" 
+                                    className="border p-2 border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-red-400" 
                                     type="email" 
                                     value={adminEmail} 
                                     onChange={(e) => setAdminEmail(e.target.value)} 
@@ -183,7 +189,7 @@ const EditAdmins = ({ onClose }) => {
 
                                 <label className="text-sm font-medium text-gray-600">Password:</label>
                                 <input 
-                                    className="border p-2 rounded-lg bg-gray-200 focus:ring-2 focus:ring-red-400" 
+                                    className="border p-2 rounded-lg border-gray-300 bg-white focus:ring-2 focus:ring-red-400" 
                                     type="password" 
                                     value={adminPassword} 
                                     onChange={(e) => setAdminPassword(e.target.value)} 
@@ -191,20 +197,21 @@ const EditAdmins = ({ onClose }) => {
                                 />
 
                                 <button 
+                                    disabled={saving}
                                     type="submit" 
-                                    className="w-full p-3 mandara-btn"
+                                    className={`bg-[#502424] hover:bg-[#301414] w-full text-white p-3 rounded-lg`}
                                 >
                                     Add Admin
                                 </button>
                             </form>
                         </div>
 
-                        <div className="p-4 bg-[#e0d8ad]  rounded-lg flex flex-col justify-between">
-                            <h3 className="text-lg font-semibold mb-3">Remove Branch Admin</h3>
+                        <div className="p-4 bg-white  rounded-lg flex flex-col justify-between">
+                            <h3 className="text-lg text-black font-semibold mb-3">Remove Branch Admin</h3>
                             <div className="flex flex-col">
                                 <label className="text-sm mb-3 font-medium text-gray-600">Select Branch:</label>
                                 <select 
-                                    className="border p-2 rounded-lg bg-gray-200 w-full focus:ring-2 focus:ring-red-400"
+                                    className="border p-2 border-gray-300 rounded-lg bg-whitew-full focus:ring-2 focus:ring-red-400"
                                     value={selectedBranch ? selectedBranch.id : ""}
                                     onChange={(e) => {
                                         const branch = branches.find(b => b.id === e.target.value);
@@ -221,7 +228,7 @@ const EditAdmins = ({ onClose }) => {
                             <div className="flex flex-col">
                                 <label className="text-sm mb-3 font-medium text-gray-600">Select Admin to Remove:</label>
                                 <select 
-                                    className="border p-2 rounded-lg bg-gray-200 w-full focus:ring-2 focus:ring-red-400"
+                                    className="border p-2 rounded-lg border-gray-300 bg-white w-full focus:ring-2 focus:ring-red-400"
                                     value={selectedAdmin || ""}
                                     onChange={(e) => setSelectedAdmin(e.target.value)}
                                 >
@@ -252,87 +259,6 @@ const EditAdmins = ({ onClose }) => {
             </div>
         </div>
     );
-
-    // return (
-    //     <div className="flex justify-center items-center ">
-    //         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-300 bg-opacity-50">
-    //             <div className="bg-white flex justify-around items-center shadow-lg rounded-lg">
-    //                 <div className="flex justify-around rounded-lg items-center px-10 py-5 h-auto w-auto bg-white ">
-    //                     <div className="p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg">
-    //                         <h2 className="text-xl font-bold mb-4">Add Branch Admin</h2>
-    //                         {message  && <p className="mb-2 text-green-500">{message}</p>}
-    //                         <form onSubmit={handleAddAdmin} className="flex flex-col space-y-3">
-    //                             <label>Select Branch:</label>
-    //                             <select 
-    //                                 className="border p-2 rounded"
-    //                                 value={selectedBranch ? selectedBranch.id : ""}
-    //                                 onChange={(e) => {
-    //                                     const branch = branches.find(b => b.id === e.target.value);
-    //                                     setSelectedBranch(branch);
-    //                                 }}
-    //                             >
-    //                                 <option value="">-- Choose Branch --</option>
-    //                                 {branches.map(branch => (
-    //                                     <option key={branch.id} value={branch.id}>{branch.name}</option>
-    //                                 ))}
-    //                             </select>
-
-    //                             <label>Email:</label>
-    //                             <input className="border p-2 rounded" type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
-
-    //                             <label>Password:</label>
-    //                             <input className="border p-2 rounded" type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} required />
-
-    //                             <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Branch Admin</button>
-    //                         </form>
-    //                     </div>
-    //                     <div className="flex flex-col p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg">
-    //                         <label>Select Admin to Remove:</label>
-    //                         <label>Select Branch:</label>
-    //                         <select 
-    //                             className="border p-2 rounded"
-    //                             value={selectedBranch ? selectedBranch.id : ""}
-    //                             onChange={(e) => {
-    //                                 const branch = branches.find(b => b.id === e.target.value);
-    //                                 setSelectedBranch(branch);
-    //                             }}
-    //                         >
-    //                             <option value="">-- Choose Branch --</option>
-    //                             {branches.map(branch => (
-    //                                 <option key={branch.id} value={branch.id}>{branch.name}</option>
-    //                             ))}
-    //                         </select>
-
-    //                         <label>Select Admin to Remove:</label>
-    //                         <select 
-    //                             className="border p-2 rounded"
-    //                             value={selectedAdmin || ""}
-    //                             onChange={(e) => setSelectedAdmin(e.target.value)}
-    //                         >
-    //                             <option value="">-- Choose Admin --</option>
-    //                             {branchAdmins.map(admin => (
-    //                                 <option key={admin.uid} value={admin.uid}>{admin.email}</option>
-    //                             ))}
-    //                         </select>
-
-    //                         <button 
-    //                             className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-    //                             onClick={handleRemoveAdmin}
-    //                         >
-    //                             Remove Branch Admin
-    //                         </button>
-    //                         <button 
-    //                             className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-    //                             onClick={() => {onClose()}}
-    //                         >
-    //                             Close
-    //                         </button>
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     </div>
-    // );
 };
 
 export default EditAdmins;

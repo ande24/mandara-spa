@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc, updateDoc, onSnapshot, query, getDocs } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
+import Image from "next/image";
 
 const ManageInv = ({onClose}) => {
     const auth = getAuth(firebase_app)
@@ -22,7 +23,6 @@ const ManageInv = ({onClose}) => {
     const [selectedItem, setSelectedItem] = useState(null);
 
     const [saving, setSaving] = useState(false);
-    const [message, setMessage] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -118,6 +118,7 @@ const ManageInv = ({onClose}) => {
       }, [selectedItem]);
 
     const handleAddItem = async (e) => {
+        setSaving(true)
         e.preventDefault();
 
         const branchRef = doc(db, "branches", userData.branch_id);
@@ -128,6 +129,7 @@ const ManageInv = ({onClose}) => {
 
             if (existingItem) {
                 alert("Item with the same name already exists")
+                setSaving(false)
                 return
             }
             
@@ -137,15 +139,17 @@ const ManageInv = ({onClose}) => {
                 item_quantity: formData.quantity
             });
 
-            setMessage("Item added successfully!");
             setFormData({
                 name: "",
                 price: "",
                 quantity: ""
             });
+
+            alert("Item added successfully!");
         } catch (error) {
-            setMessage("Error adding item: " + error.message);
+            alert("Error adding item: " + error.message);
         }
+        setSaving(false)
     };
 
     const handleRemoveItem = async (e, itemId) => {
@@ -153,6 +157,7 @@ const ManageInv = ({onClose}) => {
 
         const confirmDelete = window.confirm("Are you sure you want to remove this item?");
         if (!confirmDelete) return;
+        setSaving(true)
 
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
@@ -162,10 +167,11 @@ const ManageInv = ({onClose}) => {
 
             setItems((prevItems) => prevItems.filter(item => item.id !== itemId));
 
-            setMessage("Item removed successfully!");
+            alert("Item removed successfully!");
         } catch (error) {
-            setMessage("Error adding item: " + error.message);
+            alert("Error adding item: " + error.message);
         }
+        setSaving(false)
     };
 
     const handleEditItem = async (e) => {
@@ -203,6 +209,7 @@ const ManageInv = ({onClose}) => {
             alert("Failed to update item.");
             setSaving(false);
         }
+        setSaving(false)
     };
 
     const handleItemChange = async (e) => {
@@ -228,8 +235,10 @@ const ManageInv = ({onClose}) => {
 
     return (
         <div className="flex justify-center items-center ">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div className="bg-gray-800 p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+
+            <Image className="fixed top-30 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} /> 
+            <div className="fixed top-20 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
                     <h2 className="text-2xl font-bold text-gray-800 mb-3 text-center">Manage Items</h2>
 
                     <div className="flex flex-col md:flex-row justify-between gap-6">
@@ -290,16 +299,16 @@ const ManageInv = ({onClose}) => {
 
                                 <div className="flex justify-between space-x-4">
                                     <button 
+                                        disabled={saving}
                                         type="submit" 
-                                        className="w-full p-3 rounded-lg text-white font-semibold transition bg-green-400 border border-green-600 hover:bg-green-600"
+                                        className="w-full p-3 rounded-lg text-white font-serif transition bg-[#502424] hover:bg-[#301414]"
                                     >
                                         Add Item
                                     </button>
                                     <button 
                                         onClick={handleEditItem} 
                                         disabled={saving} 
-                                        className={`w-full p-3 rounded-lg text-white font-semibold transition ${
-                                            saving ? "bg-gray-400 cursor-not-allowed" : "bg-orange-300 border border-orange-500 hover:bg-orange-500"
+                                        className={`w-full p-3 rounded-lg text-white font-serif transition bg-[#502424] hover:bg-[#301414]"
                                         }`}
                                     >
                                         Edit Item
@@ -308,7 +317,7 @@ const ManageInv = ({onClose}) => {
 
                                 <button 
                                     onClick={() => onClose()} 
-                                    className="w-full p-3 rounded-lg text-white font-semibold bg-red-400 border border-red-600 hover:bg-red-600"
+                                    className="w-full p-3 rounded-lg  text-white font-serif bg-[#502424] hover:bg-[#301414]"
                                 >
                                     Close
                                 </button>
@@ -328,7 +337,8 @@ const ManageInv = ({onClose}) => {
                                                     <p>₱{item.price} / unit</p>
                                                 </div>
                                                 <button 
-                                                    className=" text-white p-2 rounded-lg font font-semibold bg-red-400 border border-red-600 hover:bg-red-600"
+                                                    disabled={saving}
+                                                    className=" text-white p-2 rounded-lg font font-serif bg-[#502424] hover:bg-[#301414]"
                                                     onClick={(e) => handleRemoveItem(e, item.id)}
                                                 >
                                                     Remove
@@ -343,76 +353,6 @@ const ManageInv = ({onClose}) => {
                         </div>
                     </div>
                 </div>
-
-
-
-                {/* <div className="bg-white flex justify-center items-center shadow-lg rounded-lg">
-                    <div className="flex flex-col justify-center rounded-lg items-center px-10 py-5 bg-white w-125">
-                        <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg h-25">
-                            <h2 className="text-xl font-bold mb-4">Choose Item</h2>
-                            <form className="flex flex-col space-y-3 w-100">
-                                <select className="border p-2 rounded mb-3" name="name" onChange={handleItemChange} value={formData.name || ""}>
-                                    <option value="">Select an Item</option>
-                                    {items.map(item => (
-                                    <option key={item.id} value={item.id}>
-                                        {item.name}
-                                    </option>
-                                    ))}
-                                </select>
-                            </form>
-                        </div>
-                        <div className="flex flex-col justify-center items-center mb-5 w-100">
-                            <form onSubmit={handleAddItem} className="flex flex-col space-y-3 w-100">
-                                <label>Item Name:</label>
-                                <input name="name" className="border p-2 rounded" type="text" value={formData.name} onChange={handleChange}  required/>
-
-                                <label>Price (₱):</label>
-                                <input name="price" className="border p-2 rounded" type="number" min="1" value={formData.price} onChange={handleChange}  required/>
-
-                                <label>Quantity:</label>
-                                <input name="quantity" className="border p-2 rounded" type="number" value={formData.quantity} onChange={handleChange} required/>
-
-                                <div className="flex justify-around items-center my-4">
-                                    <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-40">Add Item</button>
-                                    <button onClick={handleEditItem} disabled={saving} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-40">Edit Item</button>
-                                </div>
-                                <div className="flex justify-center items-center my-4">
-                                    <button onClick={() => {onClose()}} className="bg-red-500 text-white p-2 rounded hover:bg-blue-red w-40">Close</button>
-                                </div>
-                            </form>
-                        </div>
-                        
-                    </div>
-
-                    
-
-                    <div className="flex flex-col justify-baseline items-center my-6 p-4 bg-white rounded-lg m-2 mr-7 max-w-150 max-h-180">
-                        <h3 className="text-lg font-bold">Item List</h3>
-                        {items.length > 0 ? (
-                            <ul className="flex flex-col space-y-2 max-h-160 overflow-y-auto m-2 rounded p-2 max-w-150">
-                                {items.map(item => (
-                                    <li key={item.id} className={"flex justify-between items-center border-b p-2 rounded min-w-125"}>
-                                        <div className="flex flex-col">
-                                            <p>{item.name}</p>
-                                            <p>{item.quantity} units</p>
-                                            <p>₱{item.price} / unit</p>
-                                        </div>
-                                        <div className="flex">
-                                            <button 
-                                                className="bg-red-500 mx-2 text-white p-1 rounded hover:bg-red-600"
-                                                onClick={(e) => handleRemoveItem(e, item.id)}
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="text-gray-500">No items available.</p>
-                        )}
-                    </div>
-                </div> */}
             </div>
         </div>
     );

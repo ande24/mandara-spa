@@ -1,18 +1,17 @@
 "use client"
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const ErrorMessage = ({ onClose, message }) => {
-
     useEffect(() => {
         setTimeout(() => {
             onClose();
-        }, 2000);
-    }, [onClose])
+        }, 5000);
+    })
     
 
     return (
-        <div role="alert" className="absolute top-4 left-4 rounded-sm border-s-4 border-red-500 bg-red-50 p-4">
+        <div role="alert" className={`z-100 absolute top-4 left-4 rounded-sm border-s-4 border-red-500 bg-red-50 p-4 -scale-z-100 }`}>
             <strong className="block font-medium text-red-800"> Something went wrong </strong>
 
             <p className="mt-2 text-sm text-red-700">
