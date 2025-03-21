@@ -325,7 +325,7 @@ const ManageInv = ({onClose}) => {
                         </div>
 
                         <div className="w-full md:w-1/2 bg-white p-6 rounded-lg">
-                            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Item List</h3>
+                            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Current Inventory</h3>
                             <div className="max-h-[70vh] overflow-y-auto border border-gray-300 rounded-lg p-4">
                                 {items.length > 0 ? (
                                     <ul className="space-y-2">

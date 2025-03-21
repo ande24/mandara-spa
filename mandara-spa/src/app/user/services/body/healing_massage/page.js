@@ -34,17 +34,17 @@ export default function Page() {
   const services = [
     {
       title: "Authentic Hilot",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/healing_massage/hilot.jpg",
       desc: "A traditional Filipino massage designed to heal and relieve tired, tense muscles. This therapy is ideal for those suffering from back pain, spasms, frozen shoulders, misaligned or compressed bones, fatigue, restlessness, or simply seeking a deeper level of relaxation and wellness."
     },
     {
       title: "Pre/Post Natal Massage",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/healing_massage/natal.jpg",
       desc: "Relieve discomfort, reduce stress, improve sleep, and alleviate various discomforts associated with pregnancy. (Physician approval required prior to booking an appointment)."
     },
     {
       title: "Ventosa Cupping With Hilot",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/healing_massage/cupping.jpg",
       desc: "A traditional Chinese massage that alleviates tissue congestion and muscle spasms, commonly known to many Filipinos as 'lamig.' This therapy uses cups placed on various pressure points on the back to promote relief and relaxation."
     }    
   ];
@@ -107,7 +107,7 @@ export default function Page() {
                   <a onClick={handleBooking} className="block hover:scale-100 scale-95 p-3 rounded-xl hover:shadow-lg shadow-gray-300 transition-all mt-3 mb-15">
                     <img
                       alt=""
-                      src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                      src={service.img}
                       className="h-80 w-150 object-cover rounded-lg"
                     />
 

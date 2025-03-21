@@ -34,32 +34,32 @@ export default function Page() {
   const services = [
     {
       title: "Diamond Peel with Machine",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/face/facial.jpg",
       desc: "Reveal a fresh, new layer of skin instantly with this microdermabrasion treatment. Achieve brighter skin, reduced pimple marks, tighter pores, and rosier cheeks."
     },
     {
       title: "Non-Abrasive Diamond Peel",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/face/facial2.jpg",
       desc: "Increase your outer peace with this multi-faceted approach to treating skin breakouts. This facial treatment helps clear your skin without harsh effects. With a special focus on exfoliation and redness reduction, it improves your skin’s appearance while correcting and preventing future blemishes."
     },
     {
       title: "Collagen Gold Mask",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/face/gold.jpg",
       desc: "Get plumper, firmer skin with a collagen and gold-infused mask. This treatment deeply moisturizes and rehydrates your skin, leaving it naturally radiant and youthful."
     },
     {
       title: "Non-Surgical Face Lift",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/face/lift.jpg",
       desc: "Look youthful and beautiful with this premier anti-aging facial treatment, designed to target wrinkles, fine lines, sagging cheeks and eyebrows, dull skin, and more. This world-renowned technology offers the safest anti-aging treatment, guaranteeing an instant glow and a wow-factor after each session. Results are cumulative."
     },
     {
       title: "Ageloc Galvanic Facial Spa",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/face/facial3.jpg",
       desc: "Tighten and lift your facial skin and muscles for a youthful, refreshed look with this safe, non-surgical facelift. This treatment also leaves your skin baby-soft."
     },
     {
       title: "Radiance Facial Spa Package",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/face/facial4.jpg",
       desc: "The complete facial spa package for a fresh and radiant look. This treatment includes cleansing, facial scrubbing, non-abrasive peeling to remove dull skin, a 24K gold collagen facial mask to deeply hydrate and infuse collagen for a youthful glow, and a relaxing facial massage."
     }          
   ];
@@ -123,7 +123,7 @@ export default function Page() {
                   <a onClick={handleBooking} className="block hover:scale-100 scale-95 p-3 rounded-xl hover:shadow-lg shadow-gray-300 transition-all mt-3 mb-15">
                     <img
                       alt=""
-                      src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                      src={service.img}
                       className="h-80 w-full object-cover rounded-lg"
                     />
 

@@ -198,21 +198,16 @@ const ManageInv = ({onClose, bookingData}) => {
             const serviceSnap = await getDoc(doc(branchRef, "services", bookingData.service_id))
 
             const income = Number(bookingData.no_of_customers) * Number(serviceSnap.data().service_price)
-            const cost = usedItems 
             ? usedItems.reduce((total, item) => total + (Number(item.price) * Number(item.quantity)), 0) 
             : 0;
-            const rev = income - cost
 
             const transactionsRef = collection(branchRef, "transactions");
 
             await addDoc(transactionsRef, {
                 bookingId: bookingData.id,
                 customerId: bookingData.customer_id,
-                customerName: userSnap.data()?.user_name,
                 items_used: usedItems,
-                net_revenue: rev,
                 service_income: income,
-                service_cost: cost,
                 no_of_customers: bookingData.no_of_customers,
             });
 

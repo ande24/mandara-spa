@@ -34,22 +34,22 @@ export default function Page() {
   const services = [
     {
       title: "Organic Honey Wax Services",
-      img: "https://images.unsplash.com/photo-1612336296448-4f1e4a63b3cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-      desc: "Remove unwanted hair quickly and cleanly with organic honey hair removal wax, followed by a nourishing cream to re-moisturize your skin. Services include:\n Upper Lip\n Underarms\n Half-leg\n Full Leg\n Bikini\n Brazilian"
+      img: "/images/services/other/honey.jpg",
+      desc: "Remove unwanted hair quickly and cleanly with organic honey hair removal wax, followed by a nourishing cream to re-moisturize your skin. Services include:\nUpper Lip\nUnderarms\nHalf-leg\nFull Leg\nBikini\nBrazilian."
     },
     {
       title: "Semi-Permanent Eyelash Extension",
-      img: "https://images.unsplash.com/photo-1590523270041-e150ba3f6d56?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/other/eyelash.jpg",
       desc: "Enhance your lashes with natural-looking, semi-permanent eyelash extensions. Services include:\nNatural\nMascara"
     },
     {
       title: "Ear Candling",
-      img: "https://images.unsplash.com/photo-1582132745930-1f1262202f7a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/other/ear.jpg",
       desc: "Immerse yourself in deep relaxation as ear candles safely remove excess wax and debris, leaving you feeling clear-headed and balanced."
     },
     {
       title: "Threading Services",
-      img: "https://images.unsplash.com/photo-1597318187595-6a2f58e96460?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/other/threading.jpg",
       desc: "Eliminate unwanted hair for a neat and polished look with our professional threading services. Services include:\n Eyebrow\n Upper Lip\n Forehead\n Cheeks\n Underarms"
     }
         
@@ -113,7 +113,7 @@ export default function Page() {
                   <a onClick={handleBooking} className="block hover:scale-100 scale-95 p-3 rounded-xl hover:shadow-lg shadow-gray-300 transition-all mt-3 mb-15">
                     <img
                       alt=""
-                      src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                      src={service.img}
                       className="h-80 w-150 object-cover rounded-lg"
                     />
 

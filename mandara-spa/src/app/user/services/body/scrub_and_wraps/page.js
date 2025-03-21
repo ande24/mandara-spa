@@ -34,22 +34,22 @@ export default function Page() {
   const services = [
       {
         title: "The Scrub Ritual",
-        img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+        img: "/images/services/body/scrub_and_wraps/scrub.jpg",
         desc: "This all-over body polish is sure to be invigorating. First, your skin is lightly brushed and stimulated by our body brush, helping to eliminate dead skin on the surface and promote lymph flow. Then, an aromatic body scrub is applied to exfoliate and soften the skin while relaxing your mind and body. Finally, a soothing butter is applied to hydrate your skin, leaving it soft, smooth, and rejuvenated."
       },
       {
         title: "Body Scrub and Massage",
-        img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8MHx8&auto=format&fit=crop&w=870&q=80",
+        img: "/images/services/body/scrub_and_wraps/scrub2.jpg",
         desc: "Feel pampered and rejuvenated with a body scrub, followed by a 60-minute massage of your choice."
       },
       {
         title: "Body Scrub, Wrap, and Massage",
-        img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8MHx8&auto=format&fit=crop&w=870&q=80",
+        img: "/images/services/body/scrub_and_wraps/scrub3.jpg",
         desc: "Transcend to a world of beauty and relaxation with a body scrub and wrap, followed by a 60-minute massage of your choice."
       },
       {
         title: "Selection of Premium Scrubs and Wraps",
-        img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8MHx8&auto=format&fit=crop&w=870&q=80",
+        img: "/images/services/body/scrub_and_wraps/combo.jpg",
         desc: "Choose from our premium scrubs and wraps for a customized rejuvenating experience:\nLavender Glow (Whitening + Relaxing)\nCoffee (Anti-oxidant + Enlivening)\nGreen Tea (Hydrating + Detoxifying)\nLemon Grass FOR HIM (Soothing + Energizing)\nMandara Signature (Healing + Nourishing + All Organic)"
       }
     ];
@@ -112,7 +112,7 @@ export default function Page() {
                   <a onClick={handleBooking} className="block hover:scale-100 rounded-xl scale-95 p-3 hover:shadow-lg shadow-gray-300 transition-all mt-3 mb-15">
                     <img
                       alt=""
-                      src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                      src={service.img}
                       className="h-80 w-150 object-cover rounded-lg"
                     />
 

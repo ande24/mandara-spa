@@ -34,32 +34,32 @@ export default function Page() {
   const services = [
     {
       title: "Hand Spa",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/hand_and_foot/hand.jpg",
       desc: "Reveal softer, younger-looking hands with this special hand spa. Our premium scrub will remove dead skin from your hands before they are wrapped in a nourishing masque. Feel your stress melt away as the warmth of a hot towel wrap penetrates your arms, followed by an enriching hand massage with oils and butter."
     },
     {
       title: "Foot Spa",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/hand_and_foot/foot.jpg",
       desc: "Pamper your feet with this well-deserved special foot spa, designed to refresh and rejuvenate tired feet. Relax as we immerse your feet in a warm, aromatic foot soak before softening the skin with herbal exfoliation. Feel the invigorating effect of a peppermint-infused foot masque as it revitalizes your feet."
     },
     {
       title: "Selection of Hand and Foot Spa",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/hand_and_foot/hand_foot.jpg",
       desc: "Choose from our premium hand and foot spa treatments for a customized relaxing experience:\nLavender Aromatherapy (Whitening + Relaxing)\nPeppermint Break (Ultra Refreshing + Enlivening)\nGreen Tea (Callous Softening + Invigorating)\nMandara Signature (Healing + Nourishing + All Organic)"
     },
     {
       title: "Xiamen Foot Massage",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/hand_and_foot/xiamen.jpg",
       desc: "Take away the stress from your feet with a relaxing, tension-relieving foot massage that targets all key pressure points."
     },
     {
       title: "Chair Massage",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/hand_and_foot/chair.jpg",
       desc: "Sit back and relax in our massage chair as we effectively relieve your stress and ease back and shoulder tension."
     },
     {
       title: "Nail Care",
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/hand_and_foot/nail.jpg",
       desc: "Our nail care services offer the perfect pampering for your hands and feet:\nGreen Tea Manicure\nGreen Tea Pedicure\nHand Paraffin\nGel Manicure (Lasts up to 4 Weeks)\nGel Pedicure (Lasts up to 4 Weeks)\nFoot Paraffin"
     }      
   ];
@@ -122,7 +122,7 @@ export default function Page() {
                   <a onClick={handleBooking} className="block hover:scale-100 scale-95 rounded-xl p-3 hover:shadow-lg shadow-gray-300 transition-all mt-3 mb-15">
                     <img
                       alt=""
-                      src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+                      src={service.img}
                       className="h-80 w-150 object-cover rounded-lg"
                     />
 

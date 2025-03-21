@@ -33,35 +33,35 @@ export default function Page() {
   const [redirect, setRedirect] = useState(false)
   const services = [
     { title: "Swedish Aromatherapy", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/aroma.jpg",
       desc: "Feel your stresses go away as your therapist use relaxing patterns to manipulate your soft tissues, increase circulation and metabolism, and release tension."
     },
     { title: "Shiatsu Dry Massage", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/shiatsu.jpg",
       desc: "Based on the principles of oriental medicine, your therapist uses palms, fingers and thumbs to gently balance and restore your Chi. Dry massage (no oil)."
     },
     { title: "Combination Aromatherapy", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/aroma2.jpg",
       desc: "Relive your body from stress and aches with this combination of body reflexology techniques, including stretching. Feel lighter, invigorated and ready for the next days."
     },
     { title: "The Mandara Signature Massage", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/massage.jpg",
       desc: "Our relaxing and healing strokes with heat pad therapy, combined with our signature blend of healing olive and all-organic aromatic oils will take you into a trance. This massage will loosen tight muscles, leave you feeling recuperated, reconnected mind, body and soul."
     },
     { title: "Hot Stone Massage", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/stone.jpg",
       desc: "The healing power of nature’s harvested stones and combined therapeutic techniques warm you and bring you to a more tranquil state."
     },
     { title: "Four Hands Therapy", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/four.jpg",
       desc: "A truly inspiring and unforgettable spa experience, the medium pressure of Mandara’s Four Hands Therapy incorporates the exacting skills of two therapists working together in rhythmic tandem."
     },
     { title: "Ventosa Cupping with Hilot", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/cupping.jpg",
       desc: "A traditional form of massage that removes tissue congestion and muscles spasm also known to more Pinoys as lamig with the use of cups placed on various pressure points on the back."
     },
     { title: "Ventosa Cupping with Signature Massage", 
-      img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+      img: "/images/services/body/massage_therapy/cupping2.jpg",
       desc: "The ultimate healing massage therapy combo to rid-off muscle spasm or “lamig” as known to Filipinos, followed by a deeply relaxing Signature Massage. Feel your temsed muscles and stress melt away as your therapist slowly apply heat pads and perform Mandara’s carefully curated signature massage techniques while using organic olive massage and essential oils."
     },
   ];

@@ -134,7 +134,7 @@ const ManageTransactions = ({onClose}) => {
                             pax: data.no_of_customers,
                             serviceName: serviceName,
                             servicePrice: servicePrice,
-                            revenue: data.net_revenue,
+                            sales: data.service_income,
                             items: data.items_used
                                 ? data.items_used.map(item => ({
                                     id: item.id,
@@ -196,7 +196,7 @@ const ManageTransactions = ({onClose}) => {
                                                 {transaction.items.map((item) => (
                                                     <p key={item.id}>- {item.name} (₱{item.price}) x {item.quantity}</p>
                                                 ))}
-                                                <p>{transaction.servicePrice ?`= ₱${transaction.revenue} Net Revenue` : "" }</p>
+                                                <p>{transaction.servicePrice ?`= ₱${transaction.revenue} Total Sales` : "" }</p>
                                                 <p className="text-sm text-gray-600">{transaction.date} | {transaction.time}</p>
                                             </div>
                                             <div className="flex items-center">
