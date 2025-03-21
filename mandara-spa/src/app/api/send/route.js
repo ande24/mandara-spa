@@ -4,19 +4,19 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req, res) {
     const requestBody = await req.text();
-    const { date, time, pax, location, service, name, id } = JSON.parse(requestBody);
+    const { date, time, pax, location, service, name, id, mobile, landline } = JSON.parse(requestBody);
   try {
     const { data, error } = await resend.emails.send({
       from: 'The Mandara Spa <themandaraspa@resend.dev>',
       to: ['andeellenes@gmail.com'],
-      subject: 'The Mandara Spa Booking Confirmation',
+      subject: 'The Mandara Spa Booking Request Confirmation',
       html: `
             <!DOCTYPE html>
             <html lang="en">
             <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Booking Confirmation</title>
+            <title>Booking Request Confirmation</title>
             <style>
                 body {
                 font-family: Arial, sans-serif;
@@ -69,14 +69,15 @@ export async function POST(req, res) {
             <div class="email-container">
                 <h1>Booking Confirmation</h1>
                 <div class="email-content">
-                <p>Dear ${name},</p>
-                <p>We are happy to confirm your reservation for <strong>${pax}</strong> with the following details:</p>
+                <p>Dear ${name ? name : "customer"},</p>
+                <p>We have received your booking request for <strong>${pax}</strong> with the following details:</p>
                 <p><strong>Booking ID:</strong> ${id}</p>
                 <p><strong>Date:</strong> ${date}</p>
                 <p><strong>Time:</strong> ${time}</p>
                 <p><strong>Location:</strong> ${location}</p>
                 <p><strong>Service:</strong> ${service}</p>
-                <p>If you have any questions or clarifications, feel free to contact us at <strong>8869 9910</strong> or <strong>+63 915 844 3003</strong>.</p>
+                <p>In the event of scheduling conflicts, we will reach out to discuss alternative arrangements.<p>
+                <p>For cancellations and other concerns, feel free to contact us at <strong>${landline ? landline : "8869 9910"}</strong> or <strong>${mobile ? mobile : "+63 915 844 3003"}</strong>.</p>
                 <p>See you there!</p>
                 </div>
                 <div class="email-footer">

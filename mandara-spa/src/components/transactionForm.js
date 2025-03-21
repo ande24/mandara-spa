@@ -179,6 +179,16 @@ const ManageInv = ({onClose, bookingData}) => {
 
                 if (itemSnap.exists()) {
                     const currentQuantity = itemSnap.data().item_quantity;
+                    console.log(itemSnap.data())
+                    if (currentQuantity === 0 ) {
+                        alert(`Item \"${itemSnap.data().item_name}\" is already out of stock.`)
+                        setSaving(false)
+                        return
+                    } else if (currentQuantity < usedItem.quantity) {
+                        alert(`Item \"${itemSnap.data().item_name}\" has insufficient stock.`)
+                        setSaving(false)
+                        return
+                    }
                     const newQuantity = Math.max(0, currentQuantity - usedItem.quantity);
 
                     await updateDoc(itemRef, {
@@ -197,9 +207,7 @@ const ManageInv = ({onClose, bookingData}) => {
             const userSnap = await getDoc(doc(db, "users", bookingData.customer_id))
             const serviceSnap = await getDoc(doc(branchRef, "services", bookingData.service_id))
 
-            const income = Number(bookingData.no_of_customers) * Number(serviceSnap.data().service_price)
-            ? usedItems.reduce((total, item) => total + (Number(item.price) * Number(item.quantity)), 0) 
-            : 0;
+            const income = Number(bookingData.no_of_customers) * Number(serviceSnap.data().service_price);
 
             const transactionsRef = collection(branchRef, "transactions");
 

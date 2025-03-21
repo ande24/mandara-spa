@@ -11,6 +11,8 @@ import { FaMapMarkerAlt, FaClock, FaPhone } from "react-icons/fa";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
 import Footer from "@/components/footer";
+import SuccessMessage from "@/components/success";
+import ErrorMessage from "@/components/error";
 
 export default function Page() {
     const db = getFirestore(firebase_app);
@@ -22,6 +24,11 @@ export default function Page() {
     const [email, setEmail] = useState("");
     const [number, setNumber] = useState("");
     const [message, setMessage] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [showError, setShowError] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     useEffect (() => {
       if (redirect) router.push("/user/login");
@@ -29,6 +36,7 @@ export default function Page() {
 
     const handleForm = async (e) => {
       e.preventDefault();
+      setSaving(true)
       console.log(name, email, number, message);
 
       try {
@@ -39,15 +47,19 @@ export default function Page() {
           message: message
         });
 
-        console.log("message success");
+        setSuccessMsg("Message sent successfully!")
+        setShowSuccess(true)
 
         setName("");
         setEmail("");
         setMessage("");
         setNumber("");
       } catch (error) {
+        setErrorMsg(error.message)
+        setShowError(true)
         console.log(error)
       }
+      setSaving(false)
     }
 
     const handleBooking = () => {
@@ -62,6 +74,8 @@ export default function Page() {
   return (
     <div className="relative flex flex-col justify-center items-center h-max w-full bg-white">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
+      {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
+      {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
 
       <div className="flex justify-center items-center w-full h-24 z-50 bg-[#502424]">
         <NavBar1 currPage={"contact"} />
@@ -174,6 +188,7 @@ export default function Page() {
                     name="name"
                     type="text"
                     required
+                    value={name ? name : ""}
                     className="w-full bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                     placeholder="Enter full name"
                     onChange={(e) => setName(e.target.value)}
@@ -191,6 +206,7 @@ export default function Page() {
                           id="email"
                           name="email"
                           type="email"
+                          value={email ? email : ""}
                           className="w-full font-serif bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                           placeholder="Enter email"
                           onChange={(e) => setEmail(e.target.value)}
@@ -223,6 +239,7 @@ export default function Page() {
                                   type="tel"
                                   className="w-full bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                                   placeholder="Enter mobile number"
+                                  value={number ? number : ""}
                                   onChange={(e) => setNumber(e.target.value)}
                                   required
                                   />
@@ -239,6 +256,7 @@ export default function Page() {
                           id="message"
                           name="message"
                           type="text"
+                          value={message ? message : ""}
                           className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 h-50 pe-12 text-sm shadow-xs"
                           placeholder="Leave us a message"
                           onChange={(e) => setMessage(e.target.value)}
@@ -248,6 +266,7 @@ export default function Page() {
 
                   <div className="flex items-center justify-between w-full hover:scale-105 transition-all">
                           <button
+                          disabled={saving}
                           type="submit"
                           className="font-serif rounded-lg bg-[#e0d8ad] w-1/2 px-5 mx-auto py-3 text-sm font-medium text-black"
                           >

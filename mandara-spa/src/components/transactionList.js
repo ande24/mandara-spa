@@ -125,6 +125,7 @@ const ManageTransactions = ({onClose}) => {
                         }
 
                         console.log("Booking: ", bookingData)
+                        console.log("transaction: ", data)
 
                         return {
                             id: docu.id,
@@ -193,10 +194,12 @@ const ManageTransactions = ({onClose}) => {
                                             <div className="flex flex-col">
                                                 <p className="font-semibold">Booking {transaction.booking}</p>
                                                 <p>{transaction.serviceName} {transaction.servicePrice ? `(₱${transaction.servicePrice}) x ${transaction.pax}` : ""}</p>
+                                                <p>{transaction.servicePrice ?`= ₱${transaction.sales} Total Sales` : "" }</p>
+
+                                                <p>Items used:</p>
                                                 {transaction.items.map((item) => (
-                                                    <p key={item.id}>- {item.name} (₱{item.price}) x {item.quantity}</p>
+                                                    <p key={item.id}>{item.name} (₱{item.price}) x {item.quantity}</p>
                                                 ))}
-                                                <p>{transaction.servicePrice ?`= ₱${transaction.revenue} Total Sales` : "" }</p>
                                                 <p className="text-sm text-gray-600">{transaction.date} | {transaction.time}</p>
                                             </div>
                                             <div className="flex items-center">

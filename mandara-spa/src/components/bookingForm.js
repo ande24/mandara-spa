@@ -196,6 +196,8 @@ const BookingForm = ({ onClose }) => {
             const branchSnap = await getDoc(branchRef);
 
             const newData = {
+                mobile: branchSnap.data().branch_mobile || "",
+                landline: branchSnap.data().branch_landline || "",
                 date: formData.date,
                 time: formData.time,
                 pax: formData.pax,
@@ -213,7 +215,7 @@ const BookingForm = ({ onClose }) => {
                 body: JSON.stringify(newData),
               });
             
-            setSuccessMsg("We sent you a booking confirmation email.")
+            setSuccessMsg("We sent you a booking request confirmation email.")
             setShowSuccess(true);
             
             

@@ -143,20 +143,20 @@ export default function Page() {
         <div className="h-full md:w-3/7 lg:w-2/7 transition-all">
 
           <div className="flex flex-col text-[#e0d8ad] p-13 pt-8 justify-center items-center bg-[#301414]">
-            <div className="flex flex-col justify-center items-center z-10">
+            <div className="flex flex-col justify-center items-center">
               <h3 className=" mb-3 font-semibold text-2xl ">MANA + DARA</h3>
               <p className="indent-8 text-sm mb-3 text-justify ">Derived from the words mana (mind) and dara (single line), Mandara refers to a sacred mountain in Hindu mythology. This mountain, unlike fragmented rock formations, is a single, unified structure. It played a significant role as the churning rod used by the gods to stir the ocean of milk.</p> 
               <p className="indent-8 text-sm mb-3 text-justify ">The Mandara Relaxation Spa Co. introduced the Boutique Spa concept to the Philippines, offering customized, high-end treatments from head to toe at competitive prices. As a leader in the mid-priced spa industry, The Mandara Spa has garnered multiple accolades and is recognized among the country’s top spas, standing alongside luxury hotel spas. It is the ideal destination for guests seeking a serene retreat with essential amenities and world-class massage techniques—all without the premium cost.</p>
               <p className="indent-8 text-sm mb-3 text-justify ">Established in 2011, its first branch in BGC quickly gained a reputation as “BGC’s best-kept secret.” Today, The Mandara Spa continues to expand, making its signature experience more accessible to communities. Franchise and investment opportunities are available for qualified investors.</p>
             </div>
 
-            <div className="flex flex-col justify-center items-center text-center z-10">
+            <div className="flex flex-col justify-center items-center text-center">
               <h3 className=" font-semibold text-2xl">MISSION</h3>
               <p className="text-sm leading-relaxed text-center mt-2 ">At the Mandara Spa, we aim to continuously excel in providing superior relaxing experience and luxurious services at the best value-for-money rates.</p>
               
             </div>
             
-            <div className="flex flex-col mt-5 justify-center items-center text-center z-10">
+            <div className="flex flex-col mt-5 justify-center items-center text-center">
               <h3 className=" font-semibold text-2xl">AWARDS</h3>
               <p className="text-sm mt-2 ">Global Excellence Awards, Most Outstanding Spa 2015</p>
               <p className="text-sm ">Manila’s Top 10 Spas – Spot.ph</p>
@@ -164,7 +164,7 @@ export default function Page() {
               
             </div>
             
-            <div className="flex flex-col mt-5 justify-center items-center text-center z-10">
+            <div className="flex flex-col mt-5 justify-center items-center text-center">
               <h3 className=" font-semibold text-2xl ">CAREERS</h3>
               <p className="text-sm mt-2 ">At The Mandara Spa, we aim to continuously help people by providing a workplace with a good working environment and work-life balance.</p>
               <p className="text-sm ">For interested applicants, please email your resume to careers@themandaraspa.com.</p>
