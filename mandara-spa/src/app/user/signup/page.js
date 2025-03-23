@@ -19,11 +19,14 @@ function SignUpUser() {
     const [showSuccess, setShowSuccess] = useState(false)
     const [successMsg, setSuccessMsg] = useState('');
     const router = useRouter();
+    const [saving, setSaving] = useState(false)
 
     const handleForm = async (event) => {
         event.preventDefault()
+        setSaving(true)
 
         if (String(number).length !== 11) {
+            setSaving(false)
             return setError('Please provide an 11-digit mobile number.');
         }
 
@@ -74,9 +77,11 @@ function SignUpUser() {
 
             setSuccessMsg('Almost there! Please check your email for a verification link.')
             setShowSuccess(true)
+
         } catch (dbError) {
             setErrorMsg("Database error.")
         }
+        setSaving(false)
     }
     return (
     <section className="relative flex flex-wrap lg:h-screen lg:items-center">
@@ -226,6 +231,7 @@ function SignUpUser() {
 
                     <div className="flex items-center justify-center">
                         <button
+                        disabled={saving}
                         type="submit"
                         className=" rounded-lg bg-[#e0d8ad] w-full px-5 py-3 text-sm font-medium text-black"
                         >

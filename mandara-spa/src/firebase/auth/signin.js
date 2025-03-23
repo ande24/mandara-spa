@@ -15,9 +15,9 @@ export default async function SignIn(email, password) {
     try {
         res = await signInWithEmailAndPassword(auth, email, password);
         await res.user.reload();
-        if (!res.user.emailVerified) {
-            await sendEmailVerification(res.user, actionCodeSettings)
-        }
+        // if (!res.user.emailVerified) {
+        //     await sendEmailVerification(res.user, actionCodeSettings)
+        // }
     } catch (e) {
         err = e;
     }

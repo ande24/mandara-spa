@@ -163,6 +163,7 @@ const ResetPassword = () => {
 
                     <div className="flex items-center justify-center">
                         <button
+                        disabled={saving}
                         type="submit"
                         className="font-serif rounded-lg bg-[#e0d8ad] w-1/2 px-5 py-3 text-sm font-medium text-black"
                         >

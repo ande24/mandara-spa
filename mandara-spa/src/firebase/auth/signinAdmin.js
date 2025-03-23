@@ -20,10 +20,10 @@ export default async function SignInAdmin(email, password) {
         res = await signInWithEmailAndPassword(auth, email, password);
         console.log(res)
         await res.user.reload();
-        if (!res.user.emailVerified) {
-            await sendEmailVerification(res.user, actionCodeSettings)
-            throw new Error("Please check your inbox and verify your email before logging in.");
-        }
+        // if (!res.user.emailVerified) {
+        //     await sendEmailVerification(res.user, actionCodeSettings)
+        //     throw new Error("Please check your inbox and verify your email before logging in.");
+        // }
         
         console.log("id: ", res.user.uid)
         const userRef = doc(db, "users", res.user.uid);

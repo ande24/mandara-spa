@@ -58,6 +58,7 @@ const BookingForm = ({ onClose }) => {
                     const docRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
+                        console.log("user: ", docSnap.data());
                         setUserData(docSnap.data());
                     } else {
                         console.log("No user data found in Firestore");

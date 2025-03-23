@@ -216,7 +216,7 @@ const ManageBookings = ({onClose}) => {
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                 
             {showTransaction && selectedBooking ? (<AddTransaction bookingData={selectedBooking} onClose={() => setShowTransaction(false)} />) : (
-                    <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl  w-full overflow-y-auto">
+                    <div className="bg-white p-6 mt-20 rounded-lg shadow-md max-w-6xl max-h-2/3 w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">
                             <h3 className="text-lg font-bold">Booking List</h3>
                             {bookings.length > 0 ? (

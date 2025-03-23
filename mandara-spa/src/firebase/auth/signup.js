@@ -19,5 +19,5 @@ export default async function SignUp(email, password) {
         err = e;
     }
 
-    return { res, err };
+    return { res, err };d
 }

@@ -99,13 +99,14 @@ const ManageTransactions = ({onClose}) => {
 
         const branchRef = doc(db, "branches", userData.branch_id);
         const transactionCollection = collection(branchRef, "transactions");
-        let bookingData = null;
+        
 
         const unsubscribe = onSnapshot(transactionCollection, async (snapshot) => {
             const transactionList = await Promise.all(
                 snapshot.docs
                     .filter(docu => docu.id !== "placeholder")
                     .map(async (docu) => {
+                        let bookingData = null;
                         const data = docu.data();
 
                         const bookingRef = doc(branchRef, "bookings", data.bookingId);
@@ -181,7 +182,7 @@ const ManageTransactions = ({onClose}) => {
         <div className="flex justify-center items-center ">
             <Image className="fixed top-30 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl  w-full overflow-y-auto">
+                    <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl mt-20 max-h-2/3 w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">
                             <h3 className="text-lg font-bold">Transaction List</h3>
                             {transactions.length > 0 ? (

@@ -15,6 +15,7 @@ function SignIn() {
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const router = useRouter()
+    const [saving, setSaving] = useState(false);
 
     const createAccount = () => {
         return router.push("/user/signup")
@@ -22,8 +23,10 @@ function SignIn() {
 
     const handleForgot = async (e) => {
         e.preventDefault();
+        setSaving(true)
 
         if (!email) {
+            setSaving(false)
             setErrorMsg("Please enter your email address.");
             setShowError(true)
             return;
@@ -33,14 +36,18 @@ function SignIn() {
 
         setSuccessMsg('Please check your email for the reset link.')
         setShowSuccess(true)
+        setSaving(false)
     }
 
     const handleForm = async (event) => {
         event.preventDefault();
+        setSaving(true);
+
         if (email === "" || password === "") {
         setErrorMsg("Please enter your email address and password.");
         console.log("No email/password")
         setShowError(true);
+        setSaving(false);
         return;
         } 
 
@@ -78,13 +85,14 @@ function SignIn() {
             setShowError(true);
             return;
         }
-
+        setSaving(false);
         setErrorMsg('')
         setSuccessMsg('Logged in successfully!')
         setShowSuccess(true)
         console.log(res);
         setTimeout(() => {return router.push("/user/home")}, 2000);
     }
+
     return (
         <section className="relative flex flex-wrap lg:h-screen lg:items-center">
             {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
@@ -188,6 +196,7 @@ function SignIn() {
                             </div>
 
                             <button
+                            disabled={saving}
                             type="submit"
                             className="font-serif rounded-lg bg-[#e0d8ad] w-1/2 px-5 py-3 text-sm font-medium text-black"
                             >

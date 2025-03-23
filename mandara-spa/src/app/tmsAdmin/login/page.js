@@ -57,12 +57,7 @@ function SignIn() {
         setSuccessMsg("Logged in successfully!")
         setShowSuccess(true);
         setTimeout(() => {
-            if (userDoc.user_role == "branch_admin") {
-                return router.push("/tmsAdmin/branchAdmin");
-            }
-            else if (userDoc.user_role == "business_admin") {
-                return router.push("/tmsAdmin/businessAdmin");
-            }
+            return router.push("/tmsAdmin");
         }, 2000);
     }
     return (
