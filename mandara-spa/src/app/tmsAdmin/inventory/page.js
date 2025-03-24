@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, doc, getDocs, getDoc, updateDoc, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc, updateDoc, onSnapshot, query, getDocs } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-const ManageInv = ({onClose, bookingData}) => {
+const ManageInv = ({onClose}) => {
+    const router = useRouter();
     const auth = getAuth(firebase_app)
     const db = getFirestore(firebase_app);
     const [user, setUser] = useState(null);
@@ -13,17 +16,17 @@ const ManageInv = ({onClose, bookingData}) => {
     const [branchData, setBranchData] = useState(null);
     const [formData, setFormData] = useState({
         name: "",
+        price: "",
         quantity: "",
     });
 
     const [items, setItems] = useState([]);
-    const [usedItems, setUsedItems] = useState([]);
+    const [itemData, setItemData] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
 
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        console.log(bookingData)
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
@@ -73,28 +76,28 @@ const ManageInv = ({onClose, bookingData}) => {
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
-            const fetchItems = async () => {
-                try {
-                    const branchRef = doc(db, "branches", userData.branch_id);
-                    const itemCollection = collection(branchRef, "inventory");
-                    const itemSnapshot = await getDocs(itemCollection);
-                    const itemList = itemSnapshot.docs
-                        .filter(doc => doc.id !== "placeholder")
-                        .map(doc => ({
-                            id: doc.id,
-                            name: doc.data().item_name,
-                            quantity: doc.data().item_quantity,
-                            price: doc.data().item_price
-                        }));
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const itemCollection = collection(branchRef, "inventory");
     
-                    setItems(itemList);
-                } catch (error) {
-                    console.error("Error fetching images:", error);
-                }
-            };
-            fetchItems();
+            const unsubscribe = onSnapshot(itemCollection, (snapshot) => {
+                const itemList = snapshot.docs
+                    .filter(doc => doc.id !== "placeholder")
+                    .map(doc => ({
+                        id: doc.id,
+                        name: doc.data().item_name,
+                        price: doc.data().item_price,
+                        quantity: doc.data().item_quantity
+                    }));
+    
+                console.log("Updated items: ", itemList);
+                setItems(itemList);
+            }, (error) => {
+                console.error("Error fetching items:", error);
+            });
+    
+            return () => unsubscribe();
         }
-    }, [branchData]);
+    }, [branchData, userData?.branch_id]);
 
     useEffect(() => {
         const fetchItemData = async () => {
@@ -106,6 +109,8 @@ const ManageInv = ({onClose, bookingData}) => {
                 const itemData = docSnap.data();
                 setFormData({
                     name: itemData.item_name || "",  
+                    price: itemData.item_price || "", 
+                    quantity: itemData.item_quantity || "", 
                 });
             }
           }
@@ -115,33 +120,34 @@ const ManageInv = ({onClose, bookingData}) => {
       }, [selectedItem]);
 
     const handleAddItem = async (e) => {
-        e.preventDefault();
         setSaving(true)
+        e.preventDefault();
 
-        const selectedItemData = items.find(item => item.id === selectedItem);
+        const branchRef = doc(db, "branches", userData.branch_id);
+        const itemRef = collection(branchRef, "inventory");
 
         try {
-            const existingItem = usedItems.find(item => item.id === selectedItemData.id);
+            const existingItem = items.find(item => item.name.toLowerCase() === formData.name.toLowerCase());
 
             if (existingItem) {
-                existingItem.quantity += parseInt(formData.quantity, 10);
-            } else {
-
-                const newItem = {
-                    id: selectedItemData.id,
-                    name: selectedItemData.name,
-                    quantity: parseInt(formData.quantity, 10),
-                    price: selectedItemData.price
-                };
-
-                usedItems.push(newItem);
+                alert("Item with the same name already exists")
+                setSaving(false)
+                return
             }
+            
+            const docRef = await addDoc(itemRef, {
+                item_name: formData.name,
+                item_price: formData.price,
+                item_quantity: formData.quantity
+            });
 
-            alert("Item added successfully!");
             setFormData({
                 name: "",
+                price: "",
                 quantity: ""
             });
+
+            alert("Item added successfully!");
         } catch (error) {
             alert("Error adding item: " + error.message);
         }
@@ -150,10 +156,18 @@ const ManageInv = ({onClose, bookingData}) => {
 
     const handleRemoveItem = async (e, itemId) => {
         e.preventDefault();
+
+        const confirmDelete = window.confirm("Are you sure you want to remove this item?");
+        if (!confirmDelete) return;
         setSaving(true)
 
         try {
-            setUsedItems(prevItems => prevItems.filter(item => item.id !== itemId));
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const itemRef = doc(branchRef, "inventory", itemId);
+        
+            await deleteDoc(itemRef);
+
+            setItems((prevItems) => prevItems.filter(item => item.id !== itemId));
 
             alert("Item removed successfully!");
         } catch (error) {
@@ -162,87 +176,57 @@ const ManageInv = ({onClose, bookingData}) => {
         setSaving(false)
     };
 
-    const handleSubmitTransaction = async (e) => {
+    const handleEditItem = async (e) => {
         e.preventDefault();
         setSaving(true);
 
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
-            
-            for (const usedItem of usedItems) {
-                const itemRef = doc(branchRef, "inventory", usedItem.id);
-                const itemSnap = await getDoc(itemRef);
+            const itemRef = doc(branchRef, "inventory", selectedItem);
 
-                if (itemSnap.exists()) {
-                    const currentQuantity = itemSnap.data().item_quantity;
-                    console.log(itemSnap.data())
-                    if (currentQuantity === 0 ) {
-                        alert(`Item \"${itemSnap.data().item_name}\" is already out of stock.`)
-                        setSaving(false)
-                        return
-                    } else if (currentQuantity < usedItem.quantity) {
-                        alert(`Item \"${itemSnap.data().item_name}\" has insufficient stock.`)
-                        setSaving(false)
-                        return
-                    }
-                    const newQuantity = Math.max(0, currentQuantity - usedItem.quantity);
-
-                    await updateDoc(itemRef, {
-                        item_quantity: newQuantity
-                    });
-                }
-
-                setItems(prevItems => 
-                    prevItems.map(item => 
-                        item.id === selectedItem ? 
-                            { ...item, name: formData.name, price: formData.price, quantity: formData.quantity} : item
-                    )
-                );
+            const data = {
+                item_name: formData.name,
+                item_price: formData.price,
+                item_quantity: formData.quantity
             }
+        
+            await updateDoc(itemRef, data);
+            alert("Item details updated successfully!");
 
-            const userSnap = await getDoc(doc(db, "users", bookingData.customer_id))
-            const serviceSnap = await getDoc(doc(branchRef, "services", bookingData.service_id))
-
-            const income = Number(bookingData.no_of_customers) * Number(serviceSnap.data().service_price);
-            
-            const transactionsRef = collection(branchRef, "transactions");
-
-            await addDoc(transactionsRef, {
-                bookingId: bookingData.id,
-                customerId: bookingData.customer_id,
-                items_used: usedItems,
-                service_income: income,
-                transaction_date: bookingData.booked_date,
-                no_of_customers: bookingData.no_of_customers,
-            });
-
+            setItems(prevItems => 
+                prevItems.map(item => 
+                    item.id === selectedItem ? 
+                        { ...item, name: formData.name, price: formData.price, quantity: formData.quantity} : item
+                )
+            );
+    
             setSaving(false);
             setFormData({
                 name: "",
+                price: "",
                 quantity: "",
             });
-
-            setUsedItems([])
-
-            onClose();
         } catch (error) {
-            alert("Error updating item: " + error.message);
+            setMessage("Error updating item: " + error.message);
+            alert("Failed to update item.");
             setSaving(false);
         }
+        setSaving(false)
     };
 
     const handleItemChange = async (e) => {
         const selectedId = e.target.value;
-        const selectedItemData = items.find(item => item.id === selectedId);
+        setSelectedItem(selectedId);
+        setItemData(items.find(item => item.id === selectedId));
     
-        if (selectedItemData) {
-            setSelectedItem(selectedId);
+        if (itemData) {
             setFormData({
-                name: selectedItemData.name || "",
-                quantity: "",
+                name: itemData.name || "",
+                price: itemData.price || "",
+                quantity: itemData.quantity || "",
             });
         }
-    };
+      };
 
     const handleChange = (e) => {
         setFormData({
@@ -252,10 +236,12 @@ const ManageInv = ({onClose, bookingData}) => {
       };
 
     return (
-        <div className="flex justify-center items-center ">
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
-                <div className="bg-white mt-20 p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-3 text-center">Log Items Used</h2>
+        <div className="flex flex-col h-screen justify-center bg-[#301414] items-center">
+
+            <Image className="mt-20 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} /> 
+            <div className=" left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-3 text-center">Manage Items</h2>
 
                     <div className="flex flex-col md:flex-row justify-between gap-6">
                         <div className="w-full md:w-1/2 bg-white p-6 rounded-lg ">
@@ -265,9 +251,9 @@ const ManageInv = ({onClose, bookingData}) => {
                                     <label className="block text-gray-700 font-semibold">Select an Item:</label>
                                     <select 
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                        name="dropdown" 
+                                        name="name" 
                                         onChange={handleItemChange} 
-                                        value={""}
+                                        value={formData.name || ""}
                                     >
                                         <option value="">Select an Item</option>
                                         {items.map(item => (
@@ -277,25 +263,37 @@ const ManageInv = ({onClose, bookingData}) => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-gray-700 font-semibold">Item:</label>
+                                    <label className="block text-gray-700 font-semibold">Item Name:</label>
                                     <input 
                                         name="name" 
-                                        className="w-full p-3 mb-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                                         type="text" 
-                                        value={formData.name || ""} 
-                                        onChange={handleChange} 
+                                        value={formData.name} 
+                                        onChange={handleChange}  
                                         required
-                                        disabled
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-gray-700 mb-1 font-semibold">Quantity:</label>
+                                    <label className="block text-gray-700 font-semibold">Price (₱):</label>
+                                    <input 
+                                        name="price" 
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                        type="number" 
+                                        min="1" 
+                                        value={formData.price} 
+                                        onChange={handleChange}  
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-700 font-semibold">Quantity:</label>
                                     <input 
                                         name="quantity" 
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                                         type="number" 
-                                        value={formData.quantity || ""} 
+                                        value={formData.quantity} 
                                         onChange={handleChange} 
                                         required
                                     />
@@ -305,24 +303,23 @@ const ManageInv = ({onClose, bookingData}) => {
                                     <button 
                                         disabled={saving}
                                         type="submit" 
-                                        className="w-full p-3 rounded-lg text-white font-serif transition bg-[#502424]  hover:bg-[#301414]"
+                                        className="w-full p-3 rounded-lg text-white font-serif transition bg-[#502424] hover:bg-[#301414]"
                                     >
                                         Add Item
                                     </button>
                                     <button 
-                                        onClick={handleSubmitTransaction} 
+                                        onClick={handleEditItem} 
                                         disabled={saving} 
-                                        className={`w-full p-3 rounded-lg text-white font-serif transition ${
-                                            saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#502424]  hover:bg-[#301414]"
+                                        className={`w-full p-3 rounded-lg text-white font-serif transition bg-[#502424] hover:bg-[#301414]"
                                         }`}
                                     >
-                                        Update Inventory
+                                        Edit Item
                                     </button>
                                 </div>
 
                                 <button 
-                                    onClick={() => onClose()} 
-                                    className="w-full p-3 rounded-lg text-white font-serif bg-[#502424]  hover:bg-[#301414]"
+                                    onClick={() => {router.push("/tmsAdmin")}} 
+                                    className="w-full p-3 rounded-lg  text-white font-serif bg-[#502424] hover:bg-[#301414]"
                                 >
                                     Close
                                 </button>
@@ -330,19 +327,20 @@ const ManageInv = ({onClose, bookingData}) => {
                         </div>
 
                         <div className="w-full md:w-1/2 bg-white p-6 rounded-lg">
-                            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Items Used</h3>
+                            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Current Inventory</h3>
                             <div className="max-h-[70vh] overflow-y-auto border border-gray-300 rounded-lg p-4">
-                                {usedItems.length > 0 ? (
+                                {items.length > 0 ? (
                                     <ul className="space-y-2">
-                                        {usedItems.map(item => (
+                                        {items.map(item => (
                                             <li key={item.id} className="flex justify-between items-center border border-gray-400 p-3 rounded bg-gray-200">
                                                 <div>
                                                     <p className="font-semibold">{item.name}</p>
                                                     <p>{item.quantity} units</p>
+                                                    <p>₱{item.price} / unit</p>
                                                 </div>
                                                 <button 
                                                     disabled={saving}
-                                                    className="bg-[#502424]  text-white p-2 rounded-lg font font-serif hover:bg-[#301414]"
+                                                    className=" text-white p-2 rounded-lg font font-serif bg-[#502424] hover:bg-[#301414]"
                                                     onClick={(e) => handleRemoveItem(e, item.id)}
                                                 >
                                                     Remove

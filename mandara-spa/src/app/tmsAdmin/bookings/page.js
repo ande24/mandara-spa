@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import AddTransaction from "./transactionForm";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import AddTransaction from "@/components/transactionForm";
 
-const ManageBookings = ({onClose}) => {
+
+const ManageBookings = () => {
+    const router = useRouter();
     const auth = getAuth(firebase_app)
     const db = getFirestore(firebase_app);
     const [user, setUser] = useState(null);
@@ -135,6 +138,7 @@ const ManageBookings = ({onClose}) => {
                         return {
                             id: docu.id,
                             date: data.booked_date,
+                            dateObject: new Date(data.booked_date),
                             time: data.booked_time,
                             status: data.booking_status,
                             customer: customerName,
@@ -146,6 +150,8 @@ const ManageBookings = ({onClose}) => {
                         };
                     })
             );
+
+            bookingList.sort((a, b) => b.dateObject - a.dateObject);
 
             console.log("Updated bookings:", bookingList);
             setBookings(bookingList);
@@ -273,7 +279,7 @@ const ManageBookings = ({onClose}) => {
                         <div className="flex justify-center items-center">
                             <button 
                                 className="bg-[#502424] text-white p-3 m-3 mb-6 max-w-xs font-serif w-full hover:bg-[#301414] transition rounded-lg"
-                                onClick={onClose}
+                                onClick={() => {router.push("/tmsAdmin")}}
                             >
                                 Close
                             </button>

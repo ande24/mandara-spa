@@ -8,7 +8,7 @@ import Image from "next/image";
 import NavBar1 from "@/components/navbar1";
 import NavBar2 from "@/components/navbar2";
 import { FaMapMarkerAlt, FaClock, FaPhone } from "react-icons/fa";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { addDoc, collection, getFirestore, serverTimestamp } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
 import Footer from "@/components/footer";
 import SuccessMessage from "@/components/success";
@@ -38,13 +38,15 @@ export default function Page() {
       e.preventDefault();
       setSaving(true)
       console.log(name, email, number, message);
+      
 
       try {
         await addDoc(collection(db, "messages"),  {
           name: name,
           email: email, 
           number: number, 
-          message: message
+          message: message,
+          date: new Date()
         });
 
         setSuccessMsg("Message sent successfully!")

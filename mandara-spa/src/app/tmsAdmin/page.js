@@ -8,6 +8,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase_app from "@/firebase/config";
 import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot, query, orderBy } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -18,6 +19,7 @@ export default function Page() {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
 
+  const [branches, setBranches] = useState([]);
   const [branchData, setBranchData] = useState(null);
 
   const [items, setItems] = useState([]);
@@ -35,8 +37,6 @@ export default function Page() {
   const [prevDailyCustomers, setPrevDailyCustomers] = useState(0);
   const [dailyCustomersDiff, setDailyCustomersDiff] = useState(0);
 
-  const [incomeRange, setIncomeRange] = useState([]);
-
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [prevMonthlyIncome, setPrevMonthlyIncome] = useState(0);
   const [monthlyIncomeDiff, setMonthlyIncomeDiff] = useState(0);
@@ -44,10 +44,17 @@ export default function Page() {
   const [monthlyBookings, setMonthlyBookings] = useState(0);
   const [prevMonthlyBookings, setPrevMonthlyBookings] = useState(0);
   const [monthlyBookingsDiff, setMonthlyBookingsDiff] = useState(0);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [prevDate, setPrevDate] = useState("");
+
+  const [incomeRange, setIncomeRange] = useState([]);
+  const [bookingsToday, setBookingsToday] = useState([]);
+
+  const [currMVP, setCurrMVP] = useState(null);
+  const [prevMVP, setPrevMVP] = useState(null);
+
+  const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString("en-CA"));
   const [selectedMonth, setSelectedMonth] = useState("");
-  const [prevMonth, setPrevMonth] = useState("");
+
+
 
   useEffect(() => {
     const getDateAndMonth = () => {
@@ -64,21 +71,34 @@ export default function Page() {
     getDateAndMonth();
   }, []);
 
-  useEffect(() => {
-    const getPrevMonth = (selectedMonth) => {
-      let [year, month] = selectedMonth.split("-").map(Number); 
+
+
+  const getPrevMonth = (currMonth) => {
+    let [year, month] =currMonth.split("-").map(Number); 
       month -= 1; 
     
       if (month === 0) { 
         month = 12;
         year -= 1;
       }
-    
-      return `${year}-${String(month).padStart(2, "0")}`; 
-    };
 
-    setPrevMonth(getPrevMonth(selectedMonth))
-  }, [selectedDate, selectedMonth]);
+    return `${year}-${String(month).padStart(2, "0")}`
+  }
+
+
+
+  const getPrevDate = (date) => {
+    const yesterday = new Date(date);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const yyyy = yesterday.getFullYear();
+    const mm = String(yesterday.getMonth() + 1).padStart(2, "0"); 
+    const dd = String(yesterday.getDate()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+
 
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -93,6 +113,8 @@ export default function Page() {
       return () => unsubscribe();
   }, []);
 
+
+
   useEffect(() => {
       if (user) {
           const fetchUserData = async () => {
@@ -101,7 +123,7 @@ export default function Page() {
                   const docSnap = await getDoc(docRef);
                   if (docSnap.exists()) {
                       setUserData(docSnap.data());
-                      console.log("userData: ", docSnap.data());
+                      // console.log("userData: ", docSnap.data());
                   } else {
                       console.log("No user data found in Firestore");
                   }
@@ -113,6 +135,8 @@ export default function Page() {
           fetchUserData();
       }
   }, [user]);
+
+
 
   useEffect(() => {
       if (userData) {
@@ -130,16 +154,17 @@ export default function Page() {
       }
   }, [userData])
 
+
   useEffect(() => {
       if (user) {
           const fetchBranchData = async () => {
               try {
-                  console.log(userData)
+                  // console.log(userData)
                   const branchRef = doc(db, "branches", userData.branch_id); 
                   const branchSnap = await getDoc(branchRef);
                   if (branchSnap.exists()) {
                       setBranchData(branchSnap.data());
-                      console.log("branchData: ", branchSnap.data())
+                      // console.log("branchData: ", branchSnap.data())
                   } else {
                       console.log("No branch data found");
                   }
@@ -151,6 +176,8 @@ export default function Page() {
           fetchBranchData();
       }
   }, [userData]);
+
+
 
   useEffect(() => {
       if (userData?.branch_id && branchData) {
@@ -171,7 +198,7 @@ export default function Page() {
                           status: doc.data().service_status
                       }));
   
-                  console.log("services: ", serviceList);
+                  // console.log("services: ", serviceList);
                   setServices(serviceList);
               } catch (error) {
                   console.error("Error fetching services:", error);
@@ -181,12 +208,16 @@ export default function Page() {
       }
   }, [branchData]);
 
+
+
   useEffect(() => {
     if (items.length > 0) {
       setItemsLow(items.filter(item => item.quantity < 10 && item.quantity > 0));
       setItemsOut(items.filter(item => item.quantity === 0));
     }
   }, [items]);
+
+
 
   useEffect(() => {
       if (userData?.branch_id && branchData) {
@@ -204,7 +235,7 @@ export default function Page() {
                   }));
               
   
-              console.log("items: ", itemList);
+              // console.log("items: ", itemList);
               setItems(itemList);
           }, (error) => {
               console.error("Error fetching items:", error);
@@ -213,6 +244,8 @@ export default function Page() {
           return () => unsubscribe();
       }
   }, [branchData, userData?.branch_id]);
+
+
 
   useEffect(() => {
       if (!userData?.branch_id || !branchData) return;
@@ -248,10 +281,13 @@ export default function Page() {
 
                       let total = data.no_of_customers * Number(servicePrice)
 
+                      const fullDateTime = new Date(`${data.booked_date} ${data.booked_time}`);
+
                       return {
                           id: docu.id,
                           date: data.booked_date,
                           time: data.booked_time,
+                          fullDateTime: fullDateTime,
                           status: data.booking_status,
                           customer: customerName,
                           total: total,
@@ -262,14 +298,16 @@ export default function Page() {
                       };
                   })
           );
+          bookingList.sort((a, b) => a.fullDateTime - b.fullDateTime );
 
-          console.log("bookings: ", bookingList);
           setBookings(bookingList);
       });
 
       return () => unsubscribe();
-  }, [userData?.branch_id, !!branchData, !!services]);
+  }, [userData?.branch_id, branchData, services]);
 
+
+  
   useEffect(() => {
     if (!userData?.branch_id || !branchData) return;
 
@@ -300,8 +338,8 @@ export default function Page() {
                         }
                     }
 
-                    console.log("Booking: ", bookingData)
-                    console.log("transaction: ", data)
+                    // console.log("Booking: ", bookingData)
+                    // console.log("transaction: ", data)
 
                     return {
                         id: docu.id,
@@ -324,44 +362,27 @@ export default function Page() {
                 })
         );
 
-        console.log("transactions: ", transactionList);
+        // console.log("transactions: ", transactionList);
         setTransactions(transactionList);
     });
 
     return () => unsubscribe();
-}, [userData?.branch_id, !!branchData, !!services]);
+}, [userData?.branch_id, branchData, services]);
 
-  // useEffect(() => {
-  //   if (transactions) {
-  //     const getIncomeRange = (transactions) => {
-  //       const today = new Date(selectedDate);
-  //       today.setHours(0, 0, 0, 0); 
-      
-  //       let dailyIncome = [];
-  //       for (let i = 0; i < 7; i++) {
-  //         let date = new Date(today);
-  //         date.setDate(today.getDate() - i);
-  //         let dateString = date.toISOString().split("T")[0];
-  //         dailyIncome[i] = 0;
-      
-  //         for (let transaction of transactions) {
-  //           const bookingDate = new Date(transaction.date);
-  //           bookingDate.setHours(0, 0, 0, 0);
-  //           let transactionDateString = bookingDate.toISOString().split("T")[0];
-      
-  //           if (transactionDateString === dateString) {
-  //             dailyIncome[i] += transaction.sales;
-  //           }
-  //         }
-  //       }
-        
-  //       console.log("prev income: ", dailyIncome);
-  //       setIncomeRange(dailyIncome);
-  //     };
-
-  //     getIncomeRange(transactions);
-  //   }
-  // }, [transactions])
+useEffect(() => {
+  const fetchBranches = async () => {
+      const branchCollection = collection(db, "branches");
+      const branchSnapshot = await getDocs(branchCollection);
+      const branchList = branchSnapshot.docs
+      .filter(doc => doc.id !== "schema")
+      .map(doc => ({
+          id: doc.id,
+          name: doc.data().branch_location
+      }));
+      setBranches(branchList);
+  };
+  fetchBranches();
+}, [userData]);
 
   useEffect(() => {
     if (!userData || !branchData || !transactions) {
@@ -376,7 +397,7 @@ export default function Page() {
         setMonthlyIncome(salesThisMonth);
 
         const salesLastMonth = transactions
-        .filter((transaction) => transaction.date.startsWith(prevMonth))
+        .filter((transaction) => transaction.date.startsWith(getPrevMonth(selectedMonth)))
         .reduce((sum, transaction) => sum + transaction.sales, 0);
 
         setPrevMonthlyIncome(salesLastMonth);
@@ -403,7 +424,9 @@ export default function Page() {
     };
 
     fetchMonthlyIncome();
-  }, [userData, branchData, selectedMonth, prevMonth, selectedDate, JSON.stringify(transactions)])
+  }, [userData, branchData, selectedMonth, selectedDate, JSON.stringify(transactions)])
+
+
 
   useEffect(() => {
     if (!userData || !branchData || !bookings) {
@@ -418,7 +441,7 @@ export default function Page() {
         setMonthlyBookings(bookingsThisMonth);
 
         const bookingsLastMonth = bookings.filter(
-          (booking) => booking.date.startsWith(prevMonth)
+          (booking) => booking.date.startsWith(getPrevMonth(selectedMonth))
         ).length;
 
         setPrevMonthlyBookings(bookingsLastMonth);
@@ -441,7 +464,9 @@ export default function Page() {
     };
 
     fetchMonthlyBookings();
-  }, [userData, branchData, selectedMonth, prevMonth, JSON.stringify(bookings)])
+  }, [userData, branchData, selectedMonth, JSON.stringify(bookings)])
+
+
 
   useEffect(() => {
     if (!userData || !branchData || !bookings) {
@@ -458,7 +483,7 @@ export default function Page() {
 
         const customersYesterday = transactions
         .filter(
-          (transaction) => transaction.date === prevDate)
+          (transaction) => transaction.date === getPrevDate(selectedDate))
         .reduce((sum, transaction) => sum + Number(transaction.pax), 0);
 
         setPrevDailyCustomers(customersYesterday);
@@ -480,58 +505,145 @@ export default function Page() {
     };
 
     fetchDailyCustomers();
-  }, [userData, branchData, selectedDate, prevDate, JSON.stringify(transactions)])
+  }, [userData, branchData, selectedDate, JSON.stringify(transactions)])
+
+  useEffect(() => {
+    if (!branches || branches.length === 0) {
+      return;
+    }
+    const getBestBranches = async() => {
+      let highestPrev = 0
+      let prevName = ""
+
+      let highestCurr = 0
+      let currName = ""
+
+      for (const { id, name } of branches) {
+        const branchRef = doc(db, "branches", id);
+        const transRef = collection(branchRef, "transactions");
+        const transSnapshot = await getDocs(transRef);
+        const transList = transSnapshot.docs
+        .filter(doc => doc.id !== "schema" && doc.id !== "placeholder")
+        .map(doc => ({
+          id: doc.id,
+          date: doc.data().transaction_date,
+          income: doc.data().service_income
+        }));
+
+        const salesThisMonth = transList
+        .filter((transaction) => transaction.date.startsWith(selectedMonth))
+        .reduce((sum, transaction) => sum + transaction.income, 0);
+
+        if (salesThisMonth > highestCurr) {
+          highestCurr = salesThisMonth;
+          currName = name;
+        }
+
+        const salesLastMonth = transList
+        .filter((transaction) => transaction.date.startsWith(getPrevMonth(selectedMonth)))
+        .reduce((sum, transaction) => sum + transaction.income, 0);
+
+        if (salesLastMonth > highestPrev) {
+          highestPrev = salesLastMonth;
+          prevName = name;
+        }
+      }
+
+      setCurrMVP({
+        name: currName, 
+        amount: highestCurr
+      });
+
+      setPrevMVP({
+        name: prevName, 
+        amount: highestPrev
+      })
+    };
+
+    getBestBranches();
+  }, [branches, selectedDate]);
+
+  
 
   const changeDate = (date) => {
     setSelectedDate(date);
     setSelectedMonth(date.slice(0, 7));
+  }
 
-    const yesterday = new Date(date);
-    yesterday.setDate(yesterday.getDate() - 1);
+  useEffect(() => {
+    const getIncomeRange = () => {
+      const income = {};  
+      const today = new Date(selectedDate + "T00:00:00");
+    
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const key = date.toLocaleDateString("en-CA"); 
+        income[key] = 0;
+      }
 
-    const prevYYYY = yesterday.getFullYear();
-    const prevMM = String(yesterday.getMonth() + 1).padStart(2, "0"); 
-    const prevDD = String(yesterday.getDate()).padStart(2, "0");
+      console.log(transactions)
+    
+      transactions.forEach(({ date, sales }) => {
+        const formattedDate = new Date(date).toLocaleDateString("en-CA");
+        if (income[formattedDate] !== undefined) {
+          income[formattedDate] += sales;
+        }
+      });
+    
+      setIncomeRange(Object.values(income).reverse()); 
+    };
 
-    setPrevDate(`${prevYYYY}-${prevMM}-${prevDD}`)
+    getIncomeRange();
+  }, [transactions, selectedDate])
+  
+  
 
-    let prevYear = date.getFullYear();
-    let prevMonth = date.getMonth();
+  useEffect(() => {
+    const getTodayBookings = () => {
+      const formattedDate = new Date(selectedDate).toLocaleDateString("en-CA");
+      let bookingsToday = []
+      bookingsToday = bookings
+        .filter(({ date }) => new Date(date).toLocaleDateString("en-CA") === formattedDate)
+        .map((booking) => ({ 
+          id: booking.id,
+          time: booking.time,
+          status: booking.status
+        })); 
 
-    if (prevMonth === 0) {  
-      prevMonth = 12;
-      prevYear -= 1;
-    } else {
-      prevMonth = String(prevMonth).padStart(2, "0"); 
+      console.log("bokings today: ", bookingsToday);
+      setBookingsToday(bookingsToday);
     }
 
-    setPrevMonth(`${prevYear}-${prevMonth}`);
-  }
+    getTodayBookings();
+  }, [bookings, selectedDate])
 
   return (
     <>
-      {userData && branchData && items && (
-        <div className="flex min-h-screen bg-gray-100">
-          <Sidebar />
+      {userData && branchData && items && selectedDate && selectedMonth && currMVP && prevMVP && incomeRange && (
+        <div className="flex flex-col min-h-screen bg-[#301414]">
+          <Sidebar admin={isBusinessAdmin}/>
 
-          <div className="flex-1 p-6 pt-6">
+          <div className="flex justify-center p-6 pt-8 ">
+            <Image className="" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+          </div>
 
-            <div className="flex justify-between items-center mb-3">
-              <h1 className="text-2xl pl-20 font-bold">{userData.branch_location}</h1>
-              {isBusinessAdmin && (<button className="bg-blue-500 text-white px-4 py-2 rounded">Buttons</button>)}
+          <div className="flex-1 p-6 pt-6 ">
+
+            <div className="flex justify-between w-full p-5 px-10 items-center mb-6 bg-white shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <h1 className="text-4xl  font-bold">{userData.branch_location}</h1>
+              <input 
+                type="date" 
+                value={selectedDate} 
+                onChange={(e) => changeDate(e.target.value)} 
+                className="border p-2 rounded scale-90 hover:scale-102 transition-all mb"
+              />
             </div>
 
-            <input 
-              type="date" 
-              value={selectedDate} 
-              onChange={(e) => changeDate(e.target.value)} 
-              className="border p-2 rounded scale-90 hover:scale-102 transition-all mb-5"
-            />
-
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-3 gap-6 mb-6">
               <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Monthly Income:</h3>
-                <p className="text-2xl font-bold">{`₱ ${monthlyIncome} `}<span className={`${monthlyIncome > prevMonthlyIncome ? "text-green-500" : monthlyIncome === prevMonthlyIncome ? "text-gray-600" : "text-red-500"} text-sm`}>{monthlyIncomeDiff}</span></p>
+                <p className="text-2xl font-bold">{`₱${monthlyIncome} `}<span className={`${monthlyIncome > prevMonthlyIncome ? "text-green-500" : monthlyIncome === prevMonthlyIncome ? "text-gray-600" : "text-red-500"} text-sm`}>{monthlyIncomeDiff}</span></p>
               </div>
               <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Monthly Bookings:</h3>
@@ -540,24 +652,27 @@ export default function Page() {
               <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Customers Served Today:</h3>
                 <p className="text-2xl font-bold">{dailyCustomers} <span className={`${dailyCustomers > prevDailyCustomers ? "text-green-500" : dailyCustomers === prevDailyCustomers ? "text-gray-600" : "text-red-500"} text-sm`}>{dailyCustomersDiff}</span></p>
-                <p>{prevDailyCustomers}</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <ChartItem data={incomeRange}/>
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <h2 className="text-lg font-bold mb-2">Today's Bookings</h2>
+                <ChartItem chartData={incomeRange} endDate={selectedDate}/>
               </div>
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <h2 className="text-lg font-bold mb-2">Upcoming Appointments</h2>
-                <Timeline />
+              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+                <h2 className="text-lg font-bold mb-2">Today's Bookings</h2>
+                <Timeline bookingsToday={bookingsToday}/>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white p-4 shadow-md rounded-lg">
+            <div className="grid grid-cols-3 gap-6">
+              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h2 className="text-lg font-bold mb-2">Inventory Alerts</h2>
-                <ul className="text-sm">
+                {itemsOut.length === 0 && itemsLow.length === 0 ? (
+                  <p className="text-green-600">All good!</p>
+                ) : (
+                  <ul className="text-sm">
                   {itemsOut.map(item => (
                     <li key="item.id" className="text-red-500">⚠ {item.name} - Out of Stock</li>
                   ))}
@@ -565,18 +680,21 @@ export default function Page() {
                     <li key="item.id" className="text-yellow-500">⚠ {item.name} ({item.quantity}) - Running Low</li>
                   ))}
                 </ul>
+                )}
               </div>
 
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <h2 className="text-lg font-bold mb-2">Best Performing Service</h2>
-                <p className="text-xl font-semibold">💆 The Mandara Signature Massage</p>
-                <p className="text-sm text-gray-500">Booked 120 times this month</p>
-              </div>
-
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <h2 className="text-lg font-bold mb-2">Best Performing Service</h2>
-                <p className="text-xl font-semibold">💆 The Mandara Signature Massage</p>
-                <p className="text-sm text-gray-500">Booked 120 times this month</p>
+              <div className="bg-white col-span-2 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all flex flex-col">
+                <h2 className="text-lg font-bold mb-2">Best Performing Branches</h2>
+                <div className="flex gap-10">
+                  <div className="w-1/2">
+                    <p className={`text-xl font-semibold ${currMVP.name === "" ? "hidden" : ""}`}>{currMVP.name}</p>
+                    <p className={`text-sm text-gray-500 ${currMVP.name === "" ? "hidden" : ""}`}>Made ₱{currMVP.amount} this month</p>
+                  </div>
+                  <div className="w-1/2">
+                    <p className={`text-xl font-semibold ${prevMVP.name === "" ? "hidden" : ""}`}>{prevMVP.name}</p>
+                    <p className={`text-sm text-gray-500 ${prevMVP.name === "" ? "hidden" : ""}`}>Made ₱{prevMVP.amount} last month</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -5,11 +5,13 @@ import firebase_app from "@/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
 
 const EditBranch = ({onClose}) => {
+    const router = useRouter();
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
 
@@ -100,15 +102,13 @@ const EditBranch = ({onClose}) => {
         }
     };
 
-    if (!user) return <p className="text-center text-red-500 mt-10">Please log in as an admin.</p>;
+    if (!user) return alert("Please log in as an admin.")
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="flex justify-center bg-yellow-50 items-center">
-                <Image className="self-center" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
-            </div>
-            
-            <div className="fixed top-20 left-0 w-full h-full rounded-lg flex items-center justify-center bg-[#301414] bg-opacity-50">
+        <div className="flex flex-col h-screen items-center bg-[#301414] justify-center">
+
+            <Image className="mt-20 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <div className=" w-full h-full rounded-lg flex items-center justify-center bg-[#301414] bg-opacity-50">
                 <div className="bg-white p-6 rounded-lg shadow-md max-w-7xl w-full h-full max-h-150">
                     <h2 className="text-2xl font-bold text-gray-800 mb-1 text-center">Edit Branch Details</h2>
                     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg">
@@ -140,15 +140,13 @@ const EditBranch = ({onClose}) => {
                             </div>
                             <div className="col-span-2">
                                 <label className="block text-gray-700 font-semibold">Branch Description:</label>
-                                <textarea name="branch_desc" value={formData.branch_desc} onChange={handleChange} className="w-full p-3  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <textarea name="branch_desc" value={formData.branch_desc} onChange={handleChange} className="w-full p-3 h-70 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             </div>
                             <div className="flex justify-center items-center space-x-4 mt-4 h-min">
                                 <button type="submit" disabled={saving} className="w-2/5 p-3 rounded-lg h-full text-white text-md  transition mandara-btn">Save Changes</button>
-                                <button onClick={onClose} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
+                                <button onClick={() => {router.push("/tmsAdmin")}} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
                             </div>
                         </div>
-
-                        
                     </form>
                 </div>
             </div>
