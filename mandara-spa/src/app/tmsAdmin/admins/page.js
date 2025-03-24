@@ -33,7 +33,7 @@ const EditAdmins = ({}) => {
             setBranches(branchList);
         };
         fetchBranches();
-    }, []);
+    }, [db]);
 
     useEffect(() => {
         const fetchBranchAdmins = async () => {
@@ -71,7 +71,7 @@ const EditAdmins = ({}) => {
         };
     
         fetchBranchAdmins();
-    }, [selectedBranch]);
+    }, [selectedBranch, db]);
 
     const handleAddAdmin = async (e) => {
         e.preventDefault();

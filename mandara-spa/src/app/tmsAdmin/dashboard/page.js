@@ -656,11 +656,11 @@ useEffect(() => {
 
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
-              <h2 className="text-lg font-bold mb-2">Today's Bookings</h2>
+              <h2 className="text-lg font-bold mb-2">Daily Income:</h2>
                 <ChartItem chartData={incomeRange} endDate={selectedDate}/>
               </div>
               <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
-                <h2 className="text-lg font-bold mb-2">Today's Bookings</h2>
+                <h2 className="text-lg font-bold mb-2">Daily Bookings:</h2>
                 <Timeline bookingsToday={bookingsToday}/>
               </div>
             </div>

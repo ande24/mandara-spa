@@ -30,7 +30,7 @@ const ManageBookings = () => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -50,7 +50,7 @@ const ManageBookings = () => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -70,7 +70,7 @@ const ManageBookings = () => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -99,7 +99,7 @@ const ManageBookings = () => {
             };
             fetchServices();
         }
-    }, [branchData]);
+    }, [branchData, db]);
 
     useEffect(() => {
         if (!userData?.branch_id || !branchData || !services) return;
@@ -158,7 +158,7 @@ const ManageBookings = () => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, !!branchData, !!services]);
+    }, [userData?.branch_id, branchData, services, db]);
 
     const toggleStatus = async (bookingId, newStatus) => {
         setSaving(true)
