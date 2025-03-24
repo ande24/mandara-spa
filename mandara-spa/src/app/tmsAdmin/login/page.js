@@ -21,7 +21,7 @@ function SignIn() {
         const { res, err, userDoc } = await SignInAdmin(email, password);
 
         if (err) {
-            let message = "Login Failed. Please check your credentials.";
+            let message = ""
 
             if (err.code === "auth/invalid-email") {
             message = "Invalid email format. Please check your input.";
@@ -45,6 +45,8 @@ function SignIn() {
             message = "Please enter your email address.";
             } else if (password === "") {
             message = "Please enter your password.";
+            } else if (err) {
+                message = err.message
             }
 
             setErrorMsg(message);
@@ -57,7 +59,7 @@ function SignIn() {
         setSuccessMsg("Logged in successfully!")
         setShowSuccess(true);
         setTimeout(() => {
-            return router.push("/tmsAdmin");
+            return router.push("/tmsAdmin/dashboard");
         }, 2000);
     }
     return (

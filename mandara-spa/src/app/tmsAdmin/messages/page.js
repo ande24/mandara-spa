@@ -165,7 +165,7 @@ const ViewMessages = ({onClose}) => {
                         <div className="flex justify-center items-center">
                             <button 
                                 className="bg-[#502424]  text-white p-3 m-3 mb-6 max-w-xs font-serif w-full hover:bg-[#301414] transition rounded-lg"
-                                onClick={() => {router.push("/tmsAdmin")}}
+                                onClick={() => {router.push("/tmsAdmin/dashboard")}}
                             >
                                 Close
                             </button>

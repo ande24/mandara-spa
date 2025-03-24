@@ -318,7 +318,7 @@ const ManageInv = ({onClose}) => {
                                 </div>
 
                                 <button 
-                                    onClick={() => {router.push("/tmsAdmin")}} 
+                                    onClick={() => {router.push("/tmsAdmin/dashboard")}} 
                                     className="w-full p-3 rounded-lg  text-white font-serif bg-[#502424] hover:bg-[#301414]"
                                 >
                                     Close

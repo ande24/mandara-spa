@@ -102,8 +102,6 @@ const EditBranch = ({onClose}) => {
         }
     };
 
-    if (!user) return alert("Please log in as an admin.")
-
     return (
         <div className="flex flex-col h-screen items-center bg-[#301414] justify-center">
 
@@ -144,7 +142,7 @@ const EditBranch = ({onClose}) => {
                             </div>
                             <div className="flex justify-center items-center space-x-4 mt-4 h-min">
                                 <button type="submit" disabled={saving} className="w-2/5 p-3 rounded-lg h-full text-white text-md  transition mandara-btn">Save Changes</button>
-                                <button onClick={() => {router.push("/tmsAdmin")}} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
+                                <button onClick={() => {router.push("/tmsAdmin/dashboard")}} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
                             </div>
                         </div>
                     </form>

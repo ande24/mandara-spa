@@ -133,7 +133,7 @@ const ManageTransactions = ({onClose}) => {
                         return {
                             id: docu.id,
                             date: bookingData ? bookingData.booked_date : "",
-                            dateObject: new Date(bookingData.booked_date),
+                            dateObject: bookingData ? new Date(bookingData.booked_date) : "",
                             time: bookingData ? bookingData.booked_time : "Booking not found",
                             booking: data.bookingId,
                             pax: data.no_of_customers,
@@ -227,7 +227,7 @@ const ManageTransactions = ({onClose}) => {
                         <div className="flex justify-center items-center">
                             <button 
                                 className="bg-[#502424]  text-white p-3 m-3 mb-6 max-w-xs font-serif w-full hover:bg-[#301414] transition rounded-lg"
-                                onClick={() => {router.push("/tmsAdmin")}}
+                                onClick={() => {router.push("/tmsAdmin/dashboard")}}
                             >
                                 Close
                             </button>

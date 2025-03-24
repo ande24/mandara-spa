@@ -59,7 +59,7 @@ const BranchSelect = ({ onClose }) => {
             });
 
             setSelectedBranch(null);
-            return router.push("/tmsAdmin");
+            return router.push("/tmsAdmin/dashboard");
         } catch (error) {
             alert("Error: " + error.message);
         }
@@ -93,7 +93,7 @@ const BranchSelect = ({ onClose }) => {
 
                     <button 
                                 className="mandara-btn p-2 py-5"
-                                onClick={() => {router.push("/tmsAdmin")}}
+                                onClick={() => {router.push("/tmsAdmin/dashboard")}}
                             >
                                 Close
                             </button>

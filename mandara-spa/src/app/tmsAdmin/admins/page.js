@@ -254,7 +254,7 @@ const EditAdmins = ({}) => {
 
                 <button 
                     className="w-172 p-3 mt-3 mb-3 mandara-btn"
-                    onClick={() => {router.push("/tmsAdmin")}}
+                    onClick={() => {router.push("/tmsAdmin/dashboard")}}
                 >
                     Close
                 </button>

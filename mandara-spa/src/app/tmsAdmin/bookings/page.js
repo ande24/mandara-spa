@@ -216,9 +216,9 @@ const ManageBookings = () => {
     };
 
     return (
-        <div className="flex justify-center items-center ">
-            <Image className="fixed top-30 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
+        <div className="flex flex-col justify-center bg-[#301414] h-screen items-center ">
+            <Image className="mt-20 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <div className="mt-[-150] w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                 
             {showTransaction && selectedBooking ? (<AddTransaction bookingData={selectedBooking} onClose={() => setShowTransaction(false)} />) : (
                     <div className="bg-white p-6 mt-20 rounded-lg shadow-md max-w-6xl max-h-2/3 w-full overflow-y-auto">
@@ -279,7 +279,7 @@ const ManageBookings = () => {
                         <div className="flex justify-center items-center">
                             <button 
                                 className="bg-[#502424] text-white p-3 m-3 mb-6 max-w-xs font-serif w-full hover:bg-[#301414] transition rounded-lg"
-                                onClick={() => {router.push("/tmsAdmin")}}
+                                onClick={() => {router.push("/tmsAdmin/dashboard")}}
                             >
                                 Close
                             </button>
