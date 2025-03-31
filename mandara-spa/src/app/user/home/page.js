@@ -15,20 +15,10 @@ import { Navigation } from "swiper/modules";
 import Footer from "@/components/footer";
 
 export default function Page() {
-  useEffect(() => {
-    const swiperInstance = document.querySelector(".swiper")?.swiper;
-    if (swiperInstance) {
-      swiperInstance.params.navigation.prevEl = ".custom-prev";
-      swiperInstance.params.navigation.nextEl = ".custom-next";
-      swiperInstance.navigation.init();
-      swiperInstance.navigation.update();
-    }
-  }, []);
-
   const { user } = useAuthContext()
   const router = useRouter()
   const [showForm, setShowForm] = useState(false)
-  const [redirect, setRedirect] = useState(false)
+
   const services = [
     { title: "On-The-Go Recharge", 
       img: "/images/services/special/onthego.jpg",
@@ -79,17 +69,13 @@ export default function Page() {
     },
   ];
 
-  useEffect (() => {
-    if (redirect) router.push("/user/login");
-  }, [redirect]);
-
   const handleBooking = () => {
     if (user) {
-      console.log("showing form")
-      setShowForm(true)
+      console.log("showing form");
+      setShowForm(true);
     }
     else {
-      setRedirect(true);
+      router.push("/user/login");
     }
   }
 return ( 
