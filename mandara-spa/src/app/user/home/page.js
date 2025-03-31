@@ -94,6 +94,7 @@ return (
                   alt=""
                   height={150}
                   width={300}
+                  priority
                   className=" mb-4 object-contain scale-50 hover:scale-55 transition-all"
                 />
               </a>
@@ -113,7 +114,8 @@ return (
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover"
+        poster="/images/video_poster.png"
+        className="absolute w-full h-full object-cover"
         >
           <source src="/images/home_video.mp4" type="video/mp4"/>
           Your browser does not support the video tag.
