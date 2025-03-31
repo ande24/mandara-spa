@@ -8,8 +8,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
+import { FiMenu, FiLogOut } from "react-icons/fi";
+import Image from "next/image";
 
-const Image = dynamic(() => import("next/image"));
 const NavBar1 = dynamic(() => import("@/components/navbar1"), { ssr: false });
 const NavBar2 = dynamic(() => import("@/components/navbar2"), { ssr: false });
 const SlidingButton = dynamic(() => import("@/components/slidingButton"), { ssr: false });
@@ -20,7 +21,6 @@ export default function Page() {
   const { user } = useAuthContext()
   const router = useRouter()
   const [showForm, setShowForm] = useState(false)
-
   const services = [
     { title: "On-The-Go Recharge", 
       img: "/images/services/special/onthego.jpg",
@@ -81,22 +81,35 @@ export default function Page() {
     }
   }
 return ( 
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-x-hidden">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
-      <div className="flex justify-center items-center relative w-full h-screen">
-        <div className="absolute flex justify-center items-center inset-x-0 top-0 w-full z-20 h-30 bg-[#502424] opacity-80">
+      <div className="flex justify-center items-center relative w-screen h-screen">
+        <div className="absolute flex justify-center items-center inset-x-0 top-0 w-screen z-20 h-30 bg-[#502424] opacity-80">
           <div className="flex justify-center items-center">
-            <NavBar1 currPage={"home"}/>
-            <a href="/user/home">
-              <Image
-                src="/images/mandara_gold.png"
-                alt=""
-                height={150}
-                width={300}
-                priority
-                className=" mb-4 object-contain scale-50 hover:scale-55 transition-all"
-              />
-            </a>
+            <NavBar1 currPage={"home"} />
+              <div className="w-screen xl:w-auto flex justify-between">
+                <button
+                  className="text-gray-200 hover:scale-105 mx-5 transition-all xl:hidden" onClick={() => document.getElementById("footer")?.scrollIntoView({ behavior: "smooth" })}
+                >
+                  <FiMenu size={24} />
+                </button>
+                <a href="/user/home">
+                  <Image
+                    src="/images/mandara_gold.png"
+                    alt=""
+                    height={300}
+                    width={300}
+                    priority
+                    className="mb-4 object-contain scale-50 hover:scale-55 transition-all"
+                  />
+                </a>
+                <button
+                  onClick={() => {router.push("/user/login")}}
+                  className=" text-gray-200 mx-5 hover:scale-105 transition-all xl:hidden pr-5"
+                >
+                  <FiLogOut size={24} />
+                </button>
+              </div>
             <NavBar2 onBook={handleBooking} currPage={"home"}/>
           </div>
         </div>
@@ -119,20 +132,20 @@ return (
 
         <div className="absolute inset-x-0 bottom-0 w-full h-36 bg-[#502424] opacity-80">
           <div className="flex justify-center items-center flex-col w-full h-full">
-            <h1 className="text-4xl font-serif mb-4 font-bold text-[#e0d8ad] text-center ">WELCOME TO THE MANDARA SPA</h1>
-            <p className="text-gray-100 font-serif text-lg">Elevating the spa experience to a new art form.</p>
+            <h1 className="text-lg font-serif mb-4 sm:text-3xl md:text-4xl font-bold text-[#e0d8ad] text-center ">WELCOME TO THE MANDARA SPA</h1>
+            <p className="text-gray-100 font-serif text-xs sm:text-md md:text-lg">Elevating the spa experience to a new art form.</p>
           </div>
         </div>
       </div>
       
-        <div className="bg-gray-200 flex flex-col justify-center items-center pt-10">
-          <h1 className="text-4xl mb-6 text-center font-serif">The Mandara Spa Special Offers</h1>
-            <div className="justify-center relative">
-              <button className="custom-prev absolute rounded-full scale-80 top-2/5 left-[-50] h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+        <div className="bg-gray-200 flex-col flex justify-center items-center pt-10">
+          <h1 className="text-3xl xl:text-4xl mb-[-30] text-center font-serif">The Mandara Spa Special Offers</h1>
+            <div className="flex items-center justify-around">
+              <button className="custom-prev scale-80 xl rounded-full w-13 h-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❮
               </button>
   
-              <div className="flex  justify-center items-center max-w-7xl w-full mx-auto px-4">
+              <div className="flex justify-center h-min items-center max-w-3xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-5xl 2xl:max-w-7xl">
                 <Swiper
                   modules={[Navigation]}
                   spaceBetween={50}
@@ -144,14 +157,14 @@ return (
                     prevEl: ".custom-prev",
                   }}
                   breakpoints={{
-                    640: { slidesPerView: 1 },
-                    1024: { slidesPerView: 3 },
+                    0: { slidesPerView: 1 },
+                    1280: { slidesPerView: 3 },
                   }}
                 >
                 {services.map((service, index) => (
                   <SwiperSlide key={index}>
                     <button onClick={handleBooking}>
-                      <a className="block hover:scale-100 rounded-lg scale-95 hover:bg-gray-50 hover:shadow-lg shadow-gray-300 transition-all p-5 mt-3 mb-5">
+                      <a className="p-3 block hover:scale-85 rounded-lg scale-80 hover:bg-gray-50 hover:shadow-lg shadow-gray-300 transition-all">
                         <Image
                           alt=""
                           src={service.img}
@@ -163,7 +176,7 @@ return (
     
                         <h3 className="mt-4 text-xl text-left font-serif text-gray-900 ">{service.title}</h3>
     
-                        <p className="mt-2 max-w-sm font-serif text-sm text-left leading-relaxed text-gray-700">
+                        <p className="mt-2 h-min max-w-sm font-serif text-sm text-left leading-relaxed text-gray-700">
                           {service.desc}
                         </p>
                       </a>
@@ -173,21 +186,21 @@ return (
                 </Swiper>
               </div>
   
-              <button className="custom-next absolute rounded-full scale-80 top-2/5 right-[-50] h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+              <button className="custom-next scale-80 rounded-full h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                   ❯
               </button>
           </div>
         </div>
 
         
-        <div className="bg-gray-200 h-2xl flex flex-col justify-center items-center pb-10">
-          <h1 className="text-4xl mb-6 text-center font-serif">Testimonials</h1>
-            <div className="justify-center relative">
-              <button className="custom-prev-2 absolute rounded-full scale-80 top-2/5 left-[-50] h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+        <div className="bg-gray-200  flex flex-col justify-center items-center pb-10">
+          <h1 className="text-3xl text-center mb-[-30] font-serif">Testimonials</h1>
+            <div className="flex justify-around items-center">
+              <button className="custom-prev-2 rounded-full scale-80 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❮
               </button>
   
-              <div className="flex justify-center items-center max-w-7xl w-full mx-auto px-4">
+              <div className="flex justify-center items-center max-w-3xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-5xl 2xl:max-w-7xl">
                 <Swiper
                   modules={[Navigation]}
                   spaceBetween={50}
@@ -199,42 +212,43 @@ return (
                     prevEl: ".custom-prev-2",
                   }}
                   breakpoints={{
-                    640: { slidesPerView: 1 },
-                    1024: { slidesPerView: 3 },
+                    0: { slidesPerView: 1 },
+                    1280: { slidesPerView: 3 },
                   }}
                 >
                 {reviews.map((review, index) => (
                   <SwiperSlide key={index}>
-                    <blockquote className="hover:scale-100 rounded-lg scale-95 hover:shadow-lg shadow-gray-300 transition-all hover:bg-gray-50  bg-gray-200 p-10  sm:p-8">
+                    <div className="flex flex-col p-3 justify-start min-h-100 hover:scale-85 rounded-lg scale-80 hover:shadow-lg shadow-gray-300 transition-all hover:bg-gray-50  bg-gray-200">
                       <div className="flex items-center gap-4">
                         <Image
                           alt=""
                           src={review.img}
-                          className="size-14 rounded-full object-cover"
+                          className="size-10 rounded-full object-cover"
                           height={100}
                           width={100}
-                          layout="intrinsic"
                           priority
                         />
 
-                        <p className="mt-0.5 text-xl font-medium text-gray-900">{review.title}</p>
+                        <p className=" text-xl font-medium text-gray-900">{review.title}</p>
                       </div>
 
                       <p className="mt-4 text-sm/relaxes text-gray-700">
                         {review.desc}
                       </p>
-                    </blockquote>
+                    </div>
                   </SwiperSlide>
                   ))}
                 </Swiper>
               </div>
   
-              <button className="custom-next-2 absolute rounded-full scale-80 top-2/5 right-[-50] h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+              <button className="custom-next-2 rounded-full scale-80 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❯
               </button>
             </div>
         </div>
-        <Footer />
+        <div id="footer">
+          <Footer/>
+        </div>
     </div>
   );
 }

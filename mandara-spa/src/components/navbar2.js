@@ -3,11 +3,7 @@
 export default function NavBar2 ({currPage, onBook}) {
     return (
     <div className="pl-4">
-        <div className="sm:hidden">
-            
-        </div>
-
-        <div className="hidden sm:block">
+        <div className="hidden xl:block">
             <div className=" border-gray-200 mt-8">
                 <nav className="-mb-px  flex gap-15" aria-label="Tabs">
 

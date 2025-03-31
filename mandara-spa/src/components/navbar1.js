@@ -3,18 +3,7 @@
 export default function NavBar1 ({currPage}) {
     return (
     <div className="pr-4 ml-4">
-        <div className="md:hidden sm:hidden xs:hidden">
-            <label htmlFor="Tab" className="sr-only">Tab</label>
-
-            <select id="Tab" className="w-full rounded-md border-gray-200">
-            <option>Home</option>
-            <option>Locations</option>
-            <option>Services</option>
-            <option>Notifications</option>
-            </select>
-        </div>
-
-        <div className="hidden sm:block">
+        <div className="hidden xl:block">
             <div className=" border-gray-200 mt-8">
                 <nav className="-mb-px flex gap-15" aria-label="Tabs">
                     <a
