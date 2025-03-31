@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, doc, getDoc, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const ViewMessages = ({onClose}) => {
+const Image = dynamic(() => import("next/image"));
+
+const ViewMessages = () => {
     const router = useRouter();
     const auth = getAuth(firebase_app);
     const db = getFirestore(firebase_app);
@@ -25,7 +26,7 @@ const ViewMessages = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -45,7 +46,7 @@ const ViewMessages = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -65,7 +66,7 @@ const ViewMessages = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (!userData?.branch_id || !branchData) return;
@@ -103,7 +104,7 @@ const ViewMessages = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, !!branchData]);
+    }, [userData?.branch_id, branchData, db]);
 
     const handleRemoveMessage = async (e, messageId) => {
         e.preventDefault();
@@ -128,7 +129,7 @@ const ViewMessages = ({onClose}) => {
 
     return (
         <div className="flex flex-col justify-center bg-[#301414] h-screen w-screen items-center ">
-            <Image className="mt-20 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <Image priority className="mt-20 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
             <div className=" mb-20 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">

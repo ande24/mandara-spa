@@ -80,7 +80,7 @@ const EditBranch = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, user]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

@@ -3,20 +3,18 @@
 import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 
-import NavBar1 from "@/components/navbar1";
-import NavBar2 from "@/components/navbar2";
-
-import dynamic from "next/dynamic";
+const Image = dynamic(() => import("next/image"));
+const NavBar1 = dynamic(() => import("@/components/navbar1"), { ssr: false });
+const NavBar2 = dynamic(() => import("@/components/navbar2"), { ssr: false });
 const SlidingButton = dynamic(() => import("@/components/slidingButton"), { ssr: false });
 const Footer = dynamic(() => import("@/components/footer"), { ssr: false });
 const BookingForm = dynamic(() => import("@/components/bookingForm"), { ssr: false });
-
 
 export default function Page() {
   const { user } = useAuthContext()
@@ -154,10 +152,13 @@ return (
                   <SwiperSlide key={index}>
                     <button onClick={handleBooking}>
                       <a className="block hover:scale-100 rounded-lg scale-95 hover:bg-gray-50 hover:shadow-lg shadow-gray-300 transition-all p-5 mt-3 mb-5">
-                        <img
+                        <Image
                           alt=""
                           src={service.img}
                           className="h-80 w-150 object-cover rounded-lg"
+                          height={300}
+                          width={300}
+                          priority
                         />
     
                         <h3 className="mt-4 text-xl text-left font-serif text-gray-900 ">{service.title}</h3>
@@ -206,10 +207,14 @@ return (
                   <SwiperSlide key={index}>
                     <blockquote className="hover:scale-100 rounded-lg scale-95 hover:shadow-lg shadow-gray-300 transition-all hover:bg-gray-50  bg-gray-200 p-10  sm:p-8">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           alt=""
                           src={review.img}
                           className="size-14 rounded-full object-cover"
+                          height={100}
+                          width={100}
+                          layout="intrinsic"
+                          priority
                         />
 
                         <p className="mt-0.5 text-xl font-medium text-gray-900">{review.title}</p>

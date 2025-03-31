@@ -49,7 +49,7 @@ const BookingForm = ({ onClose }) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -70,7 +70,7 @@ const BookingForm = ({ onClose }) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && selectedBranch) {
@@ -90,7 +90,7 @@ const BookingForm = ({ onClose }) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db, selectedBranch]);
 
     useEffect(() => {
         const fetchBranches = async () => {
@@ -107,7 +107,7 @@ const BookingForm = ({ onClose }) => {
             setBranches(branchList);
         };
         fetchBranches();
-    }, []);
+    }, [db]);
 
     useEffect(() => {
         if (selectedBranch) {
@@ -138,7 +138,7 @@ const BookingForm = ({ onClose }) => {
             };
             fetchServices();
         }
-    }, [selectedBranch]);
+    }, [selectedBranch, db]);
 
     useEffect(() => {
         const today = new Date();

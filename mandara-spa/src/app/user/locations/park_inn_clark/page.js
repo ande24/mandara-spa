@@ -3,30 +3,28 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import BookingForm from "@/components/bookingForm";
-import Image from "next/image";
-import NavBar1 from "@/components/navbar1";
-import NavBar2 from "@/components/navbar2";
+import dynamic from "next/dynamic";
 import { getDoc, doc, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
 import { FaMapMarkerAlt, FaClock, FaPhone, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import Footer from "@/components/footer";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
+import Link from "next/link";
+
+const Image = dynamic(() => import("next/image"));
+const BookingForm = dynamic(() => import("@/components/bookingForm"), { ssr: false });
+const NavBar1 = dynamic(() => import("@/components/navbar1"), { ssr: false });
+const NavBar2 = dynamic(() => import("@/components/navbar2"), { ssr: false });
+const Footer = dynamic(() => import("@/components/footer"), { ssr: false });
 
 export default function Page() {
   const db = getFirestore(firebase_app)
   const { user } = useAuthContext()
   const router = useRouter()
   const [showForm, setShowForm] = useState(false)
-  const [redirect, setRedirect] = useState(false)
   const [branchData, setBranchData] = useState('')
-  
-  useEffect (() => {
-    if (redirect) router.push("/user/login");
-  }, [redirect]);
 
   useEffect (() => {
     const fetchBranch = async() => {
@@ -36,14 +34,14 @@ export default function Page() {
     }
 
     fetchBranch();
-}, []);
+}, [db]);
 
   const handleBooking = () => {
     if (user) {
       setShowForm(true)
     }
     else {
-      setRedirect(true);
+      router.push("/user/login");
     }
   }
   return (
@@ -58,15 +56,16 @@ export default function Page() {
               <NavBar1 currPage={"locations"} />
             </div>
             <div>
-              <a href="/user/home">
+              <Link href="/user/home">
                 <Image
                   src="/images/mandara_gold.png"
                   alt=""
                   height={85}
                   width={194}
+                  priority
                   className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
               />
-              </a>
+              </Link>
             </div>
             <div>
               <NavBar2 onBook={handleBooking} currPage={"locations"} />
@@ -95,10 +94,13 @@ export default function Page() {
               {branchData.branch_images.map((img, index) => (
                 <SwiperSlide key={index}>
                   <article className="overflow-hidden rounded-lg">
-                    <img
+                    <Image
                       alt=""
                       src={img}
                       className="h-150 w-full object-cover"
+                      height={1000}
+                      width={1000}
+                      priority
                     />
                   </article>
                 </SwiperSlide>

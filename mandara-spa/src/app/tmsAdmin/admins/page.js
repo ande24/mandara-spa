@@ -1,11 +1,13 @@
 "use client"; 
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, setDoc, doc, getDoc, getDocs, arrayUnion, updateDoc, arrayRemove, } from "firebase/firestore";
-import signUp from "@/firebase/auth/signup";
-import Image from "next/image";
+import { getFirestore, collection, setDoc, doc, getDoc, getDocs, arrayUnion, updateDoc, arrayRemove } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+
+const signUp = dynamic(() => import("@/firebase/auth/signup"), { ssr: false });
+const Image = dynamic(() => import("next/image"), { ssr: false });
 
 const EditAdmins = ({}) => {
     const router = useRouter();
@@ -154,7 +156,7 @@ const EditAdmins = ({}) => {
     return (
         <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
            
-                <Image className="fixed top-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+                <Image priority className="fixed top-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
           
 
             <div className="fixed flex flex-col justify-center items-center bottom-35 bg-white w-full z-50 max-w-3xl p-6 rounded-lg shadow-lg">

@@ -12,7 +12,7 @@ export default function EmailVerified () {
         setShow(true);
 
         router.push("/user/login");
-    }, [])
+    }, [router])
     return (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414]">
             {show && <SuccessMessage message={"Email verified successfully!"} onClose={() => setShow(false)}/>}

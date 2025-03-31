@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+
+const Image = dynamic(() => import("next/image"));
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -82,7 +84,7 @@ const EditBranch = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, user]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -105,7 +107,7 @@ const EditBranch = ({onClose}) => {
     return (
         <div className="flex flex-col h-screen items-center bg-[#301414] justify-center">
 
-            <Image className="mt-20 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <Image priority className="mt-20 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
             <div className=" w-full h-full rounded-lg flex items-center justify-center bg-[#301414] bg-opacity-50">
                 <div className="bg-white p-6 rounded-lg shadow-md max-w-7xl w-full h-full max-h-150">
                     <h2 className="text-2xl font-bold text-gray-800 mb-1 text-center">Edit Branch Details</h2>

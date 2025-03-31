@@ -1,10 +1,12 @@
 'use client'
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import SignInAdmin from "@/firebase/auth/signinAdmin";
-import { useRouter } from 'next/navigation'
-import Image from "next/image";
-import SuccessMessage from "@/components/success";
-import ErrorMessage from "@/components/error";
+import { useRouter } from "next/navigation";
+
+const Image = dynamic(() => import("next/image"));
+const SuccessMessage = dynamic(() => import("@/components/success"));
+const ErrorMessage = dynamic(() => import("@/components/error"));
 
 function SignIn() {
     const [email, setEmail] = React.useState('')
@@ -76,6 +78,7 @@ function SignIn() {
                 src="/images/mandara_gold.png"
                 height={200}
                 width={200}
+                priority 
                 />
 
                 <div className="mx-auto max-w-lg text-center">
@@ -174,10 +177,12 @@ function SignIn() {
         </div>
 
         <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
-            <img
+            <Image
             alt=""
             src="/images/sign_in.jpg"
             className="absolute inset-0 h-full w-full object-cover"
+            full
+            priority
             />
         </div>
     </section>

@@ -1,11 +1,13 @@
 'use client'
-import React, {useState, useEffect} from "react";
-import { useRouter, useSearchParams  } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getAuth, confirmPasswordReset } from "firebase/auth";
 import firebase_app from "@/firebase/config";
-import Image from "next/image";
-import ErrorMessage from "@/components/error";
-import SuccessMessage from "@/components/success";
+import dynamic from "next/dynamic";
+
+const Image = dynamic(() => import("next/image"));
+const ErrorMessage = dynamic(() => import("@/components/error"), { ssr: false });
+const SuccessMessage = dynamic(() => import("@/components/success"), { ssr: false });
 
 const ResetPassword = () => {
     const auth = getAuth(firebase_app);
@@ -72,6 +74,7 @@ const ResetPassword = () => {
                 src="/images/mandara_gold.png"
                 height={200}
                 width={200}
+                priority
                 />
 
                 <div className="mx-auto max-w-lg text-center">

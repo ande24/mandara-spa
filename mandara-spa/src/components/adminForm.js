@@ -31,7 +31,7 @@ const EditAdmins = ({ onClose }) => {
             setBranches(branchList);
         };
         fetchBranches();
-    }, []);
+    }, [db]);
 
     useEffect(() => {
         const fetchBranchAdmins = async () => {
@@ -69,7 +69,7 @@ const EditAdmins = ({ onClose }) => {
         };
     
         fetchBranchAdmins();
-    }, [selectedBranch]);
+    }, [selectedBranch, db]);
 
     const handleAddAdmin = async (e) => {
         e.preventDefault();

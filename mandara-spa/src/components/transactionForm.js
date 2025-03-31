@@ -29,7 +29,7 @@ const ManageInv = ({onClose, bookingData}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth, bookingData]);
 
     useEffect(() => {
         if (user) {
@@ -49,7 +49,7 @@ const ManageInv = ({onClose, bookingData}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -69,7 +69,7 @@ const ManageInv = ({onClose, bookingData}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -94,7 +94,7 @@ const ManageInv = ({onClose, bookingData}) => {
             };
             fetchItems();
         }
-    }, [branchData]);
+    }, [branchData, db, userData.branch_id]);
 
     useEffect(() => {
         const fetchItemData = async () => {
@@ -112,7 +112,7 @@ const ManageInv = ({onClose, bookingData}) => {
         };
     
         fetchItemData();
-      }, [selectedItem]);
+      }, [selectedItem, db, userData.branch_id]);
 
     const handleAddItem = async (e) => {
         e.preventDefault();

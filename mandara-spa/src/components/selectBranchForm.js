@@ -21,7 +21,7 @@ const BranchSelect = ({ onClose }) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         const fetchBranches = async () => {
@@ -37,7 +37,7 @@ const BranchSelect = ({ onClose }) => {
             setBranches(branchList);
         };
         fetchBranches();
-    }, []);
+    }, [db]);
 
     const directBranch = async (e) => {
         e.preventDefault();

@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Sidebar from "@/components/sidebar";
-import ChartItem from "@/components/chartItem";
-import Timeline from "@/components/timeline";
+import dynamic from "next/dynamic";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase_app from "@/firebase/config";
 import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot, query, orderBy } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+
+const Image = dynamic(() => import("next/image"), { ssr: false });
+const Sidebar = dynamic(() => import("@/components/sidebar"), { ssr: false });
+const ChartItem = dynamic(() => import("@/components/chartItem"), { ssr: false });
+const Timeline = dynamic(() => import("@/components/timeline"), { ssr: false });
 
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
@@ -111,7 +113,7 @@ export default function Page() {
       });
 
       return () => unsubscribe();
-  }, []);
+  }, [router]);
 
 
 
@@ -152,7 +154,7 @@ export default function Page() {
               return router.push("/");
           }
       }
-  }, [userData])
+  }, [userData, router])
 
 
   useEffect(() => {
@@ -175,7 +177,7 @@ export default function Page() {
 
           fetchBranchData();
       }
-  }, [userData]);
+  }, [userData, user]);
 
 
 
@@ -205,7 +207,7 @@ export default function Page() {
           };
           fetchServices();
       }
-  }, [branchData]);
+  }, [branchData, userData.branch_id]);
 
 
 
@@ -423,7 +425,7 @@ useEffect(() => {
     };
 
     fetchMonthlyIncome();
-  }, [userData, branchData, selectedMonth, selectedDate, JSON.stringify(transactions)])
+  }, [userData, branchData, selectedMonth, selectedDate, transactions])
 
 
 
@@ -463,7 +465,7 @@ useEffect(() => {
     };
 
     fetchMonthlyBookings();
-  }, [userData, branchData, selectedMonth, JSON.stringify(bookings)])
+  }, [userData, branchData, selectedMonth, bookings])
 
 
 
@@ -504,7 +506,7 @@ useEffect(() => {
     };
 
     fetchDailyCustomers();
-  }, [userData, branchData, selectedDate, JSON.stringify(transactions)])
+  }, [userData, branchData, selectedDate, bookings, transactions])
 
   useEffect(() => {
     if (!branches || branches.length === 0) {
@@ -560,7 +562,7 @@ useEffect(() => {
     };
 
     getBestBranches();
-  }, [branches, selectedDate]);
+  }, [branches, selectedDate, selectedMonth]);
 
   
 
@@ -624,7 +626,7 @@ useEffect(() => {
           <Sidebar admin={isBusinessAdmin}/>
 
           <div className="flex justify-center p-6 pt-8 ">
-            <Image className="" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <Image priority className="" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
           </div>
 
           <div className="flex-1 p-6 pt-6 ">

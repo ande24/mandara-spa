@@ -1,12 +1,14 @@
 'use client'
 import React, { useState } from "react";
-import SignUp from "@/firebase/auth/signup";
 import { setDoc, doc, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
-import { useRouter } from "next/navigation";
-import ErrorMessage from "@/components/error";
-import Image from "next/image";
-import SuccessMessage from "@/components/success";
+import SignUp from "@/firebase/auth/signup";
+import dynamic from "next/dynamic";
+
+const Image = dynamic(() => import("next/image"));
+const ErrorMessage = dynamic(() => import("@/components/error"), { ssr: false });
+const SuccessMessage = dynamic(() => import("@/components/success"), { ssr: false });
+
 
 function SignUpUser() {
     const db = getFirestore(firebase_app)
@@ -18,7 +20,6 @@ function SignUpUser() {
     const [errorMsg, setErrorMsg] = useState('');
     const [showSuccess, setShowSuccess] = useState(false)
     const [successMsg, setSuccessMsg] = useState('');
-    const router = useRouter();
     const [saving, setSaving] = useState(false)
 
     const handleForm = async (event) => {
@@ -89,10 +90,12 @@ function SignUpUser() {
         {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
             
         <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
-            <img
+            <Image
             alt=""
             src="/images/sign_up.jpg"
             className="absolute inset-0 h-full w-full object-cover"
+            fill
+            priority
             />
         </div>
 
@@ -104,6 +107,7 @@ function SignUpUser() {
                 src="/images/mandara_gold.png"
                 height={200}
                 width={200}
+                priority
                 />
 
                 <div className="mx-auto max-w-lg text-center">

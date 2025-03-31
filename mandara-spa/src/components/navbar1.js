@@ -32,7 +32,7 @@ export default function NavBar1 ({currPage}) {
                     </a>
 
                     <div
-                        className="absolute group-hover:opacity-100 z-50 group-hover:scale-100 transition-all opacity-0 scale-0   rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
+                        className="absolute group-hover:opacity-100 z-80 group-hover:scale-100 transition-all opacity-0 scale-0   rounded-md left-0 mt-7  w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
                         role="menu"
                         >
                         <div className="p-2">
@@ -135,7 +135,7 @@ export default function NavBar1 ({currPage}) {
                         </a>
 
                         <div
-                            className="absolute group-hover:opacity-100 group-hover:scale-100 transition-all opacity-0 scale-0 rounded-md left-0 mt-7 w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
+                            className="absolute z-80 group-hover:opacity-100 group-hover:scale-100 transition-all opacity-0 scale-0 rounded-md left-0 mt-7 w-56 text-xs font-semibold border border-gray-100 bg-white shadow-lg"
                             role="menu"
                             >
                             <div className="p-2">

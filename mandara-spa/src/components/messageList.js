@@ -23,7 +23,7 @@ const ViewMessages = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -43,7 +43,7 @@ const ViewMessages = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -63,7 +63,7 @@ const ViewMessages = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (!userData?.branch_id || !branchData) return;
@@ -91,7 +91,7 @@ const ViewMessages = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, !!branchData]);
+    }, [userData?.branch_id, branchData, db]);
 
     const handleRemoveMessage = async (e, messageId) => {
         e.preventDefault();

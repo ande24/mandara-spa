@@ -32,7 +32,7 @@ const ManageService = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -52,7 +52,7 @@ const ManageService = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -72,7 +72,7 @@ const ManageService = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -101,7 +101,7 @@ const ManageService = ({onClose}) => {
             };
             fetchServices();
         }
-    }, [branchData]);
+    }, [branchData, db, userData.branch_id]);
 
     useEffect(() => {
         const fetchServiceData = async () => {
@@ -116,7 +116,7 @@ const ManageService = ({onClose}) => {
         };
     
         fetchServiceData();
-      }, [selectedService]);
+      }, [selectedService, db, userData.branch_id]);
 
     const handleAddService = async (e) => {
         e.preventDefault();

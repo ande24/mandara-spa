@@ -1,11 +1,13 @@
 'use client'
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import signIn from "@/firebase/auth/signin";
-import { useRouter } from 'next/navigation';
 import ForgotPassword from "@/firebase/auth/forgotPassword";
-import Image from "next/image";
-import ErrorMessage from "@/components/error";
-import SuccessMessage from "@/components/success";
+import dynamic from "next/dynamic";
+
+const ErrorMessage = dynamic(() => import("@/components/error"));
+const SuccessMessage = dynamic(() => import("@/components/success"));
+const Image = dynamic(() => import("next/image"));
 
 function SignIn() {
     const [email, setEmail] = useState('')

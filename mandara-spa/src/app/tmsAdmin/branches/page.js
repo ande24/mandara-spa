@@ -1,13 +1,15 @@
 "use client"; 
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
-const BranchSelect = ({ onClose }) => {
+const Image = dynamic(() => import("next/image"), { ssr: false });
+
+const BranchSelect = () => {
     const router = useRouter();
     const auth = getAuth(firebase_app);
     const db = getFirestore(firebase_app);
@@ -68,7 +70,7 @@ const BranchSelect = ({ onClose }) => {
 
     return (
         <div className="fixed h-screen w-screen z-0 inset-0 flex items-center justify-center bg-[#301414] bg-opacity-50 p-4">
-                <Image className="fixed top-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+                <Image priority className="fixed top-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
         
 
             <div className="flex flex-col justify-around p-4 z-10 bottom-35 min-w-lg min-h-80 mx-auto bg-white shadow-lg rounded-lg">

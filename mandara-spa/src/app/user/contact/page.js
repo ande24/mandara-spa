@@ -1,25 +1,22 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
-import { useAuthContext } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import BookingForm from "@/components/bookingForm";
-import Image from "next/image";
-import NavBar1 from "@/components/navbar1";
-import NavBar2 from "@/components/navbar2";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { FaMapMarkerAlt, FaClock, FaPhone } from "react-icons/fa";
-import { addDoc, collection, getFirestore, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
 import firebase_app from "@/firebase/config";
-import Footer from "@/components/footer";
-import SuccessMessage from "@/components/success";
-import ErrorMessage from "@/components/error";
+
+const Image = dynamic(() => import("next/image"));
+const BookingForm = dynamic(() => import("@/components/bookingForm"));
+const NavBar1 = dynamic(() => import("@/components/navbar1"));
+const NavBar2 = dynamic(() => import("@/components/navbar2"));
+const Footer = dynamic(() => import("@/components/footer"));
+const SuccessMessage = dynamic(() => import("@/components/success"));
+const ErrorMessage = dynamic(() => import("@/components/error"));
 
 export default function Page() {
     const db = getFirestore(firebase_app);
-    const { user } = useAuthContext()
-    const router = useRouter()
     const [showForm, setShowForm] = useState(false)
-    const [redirect, setRedirect] = useState(false)
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [number, setNumber] = useState("");
@@ -29,10 +26,6 @@ export default function Page() {
     const [errorMsg, setErrorMsg] = useState("");
     const [showError, setShowError] = useState(false);
     const [saving, setSaving] = useState(false);
-
-    useEffect (() => {
-      if (redirect) router.push("/user/login");
-    }, [redirect]);
 
     const handleForm = async (e) => {
       e.preventDefault();
@@ -64,15 +57,6 @@ export default function Page() {
       setSaving(false)
     }
 
-    const handleBooking = () => {
-      if (user) {
-        setShowForm(true)
-      }
-      else {
-        setRedirect(true);
-      }
-    }
-
   return (
     <div className="relative flex flex-col justify-center items-center h-max w-full bg-white">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
@@ -88,6 +72,7 @@ export default function Page() {
             height={85}
             width={194}
             className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
+            priority
           />
         </a>
         <NavBar2 currPage={"contact"} />

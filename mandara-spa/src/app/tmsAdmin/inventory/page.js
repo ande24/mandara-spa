@@ -1,13 +1,15 @@
 "use client"; 
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc, updateDoc, onSnapshot, query, getDocs } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, getDoc, deleteDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const ManageInv = ({onClose}) => {
+const Image = dynamic(() => import("next/image"));
+
+const ManageInv = () => {
     const router = useRouter();
     const auth = getAuth(firebase_app)
     const db = getFirestore(firebase_app);
@@ -32,7 +34,7 @@ const ManageInv = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -52,7 +54,7 @@ const ManageInv = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -72,7 +74,7 @@ const ManageInv = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -97,7 +99,7 @@ const ManageInv = ({onClose}) => {
     
             return () => unsubscribe();
         }
-    }, [branchData, userData?.branch_id]);
+    }, [branchData, userData?.branch_id, db]);
 
     useEffect(() => {
         const fetchItemData = async () => {
@@ -117,7 +119,7 @@ const ManageInv = ({onClose}) => {
         };
     
         fetchItemData();
-      }, [selectedItem]);
+      }, [selectedItem, db, userData.branch_id]);
 
     const handleAddItem = async (e) => {
         setSaving(true)
@@ -238,7 +240,7 @@ const ManageInv = ({onClose}) => {
     return (
         <div className="flex flex-col h-screen justify-center bg-[#301414] items-center">
 
-            <Image className="mt-20 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} /> 
+            <Image priority className="mt-20 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} /> 
             <div className=" left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                 <div className="bg-white p-6 rounded-lg shadow-md max-w-5xl w-full max-h-[90vh] overflow-y-auto">
                     <h2 className="text-2xl font-bold text-gray-800 mb-3 text-center">Manage Items</h2>

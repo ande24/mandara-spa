@@ -30,7 +30,7 @@ const ManageInv = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -50,7 +50,7 @@ const ManageInv = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -70,7 +70,7 @@ const ManageInv = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -95,7 +95,7 @@ const ManageInv = ({onClose}) => {
     
             return () => unsubscribe();
         }
-    }, [branchData, userData?.branch_id]);
+    }, [branchData, userData?.branch_id, db]);
 
     useEffect(() => {
         const fetchItemData = async () => {
@@ -115,7 +115,7 @@ const ManageInv = ({onClose}) => {
         };
     
         fetchItemData();
-      }, [selectedItem]);
+      }, [selectedItem, db, userData.branch_id]);
 
     const handleAddItem = async (e) => {
         setSaving(true)

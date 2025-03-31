@@ -23,7 +23,7 @@ const ManageTransactions = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -43,7 +43,7 @@ const ManageTransactions = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -63,7 +63,7 @@ const ManageTransactions = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -92,7 +92,7 @@ const ManageTransactions = ({onClose}) => {
             };
             fetchServices();
         }
-    }, [branchData]);
+    }, [branchData, db, userData.branch_id]);
 
     useEffect(() => {
         if (!userData?.branch_id || !branchData || !services) return;
@@ -154,7 +154,7 @@ const ManageTransactions = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, !!branchData, !!services]);
+    }, [userData?.branch_id, branchData, db, services]);
 
     const handleRemoveTransaction = async (e, transactionId) => {
         e.preventDefault();

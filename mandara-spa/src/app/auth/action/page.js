@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-
 export default function AuthAction() {
     const router = useRouter();
     const searchParams = useSearchParams();

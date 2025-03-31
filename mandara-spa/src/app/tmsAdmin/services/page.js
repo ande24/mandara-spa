@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, addDoc, doc, getDocs, getDoc, deleteDoc, updateDoc, orderBy, query } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const ManageService = ({onClose}) => {
+const Image = dynamic(() => import("next/image"));
+
+const ManageService = () => {
     const router = useRouter();
     const auth = getAuth(firebase_app)
     const db = getFirestore(firebase_app);
@@ -34,7 +35,7 @@ const ManageService = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -54,7 +55,7 @@ const ManageService = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -74,7 +75,7 @@ const ManageService = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -103,7 +104,7 @@ const ManageService = ({onClose}) => {
             };
             fetchServices();
         }
-    }, [branchData]);
+    }, [branchData, db, userData.branch_id]);
 
     useEffect(() => {
         const fetchServiceData = async () => {
@@ -118,7 +119,7 @@ const ManageService = ({onClose}) => {
         };
     
         fetchServiceData();
-      }, [selectedService]);
+      }, [selectedService, db, userData.branch_id]);
 
     const handleAddService = async (e) => {
         e.preventDefault();
@@ -270,7 +271,7 @@ const ManageService = ({onClose}) => {
         <div className="flex justify-center items-center ">
             {user && userData && branchData && services && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
-                    <Image className="fixed top-10 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+                    <Image priority className="fixed top-10 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
                     
                         <div className="flex flex-col md:flex-row mt-20 justify-between gap-6">
                             <div className="md:w-1/3 bg-white p-3 rounded-lg shadow-md">

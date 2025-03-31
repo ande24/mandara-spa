@@ -1,13 +1,14 @@
 "use client"; 
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import AddTransaction from "@/components/transactionForm";
 
+const Image = dynamic(() => import("next/image"), { ssr: false });
+const AddTransaction = dynamic(() => import("@/components/transactionForm"), { ssr: false });
 
 const ManageBookings = () => {
     const router = useRouter();
@@ -99,7 +100,7 @@ const ManageBookings = () => {
             };
             fetchServices();
         }
-    }, [branchData, db]);
+    }, [branchData, db, userData.branch_id]);
 
     useEffect(() => {
         if (!userData?.branch_id || !branchData || !services) return;
@@ -217,7 +218,7 @@ const ManageBookings = () => {
 
     return (
         <div className="flex flex-col justify-center bg-[#301414] h-screen items-center ">
-            <Image className="mt-20 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <Image priority className="mt-20 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
             <div className="mt-[-150] w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                 
             {showTransaction && selectedBooking ? (<AddTransaction bookingData={selectedBooking} onClose={() => setShowTransaction(false)} />) : (

@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const ManageTransactions = ({onClose}) => {
+const Image = dynamic(() => import("next/image"));
+
+const ManageTransactions = () => {
     const router = useRouter();
     const auth = getAuth(firebase_app)
     const db = getFirestore(firebase_app);
@@ -25,7 +26,7 @@ const ManageTransactions = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -45,7 +46,7 @@ const ManageTransactions = ({onClose}) => {
     
             fetchUserData();
         }
-    }, [user]);
+    }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
@@ -65,7 +66,7 @@ const ManageTransactions = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData]);
+    }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && branchData) {
@@ -94,7 +95,7 @@ const ManageTransactions = ({onClose}) => {
             };
             fetchServices();
         }
-    }, [branchData]);
+    }, [branchData, db, userData.branch_id]);
 
     useEffect(() => {
         if (!userData?.branch_id || !branchData || !services) return;
@@ -159,7 +160,7 @@ const ManageTransactions = ({onClose}) => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, !!branchData, !!services]);
+    }, [userData?.branch_id, branchData, db, services]);
 
     const handleRemoveTransaction = async (e, transactionId) => {
         e.preventDefault();
@@ -185,7 +186,7 @@ const ManageTransactions = ({onClose}) => {
 
     return (
         <div className="flex flex-col justify-center h-screen w-screen bg-[#301414] items-center ">
-            <Image className="mt-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
+            <Image priority className="mt-30" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
             <div className="mb-20 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-6xl w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">

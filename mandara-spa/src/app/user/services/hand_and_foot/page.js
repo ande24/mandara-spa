@@ -1,36 +1,25 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import BookingForm from "@/components/bookingForm";
-import Image from "next/image";
-import NavBar1 from "@/components/navbar1";
-import NavBar2 from "@/components/navbar2";
-import { getFirestore } from "firebase/firestore";
-import firebase_app from "@/firebase/config";
+import dynamic from "next/dynamic";
+
+const BookingForm = dynamic(() => import("@/components/bookingForm"), { ssr: false });
+const Image = dynamic(() => import("next/image"));
+const NavBar1 = dynamic(() => import("@/components/navbar1"), { ssr: false });
+const NavBar2 = dynamic(() => import("@/components/navbar2"), { ssr: false });
+const Footer = dynamic(() => import("@/components/footer"), { ssr: false });
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import Footer from "@/components/footer";
 
 export default function Page() {
-  useEffect(() => {
-    const swiperInstance = document.querySelector(".swiper")?.swiper;
-    if (swiperInstance) {
-      swiperInstance.params.navigation.prevEl = ".custom-prev";
-      swiperInstance.params.navigation.nextEl = ".custom-next";
-      swiperInstance.navigation.init();
-      swiperInstance.navigation.update();
-    }
-  }, []);
-
-  const db = getFirestore(firebase_app)
   const { user } = useAuthContext()
   const router = useRouter()
   const [showForm, setShowForm] = useState(false)
-  const [redirect, setRedirect] = useState(false)
   const services = [
     {
       title: "Hand Spa",
@@ -64,16 +53,12 @@ export default function Page() {
     }      
   ];
 
-  useEffect (() => {
-    if (redirect) router.push("/user/login");
-  }, [redirect]);
-
   const handleBooking = () => {
     if (user) {
       setShowForm(true)
     }
     else {
-      setRedirect(true);
+      router.push("/user/login");
     }
   }
   return (
@@ -88,6 +73,7 @@ export default function Page() {
             alt=""
             height={85}
             width={194}
+            priority
             className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
           />
         </a>
@@ -120,10 +106,13 @@ export default function Page() {
               {services.map((service, index) => (
                 <SwiperSlide key={index}>
                   <a onClick={handleBooking} className="block hover:scale-100 scale-95 rounded-xl p-3 hover:shadow-lg shadow-gray-300 transition-all mt-3 mb-15">
-                    <img
+                    <Image
                       alt=""
                       src={service.img}
                       className="h-80 w-150 object-cover rounded-lg"
+                      height={1000}
+                      width={1000}
+                      priority
                     />
 
                     <h3 className="mt-4 text-xl font-serif text-gray-900 ">{service.title}</h3>

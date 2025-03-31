@@ -1,23 +1,20 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
-import { useAuthContext } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import BookingForm from "@/components/bookingForm";
-import Image from "next/image";
-import NavBar1 from "@/components/navbar1";
-import NavBar2 from "@/components/navbar2";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import Footer from "@/components/footer";
+
+const Image = dynamic(() => import("next/image"));
+const BookingForm = dynamic(() => import("@/components/bookingForm"));
+const NavBar1 = dynamic(() => import("@/components/navbar1"));
+const NavBar2 = dynamic(() => import("@/components/navbar2"));
+const Footer = dynamic(() => import("@/components/footer"));
 
 export default function Page() {
-    const { user } = useAuthContext()
-    const router = useRouter()
     const [showForm, setShowForm] = useState(false)
-    const [redirect, setRedirect] = useState(false)
     const events = [
       {
         title: "Anya’s Girls Power Kiddie Sparty",
@@ -107,18 +104,6 @@ export default function Page() {
       },
     ];
 
-    useEffect (() => {
-      if (redirect) router.push("/user/login");
-    }, [redirect]);
-
-    const handleBooking = () => {
-      if (user) {
-        setShowForm(true)
-      }
-      else {
-        setRedirect(true);
-      }
-    }
   return (
     <div className="relative flex flex-col bg-gray-200 min-h-screen w-full justify-center items-center">
     {showForm && <BookingForm onClose={() => setShowForm(false)} />}
@@ -131,6 +116,7 @@ export default function Page() {
             height={85}
             width={194}
             className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
+            priority
           />
         </a>
         <NavBar2 currPage={"info"} />
@@ -194,10 +180,13 @@ export default function Page() {
             {events.map((event, index) => (
               <SwiperSlide key={index}>
                 <article className="overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg">
-                  <img
+                  <Image
                     alt=""
                     src={event.img}
                     className="h-36 w-full object-cover"
+                    height={1000}
+                    width={1000}
+                    priority
                   />
 
                   <div className="bg-white h-44 p-4 sm:p-6">
@@ -247,10 +236,13 @@ export default function Page() {
             {blogs.map((blog, index) => (
               <SwiperSlide key={index}>
                     <a href={blog.link} className="flex flex-col ">
-                      <img
+                      <Image
                         alt=""
                         src={blog.img}
                         className="h-36 w-full rounded-t-lg object-cover"
+                        height={1000}
+                        width={1000}
+                        priority
                       />
 
                     <div className="bg-white p-4 h-30 sm:p-6 rounded-b-lg">

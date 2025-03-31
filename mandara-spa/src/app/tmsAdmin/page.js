@@ -8,5 +8,5 @@ export default function Page() {
 
     useEffect(() => {
         router.push("/tmsAdmin/login");
-    }, [])
+    }, [router])
 }
