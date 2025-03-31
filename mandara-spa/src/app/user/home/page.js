@@ -1,18 +1,22 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import BookingForm from "@/components/bookingForm";
 import Image from "next/image";
-import SlidingButton from "@/components/slidingButton";
-import NavBar1 from "@/components/navbar1";
-import NavBar2 from "@/components/navbar2";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import Footer from "@/components/footer";
+
+import NavBar1 from "@/components/navbar1";
+import NavBar2 from "@/components/navbar2";
+
+import dynamic from "next/dynamic";
+const SlidingButton = dynamic(() => import("@/components/slidingButton"), { ssr: false });
+const Footer = dynamic(() => import("@/components/footer"), { ssr: false });
+const BookingForm = dynamic(() => import("@/components/bookingForm"), { ssr: false });
+
 
 export default function Page() {
   const { user } = useAuthContext()
@@ -84,24 +88,18 @@ return (
       <div className="flex justify-center items-center relative w-full h-screen">
         <div className="absolute flex justify-center items-center inset-x-0 top-0 w-full z-20 h-30 bg-[#502424] opacity-80">
           <div className="flex justify-center items-center">
-            <div>
-              <NavBar1 currPage={"home"}/>
-            </div>
-            <div>
-              <a href="/user/home">
-                <Image
-                  src="/images/mandara_gold.png"
-                  alt=""
-                  height={150}
-                  width={300}
-                  priority
-                  className=" mb-4 object-contain scale-50 hover:scale-55 transition-all"
-                />
-              </a>
-            </div>
-            <div>
-              <NavBar2 onBook={handleBooking} currPage={"home"}/>
-            </div>
+            <NavBar1 currPage={"home"}/>
+            <a href="/user/home">
+              <Image
+                src="/images/mandara_gold.png"
+                alt=""
+                height={150}
+                width={300}
+                priority
+                className=" mb-4 object-contain scale-50 hover:scale-55 transition-all"
+              />
+            </a>
+            <NavBar2 onBook={handleBooking} currPage={"home"}/>
           </div>
         </div>
 
@@ -214,9 +212,7 @@ return (
                           className="size-14 rounded-full object-cover"
                         />
 
-                        <div>
-                          <p className="mt-0.5 text-xl font-medium text-gray-900">{review.title}</p>
-                        </div>
+                        <p className="mt-0.5 text-xl font-medium text-gray-900">{review.title}</p>
                       </div>
 
                       <p className="mt-4 text-sm/relaxes text-gray-700">

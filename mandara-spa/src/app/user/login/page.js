@@ -106,6 +106,7 @@ function SignIn() {
                     src="/images/mandara_gold.png"
                     height={200}
                     width={200}
+                    priority
                     />
 
                     <div className="mx-auto max-w-lg text-center">
@@ -208,10 +209,12 @@ function SignIn() {
             </div>
 
             <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
-                <img
+                <Image
                 alt=""
                 src="/images/sign_in.jpg"
                 className="absolute inset-0 h-full w-full object-cover"
+                fill
+                priority
                 />
             </div>
         </section>
