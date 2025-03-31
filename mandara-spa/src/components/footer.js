@@ -26,6 +26,10 @@ return (
         </p>
 
         <ul className="mt-8 flex mrjustify-center gap-6">
+
+          <li>
+            <a href="/user/contact" className="text-[#e0d8ad] transition hover:opacity-75">Contact Us</a>
+          </li>
           <li>
             <a
               href="https://web.facebook.com/themandaraspa"
