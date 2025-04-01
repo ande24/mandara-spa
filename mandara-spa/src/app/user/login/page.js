@@ -100,7 +100,7 @@ function SignIn() {
             {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
             {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
 
-            <div className="flex flex-col justify-center w-full h-screen px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24 bg-[#502424]">
+            <div className="flex flex-col justify-center items-center w-screen h-screen px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24 bg-[#502424]">
                 <div className="flex flex-col mb-10 justify-center items-center">
                     <Image 
                     className="mb-10"
@@ -112,29 +112,26 @@ function SignIn() {
                     />
 
                     <div className="mx-auto max-w-lg text-center">
-                        <h1 className="text-xl text-dark-brown font-serif text-[#e0d8ad] sm:text-3xl">Sign in to Your Account</h1>
+                        <h1 className="text-xl text-dark-brown font-semibold text-[#e0d8ad] sm:text-3xl">Sign in to Your Account</h1>
 
-                        <p className="mt-4 font-serif text-[#e0d8ad]">
+                        <p className="text-xs sm:text-lg mt-4 font-serif text-[#e0d8ad]">
                             To experience relaxation at The Mandara Spa
                         </p>
                     </div>
 
-                    <form onSubmit={handleForm} className="mx-auto mt-8 mb-0 min-w-100 max-w-lg space-y-4">
-                        <div>
-                            <label htmlFor="email" className="sr-only">Email</label>
-
-                            <div className="relative">
+                    <form onSubmit={handleForm} className="flex flex-col items-center justify-center mx-auto mt-8 mb-0 min-w-screen max-x-lg space-y-4">
+                        <div className="relative flex justify-center items-center w-2/3 lg:w-1/3">
                             <input
                                 required
                                 id="email"
                                 name="email"
                                 type="email"
-                                className="w-full font-serif bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+                                className="sm:w-full w-4/5 font-serif bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                                 placeholder="Enter email"
                                 onChange={(e) => setEmail(e.target.value)}
                             />
 
-                            <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                            <span className="absolute right-0 top-1/3 place-content-center px-4 hidden sm:grid">
                                 <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="size-4 text-gray-400"
@@ -150,24 +147,20 @@ function SignIn() {
                                 />
                                 </svg>
                             </span>
-                            </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="password" className="sr-only">Password</label>
-
-                            <div className="relative">
+                        <div className="relative flex justify-center items-center w-2/3 lg:w-1/3">
                             <input
                                 required
                                 id="password"
                                 name="password"
                                 type="password"
-                                className="w-full font-serif bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+                                className="w-4/5  sm:w-full font-serif bg-gray-200 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
                                 placeholder="Enter password"
                                 onChange={(e) => setPassword(e.target.value)}
                             />
 
-                            <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                            <span className="absolute top-1/3 right-0 sm:grid place-content-center px-4 hidden">
                                 <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="size-4 text-gray-400"
@@ -189,19 +182,18 @@ function SignIn() {
                                 />
                                 </svg>
                             </span>
-                            </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex w-2/3 lg:w-1/3 items-center justify-between">
                             <div className="flex flex-col text-sm">
-                                <p onClick={createAccount} className="ml-1 font-serif hover:cursor-pointer text-white hover:text-[#e0d8ad]" >Sign Up</p>
-                                <p onClick={handleForgot} className="mt-1 font-serif ml-1 hover:cursor-pointer text-white hover:text-[#e0d8ad]" >Forgot Password?</p>
+                                <p onClick={createAccount} className="ml-1 text-xs font-serif hover:cursor-pointer text-white hover:text-[#e0d8ad]" >Sign Up</p>
+                                <p onClick={handleForgot} className="mt-2 text-xs font-serif ml-1 hover:cursor-pointer text-white hover:text-[#e0d8ad]" >Forgot Password?</p>
                             </div>
 
                             <button
                             disabled={saving}
                             type="submit"
-                            className="font-serif rounded-lg bg-[#e0d8ad] w-1/2 px-5 py-3 text-sm font-medium text-black"
+                            className="font-serif rounded-lg bg-[#e0d8ad] w-2/5 sm:w-1/2 sm:text-md px-5 py-3 text-xs font-medium text-black"
                             >
                             Sign in
                             </button>
@@ -210,7 +202,7 @@ function SignIn() {
                 </div>
             </div>
 
-            <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
+            <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2 lg:block hidden">
                 <Image
                 alt=""
                 src="/images/sign_in.jpg"

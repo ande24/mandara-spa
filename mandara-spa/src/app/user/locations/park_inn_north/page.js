@@ -11,7 +11,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import Link from "next/link";
+import { FiMenu, FiLogOut } from "react-icons/fi";
 
 const Image = dynamic(() => import("next/image"));
 const BookingForm = dynamic(() => import("@/components/bookingForm"), { ssr: false });
@@ -47,39 +47,71 @@ export default function Page() {
   return (
     <div>
     {branchData && (
-      <div className="relative flex flex-col min-h-screen justify-center items-center bg-gray-200">
+      <div className="flex flex-col min-h-screen justify-center items-center bg-gray-200 overflow-x-hidden">
         {showForm && <BookingForm onClose={() => setShowForm(false)} />}
   
-        <div className="absolute flex justify-center items-center inset-x-0 top-0 w-full z-20 h-24 bg-[#502424]">
+        <div className="flex justify-center items-center inset-x-0 top-0 w-screen z-20 h-30 bg-[#502424]">
           <div className="flex justify-center items-center">
-            <div>
-              <NavBar1 currPage={"locations"} />
-            </div>
-            <div>
-              <Link href="/user/home">
-                <Image
-                  src="/images/mandara_gold.png"
-                  alt=""
-                  height={85}
-                  width={194}
-                  priority
-                  className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
-              />
-              </Link>
-            </div>
-            <div>
-              <NavBar2 onBook={handleBooking} currPage={"locations"} />
-            </div>
+            <NavBar1 currPage={"locations"} />
+              <div className="w-screen xl:w-auto flex justify-between">
+                <button
+                  className="text-gray-200 hover:scale-105 mx-5 transition-all xl:hidden" onClick={() => document.getElementById("footer")?.scrollIntoView({ behavior: "smooth" })}
+                >
+                  <FiMenu size={24} />
+                </button>
+                <a href="/user/home">
+                  <Image
+                    src="/images/mandara_gold.png"
+                    alt=""
+                    height={300}
+                    width={300}
+                    priority
+                    className="mb-4 object-contain scale-50 hover:scale-55 transition-all"
+                  />
+                </a>
+                <button
+                  onClick={() => {router.push("/user/login")}}
+                  className=" text-gray-200 mx-5 hover:scale-105 transition-all xl:hidden pr-5"
+                >
+                  <FiLogOut size={24} />
+                </button>
+              </div>
+            <NavBar2 onBook={handleBooking} currPage={"locations"}/>
           </div>
         </div>
-  
-        <div className="flex flex-col justify-center items-center w-full mx-auto p-35">
-          <h1 className="text-5xl mb-12 text-center font-serif">
+
+        <div className="flex flex-col justify-center items-center w-full ">
+          <h1 className="text-2xl
+                         my-5 
+
+                         sm:text-3xl
+                         sm:my-7
+
+                         md:font-semibold
+                         md:text-4xl
+                         md:my-10
+                         
+                         text-center font-serif">
             {branchData.branch_location}
           </h1>
   
-          <div className="flex justify-between">
-            <div className="relative rounded-lg flex justify-center w-3xl h-2xl">
+          <div className="flex justify-center items-center">
+            <button
+              className="scale-70
+                        mr-2
+                        mt-5
+              
+                        custom-prev transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-105 transition-all text-white p-2 rounded-full"
+            >
+              <FaChevronLeft />
+            </button>
+
+            <div className="w-3xs
+
+                            sm:w-lg
+
+                            md:w-2xl
+                            rounded-lg flex justify-center items-center">
               <Swiper
                 modules={[Navigation]}
                 spaceBetween={50}
@@ -97,7 +129,7 @@ export default function Page() {
                     <Image
                       alt=""
                       src={img}
-                      className="h-150 w-full object-cover"
+                      className="h-100 object-cover"
                       height={1000}
                       width={1000}
                       priority
@@ -108,49 +140,62 @@ export default function Page() {
               </Swiper>
               
               <button
-                className="custom-prev absolute left-[-60] top-1/2 transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-105 transition-all text-white p-2 rounded-full"
-              >
-                <FaChevronLeft />
-              </button>
-              <button
-                className="custom-next absolute right-[-60] top-1/2 transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-105 transition-all text-white p-2 rounded-full"
+                className="scale-70
+                          mt-5
+                          ml-2
+
+                          custom-next transform -translate-y-1/2 bg-black opacity-30 hover:opacity-50 hover:scale-105 transition-all text-white p-2 rounded-full"
               >
                 <FaChevronRight />
               </button>
             </div>
           </div>
   
-          <div className="mt-2 leading-relaxed mb-4 text-sm w-2xl text-center p-4 rounded-2xl">
+          <div className="text-xs w-xs
+
+                          sm:w-lg
+
+                          md:w-2xl
+
+                          lg:text-sm
+
+          
+                          mt-2 leading-relaxed mb-4 text-center p-4 rounded-2xl">
             <p className="font-serif text-gray-800">{branchData.branch_desc}</p>
           </div>
   
-          <div className="flex mb-4 rounded-lg hover:scale-105 hover:shadow-lg transition-all">
+          <div className="sm:w-lg
+                          md:w-2xl
+                          flex mb-4 rounded-lg hover:scale-105 hover:shadow-lg transition-all">
             <iframe
               src={branchData.branch_location_link}
               width="290"
               height="290"
               loading="lazy"
-              className="rounded-lg w-2xl shadow-black"
+              className="w-full rounded-lg shadow-black"
             ></iframe>
           </div>
   
-          <div className="mt-4 w-2xl bg-gray-200 text-gray-800 p-4 text-sm rounded-lg flex transition-all hover:bg-gray-50 hover:scale-105 hover:shadow-lg shadow-gray-300 md:flex-row md:items-center justify-between">
-            <div className="space-y-2 font-serif w-sm">
-              <p className="flex items-center gap-2">
-                <FaMapMarkerAlt className="text-[#502424]" /> {branchData.branch_address}
+          <div className="w-2xs 
+                          sm:w-lg
+                          md:w-2xl
+                          flex flex-col mt-4 mb-10 bg-gray-200 text-gray-800 p-4 text-sm rounded-lg transition-all hover:bg-gray-50 hover:scale-105 hover:shadow-lg shadow-gray-300 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-2 font-serif w-full">
+              <p className="text-xs xl:text-sm flex items-center gap-2">
+                <FaMapMarkerAlt className="text-[#502424] xs:w-2 xs:h-2 min-w-2 min-h-2" /> {branchData.branch_address}
               </p>
-              <p className="flex items-center gap-2">
-                <FaClock className="text-[#502424]" /> {branchData.branch_hours}
+              <p className="text-xs xl:text-sm flex items-center gap-2">
+                <FaClock className="text-[#502424] xs:w-2 xs:h-2 min-w-2 min-h-2"/> {branchData.branch_hours}
               </p>
-              <p className="flex items-center gap-2">
-                <FaPhone className="text-[#502424]" />{" "}
+              <p className="text-xs xl:text-sm flex items-center gap-2">
+                <FaPhone className="text-[#502424] xs:w-2 xs:h-2 min-w-2 min-h-2" />{" "}
                 {branchData.branch_landline ? `${branchData.branch_landline}, ` : ""}{" "}
                 {branchData.branch_mobile}
               </p>
             </div>
-              <button onClick={handleBooking} className="bg-[#502424] text-xs text-white font-semibold p-2 w-1/3 h-full rounded-lg hover:bg-[#e0d8ad] hover:scale-105 transition-all md:ml-6">
-                Book Now
-              </button>
+            <button onClick={handleBooking} className="bg-[#502424] text-xs text-white font-serif sm:font-semibold p-2 w-max lg:w-1/3 mt-5 h-full rounded-lg hover:bg-[#e0d8ad] hover:scale-105 transition-all md:ml-6">
+              Book Now
+            </button>
           </div>
         </div>
         

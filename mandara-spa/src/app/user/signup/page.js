@@ -89,7 +89,7 @@ function SignUpUser() {
         {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
         {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
             
-        <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
+        <div className="relative h-64 hidden lg:block w-full sm:h-96 lg:h-full lg:w-1/2">
             <Image
             alt=""
             src="/images/sign_up.jpg"
@@ -111,14 +111,14 @@ function SignUpUser() {
                 />
 
                 <div className="mx-auto max-w-lg text-center">
-                    <h1 className="text-xl text-dark-brown font-semibold text-[#e0d8ad] sm:text-3xl">Create Your Account</h1>
+                    <h1 className="text-xl sm:text-3xl text-dark-brown font-semibold text-[#e0d8ad]">Create Your Account</h1>
 
-                    <p className="mt-4 text-[#e0d8ad]">
+                    <p className="mt-4 text-xs sm:text-base text-[#e0d8ad]">
                         To experience relaxation at The Mandara Spa
                     </p>
                 </div>
 
-                <form onSubmit={handleForm} className="mx-auto mt-8 mb-0 min-w-100 max-w-lg space-y-4">
+                <form onSubmit={handleForm} className="mx-auto mt-8 mb-0 w-4/5 max-w-lg space-y-4">
                     <div>
                         <label htmlFor="name" className="sr-only">Full Name</label>
                         <div className="relative">
@@ -131,7 +131,7 @@ function SignUpUser() {
                                 placeholder="Enter full name"
                                 onChange={(e) => setName(e.target.value)}
                             />
-                            <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                            <span className="absolute inset-y-0 end-0 hidden sm:grid place-content-center px-4">
                             <svg xmlns="http://www.w3.org/2000/svg" className="size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14c3.866 0 7 3.134 7 7H5c0-3.866 3.134-7 7-7zm0-4a4 4 0 110-8 4 4 0 010 8z"/>
                             </svg>
@@ -152,7 +152,7 @@ function SignUpUser() {
                                 placeholder="Enter mobile number"
                                 onChange={(e) => setNumber(e.target.value)}
                             />
-                            <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                            <span className="absolute inset-y-0 end-0 hidden sm:grid place-content-center px-4">
                             <svg xmlns="http://www.w3.org/2000/svg" className="size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h2l3 5-2 2a16 16 0 006 6l2-2 5 3v2a2 2 0 01-2 2h-3c-7.18 0-13-5.82-13-13V7a2 2 0 012-2z"/>
                             </svg>
@@ -175,7 +175,7 @@ function SignUpUser() {
                             onChange={(e) => setEmail(e.target.value)}
                         />
 
-                        <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                        <span className="absolute inset-y-0 end-0 hidden sm:grid place-content-center px-4">
                             <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-4 text-gray-400"
@@ -208,7 +208,7 @@ function SignUpUser() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
 
-                        <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                        <span className="absolute inset-y-0 end-0 hidden sm:grid place-content-center px-4">
                             <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-4 text-gray-400"

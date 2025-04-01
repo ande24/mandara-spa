@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { FiMenu, FiLogOut } from "react-icons/fi";
 
 const BookingForm = dynamic(() => import("@/components/bookingForm"), { ssr: false });
 const Image = dynamic(() => import("next/image"));
@@ -50,29 +51,44 @@ export default function Page() {
     <div className="relative flex flex-col min-h-screen bg-gray-100">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
 
-      <div className="flex justify-center items-center w-full h-24 bg-[#502424]">
-        <NavBar1 currPage={"services"} />
-        <a href="/user/home">
-          <Image
-            src="/images/mandara_gold.png"
-            alt=""
-            height={85}
-            width={194}
-            priority
-            className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
-          />
-        </a>
-        <NavBar2 onBook={handleBooking} currPage={"services"} />
+      <div className="flex justify-center items-center inset-x-0 top-0 w-screen z-20 h-30 bg-[#502424]">
+        <div className="flex justify-center items-center">
+          <NavBar1 currPage={"services"} />
+            <div className="w-screen xl:w-auto flex justify-between">
+              <button
+                className="text-gray-200 hover:scale-105 mx-5 transition-all xl:hidden" onClick={() => document.getElementById("footer")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                <FiMenu size={24} />
+              </button>
+              <a href="/user/home">
+                <Image
+                  src="/images/mandara_gold.png"
+                  alt=""
+                  height={300}
+                  width={300}
+                  priority
+                  className="mb-4 object-contain scale-50 hover:scale-55 transition-all"
+                />
+              </a>
+              <button
+                onClick={() => {router.push("/user/login")}}
+                className=" text-gray-200 mx-5 hover:scale-105 transition-all xl:hidden pr-5"
+              >
+                <FiLogOut size={24} />
+              </button>
+            </div>
+          <NavBar2 onBook={handleBooking} currPage={"services"}/>
+        </div>
       </div>
 
-      <div className="flex flex-col justify-center pt-18 mb-10">
-        <h1 className="text-4xl mb-6 text-center font-serif">The Mandara Spa Body Rituals: Traditional Healing Massage</h1>
-          <div className="flex justify-center relative">
-            <button className="custom-prev absolute rounded-full scale-80 top-2/5 left-60 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+      <div className="flex flex-col justify-center pt-10 mb-10 overflow-x-hidden">
+        <h1 className="text-xl sm:text-2xl md:text-4xl lg:font-semibold text-center font-serif">The Mandara Spa Body Rituals: Traditional Healing Massage</h1>
+          <div className="flex justify-center items-center">
+            <button className="custom-prev mr-[-80] sm:mr-0 md:scale-100 rounded-full scale-50 top-2/5 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
               ❮
             </button>
 
-            <div className="relative flex justify-center items-center max-w-7xl w-full mx-auto px-4">
+            <div className="relative flex justify-center items-center w-sm md:w-lg lg:w-3xl xl:w-5xl 2xl:w-7xl scale-70 mt-[-100] mb-[-100] sm:scale-100 sm:mt-0 sm:mb-0 px-4">
               <Swiper
                 modules={[Navigation]}
                 spaceBetween={50}
@@ -84,7 +100,7 @@ export default function Page() {
                   prevEl: ".custom-prev",
                 }}
                 breakpoints={{
-                  640: { slidesPerView: 1 },
+                  0: { slidesPerView: 1 },
                   1024: { slidesPerView: 3 },
                 }}
               >
@@ -116,7 +132,7 @@ export default function Page() {
               </Swiper>
             </div>
 
-            <button className="custom-next absolute rounded-full scale-80 top-2/5 right-60 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+            <button className="custom-next rounded-full ml-[-80] md:scale-100 sm:ml-0 scale-50 top-2/5 right-60 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❯
             </button>
         </div>

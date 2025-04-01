@@ -139,9 +139,9 @@ return (
       </div>
       
         <div className="bg-gray-200 flex-col flex justify-center items-center pt-10">
-          <h1 className="text-3xl xl:text-4xl mb-[-30] text-center font-serif">The Mandara Spa Special Offers</h1>
+          <h1 className="text-3xl xl:text-4xl xl:mb-5 mb-[-30] text-center font-serif">The Mandara Spa Special Offers</h1>
             <div className="flex items-center justify-around">
-              <button className="custom-prev scale-80 xl rounded-full w-13 h-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+              <button className="custom-prev xl:m-10 scale-80 xl:scale-100 rounded-full w-13 h-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❮
               </button>
   
@@ -164,7 +164,7 @@ return (
                 {services.map((service, index) => (
                   <SwiperSlide key={index}>
                     <button onClick={handleBooking}>
-                      <a className="p-3 block hover:scale-85 rounded-lg scale-80 hover:bg-gray-50 hover:shadow-lg shadow-gray-300 transition-all">
+                      <a className="p-3 block hover:scale-85 rounded-lg scale-80 hover:bg-gray-50 xl:m-3 xl:scale-100 xl:hover:scale-105 hover:shadow-lg shadow-gray-300 transition-all">
                         <Image
                           alt=""
                           src={service.img}
@@ -186,7 +186,7 @@ return (
                 </Swiper>
               </div>
   
-              <button className="custom-next scale-80 rounded-full h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+              <button className="custom-next xl:m-10 scale-80 rounded-full h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                   ❯
               </button>
           </div>
@@ -194,9 +194,9 @@ return (
 
         
         <div className="bg-gray-200  flex flex-col justify-center items-center pb-10">
-          <h1 className="text-3xl text-center mb-[-30] font-serif">Testimonials</h1>
+          <h1 className="text-3xl text-center xl:mt-10 xl:mb-5 mb-[-30] font-serif">Testimonials</h1>
             <div className="flex justify-around items-center">
-              <button className="custom-prev-2 rounded-full scale-80 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+              <button className="custom-prev-2 xl:m-10 rounded-full xl:scale-100 scale-80 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❮
               </button>
   
@@ -218,7 +218,7 @@ return (
                 >
                 {reviews.map((review, index) => (
                   <SwiperSlide key={index}>
-                    <div className="flex flex-col p-3 justify-start min-h-100 hover:scale-85 rounded-lg scale-80 hover:shadow-lg shadow-gray-300 transition-all hover:bg-gray-50  bg-gray-200">
+                    <div className="flex flex-col p-3 xl:m-3 justify-start min-h-100 hover:scale-85 xl:scale-100 xl:hover:scale-105 rounded-lg scale-80 hover:shadow-lg shadow-gray-300 transition-all hover:bg-gray-50  bg-gray-200">
                       <div className="flex items-center gap-4">
                         <Image
                           alt=""
@@ -241,7 +241,7 @@ return (
                 </Swiper>
               </div>
   
-              <button className="custom-next-2 rounded-full scale-80 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
+              <button className="custom-next-2 xl:m-10 rounded-full scale-80 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-50 transition-all">
                 ❯
               </button>
             </div>

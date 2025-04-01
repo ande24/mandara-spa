@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
+import { FiMenu, FiLogOut } from "react-icons/fi";
 
 const Image = dynamic(() => import("next/image"));
 const BookingForm = dynamic(() => import("@/components/bookingForm"));
@@ -105,168 +106,177 @@ export default function Page() {
     ];
 
   return (
-    <div className="relative flex flex-col bg-gray-200 min-h-screen w-full justify-center items-center">
+    <div className="relative flex flex-col bg-gray-200 min-h-screen w-full justify-center items-center overflow-x-hidden">
     {showForm && <BookingForm onClose={() => setShowForm(false)} />}
-      <div className="flex justify-center items-center w-full h-24 z-10 bg-[#502424]">
-        <NavBar1 currPage={"info"} />
-        <a href="/user/home">
-          <Image
-            src="/images/mandara_gold.png"
-            alt=""
-            height={85}
-            width={194}
-            className="mb-2 object-contain scale-50 hover:scale-55 transition-all"
-            priority
-          />
-        </a>
-        <NavBar2 currPage={"info"} />
+      <div className="flex justify-center items-center w-full h-24 z-50 bg-[#502424]">
+        <div className="flex justify-center items-center">
+          <NavBar1 currPage={"info"} />
+            <div className="w-screen xl:w-auto flex justify-between">
+              <button
+                className="text-gray-200 hover:scale-105 mx-5 transition-all xl:hidden" onClick={() => document.getElementById("footer")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                <FiMenu size={24} />
+              </button>
+              <a href="/user/home">
+                <Image
+                  src="/images/mandara_gold.png"
+                  alt=""
+                  height={300}
+                  width={300}
+                  priority
+                  className="mb-4 object-contain scale-50 hover:scale-55 transition-all"
+                />
+              </a>
+              <button
+                onClick={() => {router.push("/user/login")}}
+                className=" text-gray-200 mx-5 hover:scale-105 transition-all xl:hidden pr-5"
+              >
+                <FiLogOut size={24} />
+              </button>
+            </div>
+          <NavBar2 currPage={"info"}/>
+        </div>
       </div>
       
 
-      <div className="flex relative min-h-screen w-full">
-        <div className="md:hidden lg:block min-h-full w-1/7 "></div>
-
-        <div className="h-full md:w-3/7 lg:w-2/7 transition-all">
-
-          <div className="flex flex-col text-[#e0d8ad] p-13 pt-8 justify-center items-center bg-[#301414]">
+      <div className="flex flex-col lg:flex-row justify-center items-center relative min-h-screen w-full">
+        <div className="h-full md:w-2/3 lg:w-3/7 transition-all">
+          <div className="flex flex-col lg:h-280 xl:h-270 2xl:h-260 h-full text-[#e0d8ad] p-8 xl:p-20 sm:p-13 pt-8 justify-center items-center md:rounded-b-lg lg:rounded-r-lg lg:rounded-l-none md:shadow-md shadow-black bg-[#301414]">
             <div className="flex flex-col justify-center items-center">
-              <h3 className=" mb-3 font-semibold text-2xl ">MANA + DARA</h3>
-              <p className="indent-8 text-sm mb-3 text-justify ">Derived from the words mana (mind) and dara (single line), Mandara refers to a sacred mountain in Hindu mythology. This mountain, unlike fragmented rock formations, is a single, unified structure. It played a significant role as the churning rod used by the gods to stir the ocean of milk.</p> 
-              <p className="indent-8 text-sm mb-3 text-justify ">The Mandara Relaxation Spa Co. introduced the Boutique Spa concept to the Philippines, offering customized, high-end treatments from head to toe at competitive prices. As a leader in the mid-priced spa industry, The Mandara Spa has garnered multiple accolades and is recognized among the country’s top spas, standing alongside luxury hotel spas. It is the ideal destination for guests seeking a serene retreat with essential amenities and world-class massage techniques—all without the premium cost.</p>
-              <p className="indent-8 text-sm mb-3 text-justify ">Established in 2011, its first branch in BGC quickly gained a reputation as “BGC’s best-kept secret.” Today, The Mandara Spa continues to expand, making its signature experience more accessible to communities. Franchise and investment opportunities are available for qualified investors.</p>
+              <h3 className="mb-3 font-semibold xl:mt-8 text-xl sm:text-2xl ">MANA + DARA</h3>
+              <p className="indent-8 text-xs sm:text-sm mb-3 text-justify ">Derived from the words mana (mind) and dara (single line), Mandara refers to a sacred mountain in Hindu mythology. This mountain, unlike fragmented rock formations, is a single, unified structure. It played a significant role as the churning rod used by the gods to stir the ocean of milk.</p> 
+              <p className="indent-8 text-xs sm:text-sm mb-3 text-justify ">The Mandara Relaxation Spa Co. introduced the Boutique Spa concept to the Philippines, offering customized, high-end treatments from head to toe at competitive prices. As a leader in the mid-priced spa industry, The Mandara Spa has garnered multiple accolades and is recognized among the country’s top spas, standing alongside luxury hotel spas. It is the ideal destination for guests seeking a serene retreat with essential amenities and world-class massage techniques—all without the premium cost.</p>
+              <p className="indent-8 text-xs sm:text-sm mb-3 text-justify ">Established in 2011, its first branch in BGC quickly gained a reputation as “BGC’s best-kept secret.” Today, The Mandara Spa continues to expand, making its signature experience more accessible to communities. Franchise and investment opportunities are available for qualified investors.</p>
             </div>
 
             <div className="flex flex-col justify-center items-center text-center">
-              <h3 className=" font-semibold text-2xl">MISSION</h3>
-              <p className="text-sm leading-relaxed text-center mt-2 ">At the Mandara Spa, we aim to continuously excel in providing superior relaxing experience and luxurious services at the best value-for-money rates.</p>
+              <h3 className=" font-semibold text-xl lg:mt-5 sm:text-2xl">MISSION</h3>
+              <p className="text-xs sm:text-sm leading-relaxed text-center mt-2 ">At the Mandara Spa, we aim to continuously excel in providing superior relaxing experience and luxurious services at the best value-for-money rates.</p>
               
             </div>
             
             <div className="flex flex-col mt-5 justify-center items-center text-center">
-              <h3 className=" font-semibold text-2xl">AWARDS</h3>
-              <p className="text-sm mt-2 ">Global Excellence Awards, Most Outstanding Spa 2015</p>
-              <p className="text-sm ">Manila’s Top 10 Spas – Spot.ph</p>
-              <p className="text-sm ">Top Luxury Spas in Philippines – getspabulous.com</p>
+              <h3 className=" font-semibold text-xl lg:mt-5 sm:text-2xl">AWARDS</h3>
+              <p className="text-xs sm:text-sm mt-2 ">Global Excellence Awards, Most Outstanding Spa 2015</p>
+              <p className="text-xs sm:text-sm ">Manila’s Top 10 Spas – Spot.ph</p>
+              <p className="text-xs sm:text-sm ">Top Luxury Spas in Philippines – getspabulous.com</p>
               
             </div>
             
             <div className="flex flex-col mt-5 justify-center items-center text-center">
-              <h3 className=" font-semibold text-2xl ">CAREERS</h3>
-              <p className="text-sm mt-2 ">At The Mandara Spa, we aim to continuously help people by providing a workplace with a good working environment and work-life balance.</p>
-              <p className="text-sm ">For interested applicants, please email your resume to careers@themandaraspa.com.</p>
+              <h3 className=" font-semibold text-xl lg:mt-5 sm:text-2xl ">CAREERS</h3>
+              <p className="text-xs sm:text-sm mt-2 ">At The Mandara Spa, we aim to continuously help people by providing a workplace with a good working environment and work-life balance.</p>
+              <p className="text-xs sm:text-sm ">For interested applicants, please email your resume to careers@themandaraspa.com.</p>
             </div>
           </div>
         </div>
       
-    <div className="md:flex flex-col h-fit justify-center items-center relative h-sm lg:w-3/7 mg:w-4/7">
-        <h3 className="text-[#502424] my-10 font-semibold text-3xl z-20">EVENTS</h3>
-        
-        <div className="flex w-auto justify-center items-center">
-          <button className="custom-prev-1 mr-3 rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-40 transition-all">
-            ❮
-          </button>
-          <div className="xl:max-w-xl md:max-w-md">
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={0}
-              slidesPerView={1}
-              loop={true} 
-              navigation={{
-                nextEl: ".custom-next-1",
-                prevEl: ".custom-prev-1",
-              }}
-              className="hover:scale-105 hover:shadow-lg shadow-gray-300 rounded-lg transition-all"
-            >
-            {events.map((event, index) => (
-              <SwiperSlide key={index}>
-                <article className="overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg">
-                  <Image
-                    alt=""
-                    src={event.img}
-                    className="h-36 w-full object-cover"
-                    height={1000}
-                    width={1000}
-                    priority
-                  />
+        <div className="flex flex-col h-full justify-center items-center lg:w-4/7">
+          <h3 className="text-[#502424] mt-10 lg:mt-0  text-center font-semibold text-2xl sm:text-3xl xl:text-3xl z-20">EVENTS</h3>
+          <div className="flex w-full justify-center items-center">
+            <button className="custom-prev-1 rounded-full scale-50 sm:scale-80 top-2/5 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-40 transition-all">
+              ❮
+            </button>
+            <div className="max-w-xs sm:max-w-lg xl:max-w-xl 2xl:max-w-2xl md:max-w-md">
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={0}
+                slidesPerView={1}
+                loop={true} 
+                navigation={{
+                  nextEl: ".custom-next-1",
+                  prevEl: ".custom-prev-1",
+                }}
+                className="scale-90 hover:scale-95 hover:shadow-lg shadow-gray-300 rounded-lg transition-all"
+              >
+              {events.map((event, index) => (
+                <SwiperSlide key={index}>
+                  <article className="overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg">
+                    <Image
+                      alt=""
+                      src={event.img}
+                      className="h-75 w-full object-cover"
+                      height={1000}
+                      width={1000}
+                      priority
+                    />
 
-                  <div className="bg-white h-44 p-4 sm:p-6">
-                    <h3 className="mt-0.5 text-sm text-gray-900">{event.title}</h3>
+                    <div className="bg-white h-full p-4 sm:p-6">
+                      <h3 className="mt-0.5 text-sm text-gray-900">{event.title}</h3>
 
-                    <p className="mt-2 line-clamp-6 text-xs/tight text-gray-500">
-                    {event.desc.split("\n").map((line, index) => (
-                      <span key={index}>
-                        {line}
-                        <br />
-                      </span>
-                    ))}
-                    </p>
-                  </div>
-                </article>
-              </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-          <button className="custom-next-1 ml-3 rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-40 transition-all">
-              ❯
-          </button>
-        </div>
-        
-
-        <h3 className="text-[#502424] my-8 font-semibold text-3xl z-20">BLOGS</h3>
-
-        <div className=" flex w-auto justify-center items-center">
-          <button className="custom-prev-2 mr-3 rounded-full scale-80 top-2/5 left-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
-            ❮
-          </button>
-
-          <div className="xl:max-w-xl md:max-w-md">
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={0}
-              slidesPerView={1}
-              loop={true} 
-              observer={true} 
-              observeParents={true}
-              navigation={{
-                nextEl: ".custom-next-2",
-                prevEl: ".custom-prev-2",
-              }}
-              className="hover:scale-105 transition-all  hover:shadow-lg shadow-gray-300"
-            >
-            {blogs.map((blog, index) => (
-              <SwiperSlide key={index}>
-                    <a href={blog.link} className="flex flex-col ">
-                      <Image
-                        alt=""
-                        src={blog.img}
-                        className="h-36 w-full rounded-t-lg object-cover"
-                        height={1000}
-                        width={1000}
-                        priority
-                      />
-
-                    <div className="bg-white p-4 h-30 sm:p-6 rounded-b-lg">
-                      <time className="block text-xs text-gray-500">{blog.date}</time>
-                      <h3 className="mt-0.5 text-sm text-gray-900">{blog.title}</h3>
-                      <p className="mt-1 line-clamp-3 text-xs/tight text-gray-500">{blog.desc}</p>
+                      <p className="mt-2 h-full text-xs/tight text-gray-500">
+                      {event.desc.split("\n").map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          <br />
+                        </span>
+                      ))}
+                      </p>
                     </div>
-                  </a>
-              </SwiperSlide>
-              ))}
-            </Swiper>
+                  </article>
+                </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+            <button className="custom-next-1  rounded-full scale-50 sm:scale-80 top-2/5 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 sm:hover:scale-85 text-white text-3xl flex items-center justify-center z-40 transition-all">
+                ❯
+            </button>
           </div>
-          <button className="custom-next-2 ml-3 rounded-full scale-80 top-2/5 right-15 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
-              ❯
-          </button>
-        </div>
-      </div>
+          
 
-      <div className="md:hidden lg:block h-full w-1/7 "></div>
+          <h3 className="text-[#502424] mt-8 lg:mt-[-10] 2xl:mt-3 text-center  font-semibold text-2xl sm:text-3xl z-20">BLOGS</h3>
+          <div className="flex h-full w-auto justify-center items-center lg:mb-0 mb-10">
+            <button className="custom-prev-2 rounded-full scale-50 sm:scale-80 top-2/5 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
+              ❮
+            </button>
+
+            <div className="max-w-xs sm:max-w-lg xl:max-w-xl 2xl:max-w-2xl md:max-w-md">
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={0}
+                slidesPerView={1}
+                loop={true} 
+                observer={true} 
+                observeParents={true}
+                navigation={{
+                  nextEl: ".custom-next-2",
+                  prevEl: ".custom-prev-2",
+                }}
+                className="x scale-90 hover:scale-95 transition-all  hover:shadow-lg shadow-gray-300"
+              >
+              {blogs.map((blog, index) => (
+                <SwiperSlide key={index}>
+                      <a href={blog.link} className="flex flex-col shadow-sm">
+                        <Image
+                          alt=""
+                          src={blog.img}
+                          className="h-75 w-full rounded-t-lg object-cover"
+                          height={1000}
+                          width={1000}
+                          priority
+                        />
+
+                      <div className="bg-white p-4 h-full sm:p-6 rounded-b-lg">
+                        <time className="block text-xs text-gray-500">{blog.date}</time>
+                        <h3 className="mt-0.5 text-sm text-gray-900">{blog.title}</h3>
+                        <p className="mt-1  text-xs/tight text-gray-500">{blog.desc}</p>
+                      </div>
+                    </a>
+                </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+            <button className="custom-next-2  rounded-full scale-50 sm:scale-80 top-2/5 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 sm:hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
+                ❯
+            </button>
+          </div>
+        </div>
     </div>
-    <div className="w-full mt-[-72] z-50">
+
+    <div className="w-full z-50">
       <Footer />
     </div>
-     
+
   </div>
   );
 }

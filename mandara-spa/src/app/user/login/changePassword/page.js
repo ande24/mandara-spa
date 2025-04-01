@@ -66,7 +66,7 @@ const ResetPassword = () => {
         {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
         {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
 
-        <div className="flex flex-col justify-center w-full h-screen px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24 bg-[#502424]">
+        <div className="flex flex-col justify-center sm:w-full w-4/5 h-screen px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24 bg-[#502424]">
             <div className="flex flex-col mb-10 justify-center items-center">
                 <Image 
                 className="mb-10"
@@ -85,11 +85,11 @@ const ResetPassword = () => {
                     </p>
                 </div>
 
-                <form onSubmit={handleForm} className="mx-auto mt-8 mb-0 min-w-100 max-w-lg space-y-4">
+                <form onSubmit={handleForm} className="mx-auto mt-8 mb-0  max-w-lg space-y-4">
                     <div>
                         <label htmlFor="password" className="sr-only">New Password</label>
 
-                        <div className="relative">
+                        <div className="relative w-full flex justify-center items-center">
                         <input
                             required
                             id="password"
@@ -100,7 +100,7 @@ const ResetPassword = () => {
                             onChange={(e) => setPassword1(e.target.value)}
                         />
 
-                        <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                        <span className="absolute inset-y-0 end-0 sm:grid place-content-center px-4 hidden">
                             <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-4 text-gray-400"
@@ -128,7 +128,7 @@ const ResetPassword = () => {
                     <div>
                         <label htmlFor="password" className="sr-only">Confirm New Password</label>
 
-                        <div className="relative">
+                        <div className="relative flex justify-center items-center">
                         <input
                             required
                             id="password"
@@ -139,7 +139,7 @@ const ResetPassword = () => {
                             onChange={(e) => setPassword2(e.target.value)}
                         />
 
-                        <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                        <span className="absolute inset-y-0 end-0 sm:grid hidden place-content-center px-4">
                             <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-4 text-gray-400"
@@ -168,7 +168,7 @@ const ResetPassword = () => {
                         <button
                         disabled={saving}
                         type="submit"
-                        className="font-serif rounded-lg bg-[#e0d8ad] w-1/2 px-5 py-3 text-sm font-medium text-black"
+                        className="font-serif rounded-lg bg-[#e0d8ad]  px-5 py-3 text-sm font-medium text-black"
                         >
                         Change Password
                         </button>

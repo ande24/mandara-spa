@@ -5,10 +5,10 @@ import Image from "next/image";
 const Footer = () => {
   
 return (
-  <footer className="bg-[#502424] h-50">
+  <footer className="bg-[#502424] h-full w-screen z-80">
     <div className="mx-auto max-w-screen-xl space-y-8 px-4 py-16 sm:px-6 lg:space-y-16 lg:px-8">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center xl:items-start items-center">
           
           <a href="/user/about">
               <Image
@@ -16,7 +16,7 @@ return (
                   alt=""
                   height={150}
                   width={300}
-                  className=" mb-4 object-contain scale-70 hover:scale-85 transition-all"
+                  className=" mb-4 object-contain scale-70 xl:scale-100 xl:ml-3 hover:scale-85 transition-all"
               />
           </a>
 
@@ -104,7 +104,7 @@ return (
 
           <div>
 
-            <ul className="mt-18 space-y-4 text-sm">
+            <ul className="mt-[-15] sm:mt-18 space-y-4 text-sm">
               <li>
                 <a href="/user/locations/sm" className="text-[#e0d8ad] transition hover:opacity-75"> SM North Edsa </a>
               </li>
@@ -151,7 +151,7 @@ return (
 
           <div>
 
-            <ul className="mt-18 space-y-4 text-sm">
+            <ul className="mt-[-15] sm:mt-18 space-y-4 text-sm">
               <li>
                 <a  className="text-[#e0d8ad]"> Body Rituals </a>
               </li>
