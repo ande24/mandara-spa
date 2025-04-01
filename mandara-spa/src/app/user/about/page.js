@@ -273,8 +273,8 @@ export default function Page() {
         </div>
     </div>
 
-    <div className="w-full z-50">
-      <Footer id="footer"/>
+    <div id="footer">
+      <Footer/>
     </div>
 
   </div>

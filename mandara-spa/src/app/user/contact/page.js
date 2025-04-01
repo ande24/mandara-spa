@@ -282,8 +282,8 @@ export default function Page() {
             </form> 
         </div>
       </div>
-      <div className="w-full z-50">
-        <Footer id="footer"/>
+      <div id="footer">
+        <Footer/>
       </div>
     </div>
   );

@@ -146,7 +146,9 @@ export default function Page() {
         </div>
       </div>
 
-    <Footer id="footer" />   
+      <div id="footer">
+          <Footer/>
+        </div> 
      
     </div>
   );
