@@ -274,7 +274,7 @@ export default function Page() {
     </div>
 
     <div className="w-full z-50">
-      <Footer />
+      <Footer id="footer"/>
     </div>
 
   </div>

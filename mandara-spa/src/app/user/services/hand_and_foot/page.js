@@ -152,7 +152,7 @@ export default function Page() {
             </button>
         </div>
       </div>
-      <Footer />
+      <Footer id="footer"/>
     </div>
   );
 }

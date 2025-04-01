@@ -199,7 +199,7 @@ export default function Page() {
       </div>
     )
     }
-    <Footer />
+    <Footer id="footer"/>
     </div>
   );  
 }

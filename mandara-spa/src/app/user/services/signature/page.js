@@ -146,7 +146,7 @@ export default function Page() {
         </div>
       </div>
 
-    <Footer />   
+    <Footer id="footer" />   
      
     </div>
   );
