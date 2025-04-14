@@ -53,7 +53,7 @@ const EditBranch = ({onClose}) => {
     }, [user]);
 
     useEffect(() => {
-        if (user) {
+        if (user && userData && userData.branch_id) {
             const fetchBranchData = async () => {
                 try {
                     console.log(userData)
@@ -80,7 +80,7 @@ const EditBranch = ({onClose}) => {
 
             fetchBranchData();
         }
-    }, [userData, user]);
+    }, [user, userData]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

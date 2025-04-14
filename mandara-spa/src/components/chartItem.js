@@ -15,7 +15,6 @@ export default function ChartItem({ chartData, endDate }) {
   };
 
   const generateRandomData = (n) => Array.from({ length: n }, () => Math.floor(Math.random() * 10));
-  console.log("mydata: ", chartData);
   const data = {
     labels: generateNDays(7),
     datasets: [

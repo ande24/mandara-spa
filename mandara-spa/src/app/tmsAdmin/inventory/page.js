@@ -57,7 +57,7 @@ const ManageInv = () => {
     }, [user, db]);
 
     useEffect(() => {
-        if (userData && userData.branch_id) {
+        if (userData) {
             const fetchBranchData = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id); 
@@ -77,7 +77,7 @@ const ManageInv = () => {
     }, [userData, db]);
 
     useEffect(() => {
-        if (userData?.branch_id && branchData) {
+        if (userData && branchData) {
             const branchRef = doc(db, "branches", userData.branch_id);
             const itemCollection = collection(branchRef, "inventory");
     
@@ -99,11 +99,11 @@ const ManageInv = () => {
     
             return () => unsubscribe();
         }
-    }, [branchData, userData?.branch_id, db]);
+    }, [branchData, userData, db]);
 
     useEffect(() => {
         const fetchItemData = async () => {
-          if (selectedItem) {
+          if (selectedItem && userData) {
             const branchRef = doc(db, "branches", userData.branch_id);
             const docRef = doc(branchRef, "inventory", selectedItem);
             const docSnap = await getDoc(docRef);
@@ -119,7 +119,7 @@ const ManageInv = () => {
         };
     
         fetchItemData();
-      }, [selectedItem, db, userData.branch_id]);
+      }, [selectedItem, db, userData]);
 
     const handleAddItem = async (e) => {
         setSaving(true)

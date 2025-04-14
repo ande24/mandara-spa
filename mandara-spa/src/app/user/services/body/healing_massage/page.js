@@ -48,7 +48,7 @@ export default function Page() {
     }
   }
   return (
-    <div className="relative flex flex-col min-h-screen bg-gray-100">
+    <div className="relative flex flex-col min-h-screen bg-gray-100 overflow-x-hidden">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
 
       <div className="flex justify-center items-center inset-x-0 top-0 w-screen z-20 h-30 bg-[#502424]">

@@ -32,6 +32,7 @@ export default function Sidebar({ admin }) {
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/bookings")}}>Bookings</button></li>
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/transactions")}}>Transactions</button></li>
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/messages")}}>Messages</button></li>
+                <li><button className="p-2 py-6" onClick={() => {router.push("/tmsAdmin")}}>Log out</button></li>
             </ul>
             </nav>
         </div>

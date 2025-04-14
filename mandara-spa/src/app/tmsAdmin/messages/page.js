@@ -5,6 +5,7 @@ import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDoc, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const Image = dynamic(() => import("next/image"));
 
@@ -49,7 +50,7 @@ const ViewMessages = () => {
     }, [user, db]);
 
     useEffect(() => {
-        if (userData && userData.branch_id) {
+        if (userData) {
             const fetchBranchData = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id); 
@@ -69,7 +70,7 @@ const ViewMessages = () => {
     }, [userData, db]);
 
     useEffect(() => {
-        if (!userData?.branch_id || !branchData) return;
+        if (!userData || !branchData) return;
 
         const messageCollection = collection(db, "messages");
 
@@ -104,7 +105,7 @@ const ViewMessages = () => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, branchData, db]);
+    }, [userData, branchData, db]);
 
     const handleRemoveMessage = async (e, messageId) => {
         e.preventDefault();

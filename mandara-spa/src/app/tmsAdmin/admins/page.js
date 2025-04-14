@@ -5,8 +5,8 @@ import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
 import { getFirestore, collection, setDoc, doc, getDoc, getDocs, arrayUnion, updateDoc, arrayRemove } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import SignUp from "@/firebase/auth/signup";
 
-const signUp = dynamic(() => import("@/firebase/auth/signup"), { ssr: false });
 const Image = dynamic(() => import("next/image"), { ssr: false });
 
 const EditAdmins = ({}) => {
@@ -85,7 +85,10 @@ const EditAdmins = ({}) => {
         }
 
         try {
-            const { res, err } = await signUp(adminEmail, adminPassword);
+            const { res, err } = await SignUp(adminEmail, adminPassword);
+
+            console.log("res: ", res)
+            console.log("err: ", err)
             
             if (err) {
                 setSaving(false)

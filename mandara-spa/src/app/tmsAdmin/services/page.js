@@ -5,6 +5,7 @@ import firebase_app from "@/firebase/config";
 import { getFirestore, collection, addDoc, doc, getDocs, getDoc, deleteDoc, updateDoc, orderBy, query } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const Image = dynamic(() => import("next/image"));
 
@@ -78,7 +79,7 @@ const ManageService = () => {
     }, [userData, db]);
 
     useEffect(() => {
-        if (userData?.branch_id && branchData) {
+        if (userData && branchData) {
             const fetchServices = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id);
@@ -104,11 +105,11 @@ const ManageService = () => {
             };
             fetchServices();
         }
-    }, [branchData, db, userData.branch_id]);
+    }, [branchData, db, userData]);
 
     useEffect(() => {
         const fetchServiceData = async () => {
-          if (selectedService) {
+          if (selectedService && userData) {
             const branchRef = doc(db, "branches", userData.branch_id);
             const docRef = doc(branchRef, "services", selectedService);
             const docSnap = await getDoc(docRef);
@@ -119,7 +120,7 @@ const ManageService = () => {
         };
     
         fetchServiceData();
-      }, [selectedService, db, userData.branch_id]);
+      }, [selectedService, db, userData]);
 
     const handleAddService = async (e) => {
         e.preventDefault();

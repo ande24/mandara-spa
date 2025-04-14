@@ -181,7 +181,7 @@ function SignIn() {
             alt=""
             src="/images/sign_in.jpg"
             className="absolute inset-0 h-full w-full object-cover"
-            full
+            fill
             priority
             />
         </div>

@@ -5,6 +5,7 @@ import firebase_app from "@/firebase/config";
 import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const Image = dynamic(() => import("next/image"));
 
@@ -49,7 +50,7 @@ const ManageTransactions = () => {
     }, [user, db]);
 
     useEffect(() => {
-        if (userData && userData.branch_id) {
+        if (userData) {
             const fetchBranchData = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id); 
@@ -69,7 +70,7 @@ const ManageTransactions = () => {
     }, [userData, db]);
 
     useEffect(() => {
-        if (userData?.branch_id && branchData) {
+        if (userData && branchData) {
             const fetchServices = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id);
@@ -95,10 +96,10 @@ const ManageTransactions = () => {
             };
             fetchServices();
         }
-    }, [branchData, db, userData.branch_id]);
+    }, [branchData, db, userData]);
 
     useEffect(() => {
-        if (!userData?.branch_id || !branchData || !services) return;
+        if (!userData || !userData?.branch_id || !branchData || !services) return;
 
         const branchRef = doc(db, "branches", userData.branch_id);
         const transactionCollection = collection(branchRef, "transactions");
@@ -160,7 +161,7 @@ const ManageTransactions = () => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, branchData, db, services]);
+    }, [userData, branchData, db, services]);
 
     const handleRemoveTransaction = async (e, transactionId) => {
         e.preventDefault();

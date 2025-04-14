@@ -105,9 +105,13 @@ export default function Page() {
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
           if (currentUser) {
+              console.log("USER: ", currentUser)
+              console.log("USER EMAIL: ", currentUser.email)
+              console.log("USER EMAIL VERIFIED: ", currentUser.emailVerified)
               setUser(currentUser);
           } 
           else {
+            console.log("NO USER")
             router.push("/tmsAdmin/login");
           }
       });
@@ -118,7 +122,10 @@ export default function Page() {
 
 
   useEffect(() => {
-      if (user) {
+      if (user && auth) {
+          console.log("FETCHING USER DATA")
+          console.log("user: ", user.uid)
+          console.log("userData: ", userData)
           const fetchUserData = async () => {
               try {
                   const docRef = doc(db, "users", user.uid);
@@ -136,29 +143,35 @@ export default function Page() {
 
           fetchUserData();
       }
-  }, [user]);
+  }, [user, auth]);
 
 
 
   useEffect(() => {
       if (userData) {
+          console.log(userData);
+          console.log(userData.user_role);
           if (userData.user_role === "business_admin") {
+              console.log("business admin");
               setIsAdmin(true);
               setIsBusinessAdmin(true);
+              return;
           }
           else if (userData.user_role === "branch_admin") {
               setIsAdmin(true);
-              setIsBusinessAdmin(false);
+              return;
           }
           else {
-              return router.push("/");
+            console.log("not admin");
+            router.push("/");
+            return;
           }
       }
   }, [userData, router])
 
 
   useEffect(() => {
-      if (user) {
+      if (user && userData && userData.branch_id) {
           const fetchBranchData = async () => {
               try {
                   // console.log(userData)
@@ -182,7 +195,9 @@ export default function Page() {
 
 
   useEffect(() => {
-      if (userData?.branch_id && branchData) {
+      if (!userData || !userData?.branch_id || !branchData) {
+        return;
+      }
           const fetchServices = async () => {
               try {
                   const branchRef = doc(db, "branches", userData.branch_id);
@@ -206,8 +221,8 @@ export default function Page() {
               }
           };
           fetchServices();
-      }
-  }, [branchData, userData.branch_id]);
+      
+  }, [userData, branchData]);
 
 
 
@@ -249,7 +264,10 @@ export default function Page() {
 
 
   useEffect(() => {
-      if (!userData?.branch_id || !branchData) return;
+    if (!userData || !userData.branch_id || !branchData) {
+      console.log("userData or branchData is not ready yet");
+      return;
+    }
 
       const branchRef = doc(db, "branches", userData.branch_id);
       const bookingCollection = collection(branchRef, "bookings");
@@ -305,7 +323,7 @@ export default function Page() {
       });
 
       return () => unsubscribe();
-  }, [userData?.branch_id, branchData, services]);
+  }, [userData, branchData, services]);
 
 
   
@@ -368,7 +386,7 @@ export default function Page() {
     });
 
     return () => unsubscribe();
-}, [userData?.branch_id, branchData, services]);
+}, [userData, branchData, services]);
 
 useEffect(() => {
   const fetchBranches = async () => {
@@ -566,10 +584,45 @@ useEffect(() => {
 
   
 
-  const changeDate = (date) => {
-    setSelectedDate(date);
-    setSelectedMonth(date.slice(0, 7));
-  }
+  const changeDate = (prevDate, date) => {
+    // Check if the date is valid
+    const [year, month, day] = date.split("-").map(Number);
+    const [pyear, pmonth, pday] = prevDate.split("-").map(Number);
+
+    if (!date) {
+      if (pday === 1) {
+        if (pmonth === 2) {
+          const isLeapYear = (pyear % 4 === 0 && pyear % 100 !== 0) || (pyear % 400 === 0);
+          const nday = isLeapYear ? 29 : 28;
+          date = `${pyear}-${String(pmonth)}-${nday}`;
+        } else if ([4, 6, 9, 11].includes(pmonth)) {
+          const nday = 30;
+          date = `${pyear}-${String(pmonth)}-${nday}`;
+        } else {
+          const nday = 31;
+          date = `${pyear}-${String(pmonth)}-${nday}`;
+        }
+      }
+      else {
+        const nday = 1;
+        date = `${pyear}-${String(pmonth)}-${nday}`;
+      }
+    }
+
+    const newDate = new Date(date); 
+    
+    if (!newDate) {
+      window.alert("You tried to input an invalid date!", "Try adjusting the day value before changing the month or year.")
+      return;
+    }
+    
+    newDate.setHours(8, 0, 0, 0); 
+  
+    // If valid, update the selected date and month
+    const formattedDate = newDate.toISOString().split("T")[0];
+    setSelectedDate(formattedDate);
+    setSelectedMonth(formattedDate.slice(0, 7));
+  };
 
   useEffect(() => {
     const getIncomeRange = () => {
@@ -612,7 +665,6 @@ useEffect(() => {
           status: booking.status
         })); 
 
-      console.log("bokings today: ", bookingsToday);
       setBookingsToday(bookingsToday);
     }
 
@@ -622,53 +674,53 @@ useEffect(() => {
   return (
     <>
       {userData && branchData && items && selectedDate && selectedMonth && currMVP && prevMVP && incomeRange && (
-        <div className="flex flex-col min-h-screen bg-[#301414]">
+        <div className="flex flex-col min-h-screen bg-[#301414] p-15">
           <Sidebar admin={isBusinessAdmin}/>
 
-          <div className="flex justify-center p-6 pt-8 ">
+          <div className="flex justify-center p-6 ">
             <Image priority className="" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
           </div>
 
           <div className="flex-1 p-6 pt-6 ">
 
             <div className="flex justify-between w-full p-5 px-10 items-center mb-6 bg-white shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
-              <h1 className="text-4xl  font-bold">{userData.branch_location}</h1>
+              <h1 className="text-4xl text-gray-700 font-bold">{userData.branch_location}</h1>
               <input 
                 type="date" 
                 value={selectedDate} 
-                onChange={(e) => changeDate(e.target.value)} 
-                className="border p-2 rounded scale-90 hover:scale-102 transition-all mb"
+                onChange={(e) => changeDate(selectedDate, e.target.value)} 
+                className="border p-2 text-gray-700 rounded scale-90 hover:scale-102 transition-all mb"
               />
             </div>
 
             <div className="grid grid-cols-3 gap-6 mb-6">
-              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Monthly Income:</h3>
                 <p className="text-2xl font-bold">{`₱${monthlyIncome} `}<span className={`${monthlyIncome > prevMonthlyIncome ? "text-green-500" : monthlyIncome === prevMonthlyIncome ? "text-gray-600" : "text-red-500"} text-sm`}>{monthlyIncomeDiff}</span></p>
               </div>
-              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Monthly Bookings:</h3>
                 <p className="text-2xl font-bold">{monthlyBookings} <span className={`${monthlyBookings > prevMonthlyBookings ? "text-green-500" : monthlyBookings === prevMonthlyBookings ? "text-gray-600" : "text-red-500"} text-sm`}>{monthlyBookingsDiff}</span></p>
               </div>
-              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Customers Served Today:</h3>
                 <p className="text-2xl font-bold">{dailyCustomers} <span className={`${dailyCustomers > prevDailyCustomers ? "text-green-500" : dailyCustomers === prevDailyCustomers ? "text-gray-600" : "text-red-500"} text-sm`}>{dailyCustomersDiff}</span></p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6 mb-6">
-              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
               <h2 className="text-lg font-bold mb-2">Daily Income:</h2>
                 <ChartItem chartData={incomeRange} endDate={selectedDate}/>
               </div>
-              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h2 className="text-lg font-bold mb-2">Daily Bookings:</h2>
                 <Timeline bookingsToday={bookingsToday}/>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <div className="bg-white p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h2 className="text-lg font-bold mb-2">Inventory Alerts</h2>
                 {itemsOut.length === 0 && itemsLow.length === 0 ? (
                   <p className="text-green-600">All good!</p>
@@ -684,7 +736,7 @@ useEffect(() => {
                 )}
               </div>
 
-              <div className="bg-white col-span-2 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all flex flex-col">
+              <div className="bg-yellow-50 col-span-2 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all flex flex-col">
                 <h2 className="text-lg font-bold mb-2">Best Performing Branches</h2>
                 <div className="flex gap-10">
                   <div className="w-1/2">

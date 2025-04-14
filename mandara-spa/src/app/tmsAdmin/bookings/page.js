@@ -74,7 +74,7 @@ const ManageBookings = () => {
     }, [userData, db]);
 
     useEffect(() => {
-        if (userData?.branch_id && branchData) {
+        if (userData?.branch_id && userData && branchData) {
             const fetchServices = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id);
@@ -100,10 +100,10 @@ const ManageBookings = () => {
             };
             fetchServices();
         }
-    }, [branchData, db, userData.branch_id]);
+    }, [branchData, db, userData]);
 
     useEffect(() => {
-        if (!userData?.branch_id || !branchData || !services) return;
+        if (!userData?.branch_id || !branchData || !services || !userData) return;
 
         const branchRef = doc(db, "branches", userData.branch_id);
         const bookingCollection = collection(branchRef, "bookings");
@@ -159,7 +159,7 @@ const ManageBookings = () => {
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, branchData, services, db]);
+    }, [userData?.branch_id, userData, branchData, services, db]);
 
     const toggleStatus = async (bookingId, newStatus) => {
         setSaving(true)

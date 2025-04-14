@@ -19,5 +19,8 @@ export default async function SignUp(email, password) {
         err = e;
     }
 
-    return { res, err };d
+    console.log(" dres: ", res);
+    console.log("derr: ", err);
+
+    return { res, err };
 }

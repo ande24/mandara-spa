@@ -59,7 +59,7 @@ export default function Page() {
     }
 
   return (
-    <div className="flex flex-col overflow-x-hidden justify-center items-center h-full w-screen bg-white">
+    <div className="flex flex-col overflow-x-hidden justify-center items-center h-full w-full bg-white">
       {showForm && <BookingForm onClose={() => setShowForm(false)} />}
       {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
       {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
@@ -95,7 +95,7 @@ export default function Page() {
       </div>
         
       <div className="flex-col lg:flex-row lg:flex-grow flex justify-center items-center h-full w-full bg-white xl:bg-white lg:bg-[#401414]">
-        <div className="flex flex-col w-full lg:min-h-250 lg:w-1/2 lg:max-w-full xl:w-1/3 md:max-w-xl justify-center items-center p-6 pb-10 shadow-lg shadow-black h-full text-[#e0d8ad] bg-[#401414] z-10">
+        <div className="flex flex-col w-full lg:min-h-250 lg:w-1/2 lg:max-w-full xl:w-1/3 md:max-w-xl justify-center items-center p-6 pb-10 shadow-lg xl:shadow-md rounded-bl-lg shadow-black h-full text-[#e0d8ad] bg-[#401414] z-10">
           <div className="flex flex-col w-full font-serif space-y-1 hover:shadow-lg hover:bg-[#502424] hover:scale-105 transition-all p-4 shadow-[#502424] rounded-b-2xl">
             <h2 className="text-base sm:text-xl text-center font-semibold mb-2">SM North</h2>
             <p className="flex items-center gap-4 text-xs sm:text-sm">
@@ -183,7 +183,7 @@ export default function Page() {
         <div>
           
         </div>
-        <div className="flex p-3 pt-5 w-full lg:w-1/2 md:max-w-xl lg:max-w-full xl:w-1/3 h-full lg:min-h-250 flex-col justify-center items-center lg:rounded-md xl:rounded-r-md xl:rounded-l-none xl:shadow-md shadow-lg shadow-black z-20 bg-[#301414]">
+        <div className="flex p-3 pt-5 w-full lg:w-1/2 md:max-w-xl lg:max-w-full xl:w-1/3 h-full lg:min-h-250 flex-col justify-center items-center lg:rounded-md xl:rounded-br-lg xl:rounded-l-none xl:shadow-md shadow-lg shadow-black z-20 bg-[#301414]">
           <h3 className="text-2xl sm:text-3xl text-center text-[#e0d8ad] font-semibold mb-8">Send us a Message</h3>
             <form onSubmit={handleForm} className="flex h-full flex-col justify-center items-center w-full px-10 z-10 space-y-6">
                       
@@ -282,7 +282,7 @@ export default function Page() {
             </form> 
         </div>
       </div>
-      <div id="footer">
+      <div id="footer" className="w-screen">
         <Footer/>
       </div>
     </div>

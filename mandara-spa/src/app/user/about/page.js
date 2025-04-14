@@ -187,7 +187,7 @@ export default function Page() {
                   nextEl: ".custom-next-1",
                   prevEl: ".custom-prev-1",
                 }}
-                className="scale-90 hover:scale-95 hover:shadow-lg shadow-gray-300 rounded-lg transition-all"
+                className="scale-90 hover:scale-95 rounded-lg transition-all"
               >
               {events.map((event, index) => (
                 <SwiperSlide key={index}>
@@ -226,7 +226,7 @@ export default function Page() {
 
           <h3 className="text-[#502424] mt-8 lg:mt-[-10] 2xl:mt-3 text-center  font-semibold text-2xl sm:text-3xl z-20">BLOGS</h3>
           <div className="flex h-full w-auto justify-center items-center lg:mb-0 mb-10">
-            <button className="custom-prev-2 rounded-full scale-50 sm:scale-80 top-2/5 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
+            <button className="custom-prev-2 rounded-full scale-50 sm:scale-80 top-2/5 h-13 w-13 bg-[#502424] opacity-30 hover:opacity-50 sm:hover:scale-85 text-white text-3xl flex items-center justify-center z-49 transition-all">
               ❮
             </button>
 
@@ -242,7 +242,7 @@ export default function Page() {
                   nextEl: ".custom-next-2",
                   prevEl: ".custom-prev-2",
                 }}
-                className="x scale-90 hover:scale-95 transition-all  hover:shadow-lg shadow-gray-300"
+                className=" scale-90 hover:scale-95 transition-all  shadow-gray-300"
               >
               {blogs.map((blog, index) => (
                 <SwiperSlide key={index}>
@@ -273,7 +273,7 @@ export default function Page() {
         </div>
     </div>
 
-    <div id="footer">
+    <div id="footer" className="w-screen">
       <Footer/>
     </div>
 

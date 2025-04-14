@@ -52,7 +52,7 @@ const ManageInv = ({onClose, bookingData}) => {
     }, [user, db]);
 
     useEffect(() => {
-        if (userData && userData.branch_id) {
+        if (userData) {
             const fetchBranchData = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id); 
@@ -72,7 +72,7 @@ const ManageInv = ({onClose, bookingData}) => {
     }, [userData, db]);
 
     useEffect(() => {
-        if (userData?.branch_id && branchData) {
+        if (branchData && userData) {
             const fetchItems = async () => {
                 try {
                     const branchRef = doc(db, "branches", userData.branch_id);
@@ -94,11 +94,11 @@ const ManageInv = ({onClose, bookingData}) => {
             };
             fetchItems();
         }
-    }, [branchData, db, userData.branch_id]);
+    }, [branchData, db, userData]);
 
     useEffect(() => {
         const fetchItemData = async () => {
-          if (selectedItem) {
+          if (selectedItem && userData) {
             const branchRef = doc(db, "branches", userData.branch_id);
             const docRef = doc(branchRef, "inventory", selectedItem);
             const docSnap = await getDoc(docRef);
@@ -112,7 +112,7 @@ const ManageInv = ({onClose, bookingData}) => {
         };
     
         fetchItemData();
-      }, [selectedItem, db, userData.branch_id]);
+      }, [selectedItem, db, userData]);
 
     const handleAddItem = async (e) => {
         e.preventDefault();

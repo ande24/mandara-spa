@@ -16,6 +16,7 @@ const BookingForm = ({ onClose }) => {
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
     const [branches, setBranches] = useState([]);
+    const [branchData, setBranchData] = useState(null);
     const [selectedBranch, setSelectedBranch] = useState(null);
 
     const [services, setServices] = useState([]);
