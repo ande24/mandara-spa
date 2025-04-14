@@ -12,6 +12,7 @@ const BookingForm = ({ onClose }) => {
     const db = getFirestore(firebase_app);
     const auth = getAuth(firebase_app);
     const [minDate, setMinDate] = useState("");
+    const [step, setStep] = useState(1);
 
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
@@ -20,6 +21,7 @@ const BookingForm = ({ onClose }) => {
     const [selectedBranch, setSelectedBranch] = useState(null);
 
     const [services, setServices] = useState([]);
+    const [selectedPax, setSelectedPax] = useState(null);
     const [selectedService, setSelectedService] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [show, setShow] = useState(false)
@@ -151,6 +153,13 @@ const BookingForm = ({ onClose }) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handlePaxChange = async (e) => {
+        const selectedPax = e.target.value;
+        setSelectedPax(selectedPax);
+
+        setFormData((prev) => ({ ...prev, pax: selectedPax }))
+    };
+
     const handleCategoryChange = async (e) => {
         const selectedCat = e.target.value;
         setSelectedCategory(selectedCat);
@@ -171,11 +180,42 @@ const BookingForm = ({ onClose }) => {
         setFormData((prev) => ({ ...prev, branch: selectedB }))
     };
 
+    const submitDetails = async (e) =>  {
+        e.preventDefault();
+        if (selectedBranch === "" || !formData.date || !formData.time || selectedPax === "" ) {
+            setErrorMsg("Please fill in all required fields.");
+            setShowError(true);
+            return;
+        }
+
+        console.log("DATA: ", formData)
+
+        setStep(2);
+    }
+
+    const submitServices = async (e) =>  {
+        e.preventDefault();
+        // if (selectedBranch === "" || !formData.date || !formData.time || selectedPax === "" ) {
+        //     setErrorMsg("Please fill in all required fields.");
+        //     setShowError(true);
+        //     return;
+        // }
+
+        setStep(3);
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true)
 
         console.log(formData)
+        
+        if (selectedBranch === "" || !formData.date || !formData.time || selectedPax === "" ) {
+            setErrorMsg("Please fill in all required fields.");
+            setShowError(true);
+            setSaving(false)
+            return;
+        }
         
         try {
             console.log("select", selectedBranch)
@@ -202,7 +242,7 @@ const BookingForm = ({ onClose }) => {
                 landline: branchSnap.data().branch_landline || "",
                 date: formData.date,
                 time: formData.time,
-                pax: formData.pax,
+                pax: selectedPax,
                 service: serviceSnap.data().service_name,
                 location: branchSnap.data().branch_location,
                 name: userData.user_name,
@@ -254,17 +294,93 @@ const BookingForm = ({ onClose }) => {
 
             <div className={`fixed top-0 left-0 w-full h-full transition-all bg-white opacity-80 ${show ? "scale-100" : "scale-0"}`}></div>
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-                <div className={`flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
-                    <h2 className="text-2xl mb-2 font-bold text-center">Book an Appointment</h2>
+                <div className={`relative flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
+                    <button 
+                        type="button"
+                        onClick={onClose}
+                        className="absolute top-5 right-5 p-2 rounded-md hover:scale-120 transition-all"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#e0d8ad]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    
+                    <h2 className="text-2xl mb-2 font-bold text-center">Online Booking</h2>
 
-                    <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-                        <label>Branch:</label>
+                    <div className="my-6 mx-10">
+                        <h2 className="sr-only">Steps</h2>
+
+                        <div>
+                            <div className={`overflow-hidden rounded-full ${step === 3 ? "bg-[#e0d8ad]" : "bg-gray-200"}`}>
+                                <div className={`h-2 w-1/2 rounded-full ${step === 1 ? "" : "bg-[#e0d8ad]"}`}></div>
+                                </div>
+
+                                <ol className="mt-4 grid grid-cols-3 text-sm font-medium text-gray-400">
+                                <li className="flex items-center justify-start text-[#e0d8ad] sm:gap-1.5">
+                                    <span className="hidden sm:inline"> Details</span>
+
+                                    <svg
+                                    className="size-6 sm:size-5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                    </svg>
+                                </li>
+
+                                <li className={`flex items-center justify-center ${step === 1 ? "" : "text-[#e0d8ad]"} sm:gap-1.5`}>
+                                    <span className="hidden sm:inline"> Services </span>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-6 w-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+</svg>
+
+                                </li>
+
+                                <li className={`flex items-center justify-end  sm:gap-1.5 ${step === 3 ? "text-[#e0d8ad]" : ""}`}>
+                                    <span className="hidden sm:inline"> Confirm </span>
+
+                                    <svg
+                                    className="size-6 sm:size-5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                                    />
+                                    </svg>
+                                </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    {step === 1 && (
+
+                    <form onSubmit={submitDetails} className="flex flex-col space-y-2 px-10">
+                        <label>Location</label>
                         <select 
-                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
                             value={selectedBranch ? selectedBranch.id : ""}
                             onChange={handleBranchChange}
                         >
-                            <option value="">Select Branch</option>
+                            <option value=""></option>
                             {branches
                             .filter(branch => branch.name !== "Camaya Coast, Bataan" && branch.name !== "BGC One Serendra")
                             .map(branch => (
@@ -272,7 +388,7 @@ const BookingForm = ({ onClose }) => {
                             ))}
                         </select>
 
-                        <label>Service Category:</label>
+                        {/* <label>Service Category:</label>
                         <select
                             name="category"
                             className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
@@ -303,44 +419,166 @@ const BookingForm = ({ onClose }) => {
                                 <option key={service.id} value={service.id}>{service.name} {service.price ? `- ₱${service.price}` : ""}</option>
                             ))}
                             
-                        </select>
+                        </select> */}
+                        
+                        
 
-                        <label>Number of Customers</label>
-                        <input 
-                            type="number" name="pax" min="1"
-                            value={formData.pax} onChange={handleChange} required
-                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
-                        />
                         <label>Date</label>
                         <input 
                             type="date" name="date" min={minDate}
                             value={formData.date} onChange={handleChange} required
-                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
+                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 text-sm shadow-xs"
                         />
+                        
                         <label>Time</label>
-                        <input 
-                            type="time" name="time" step="1800"
-                            value={formData.time} onChange={handleChange} required
-                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
-                        />
+                        <select
+                            name="time"
+                            value={formData.time}
+                            onChange={handleChange}
+                            required
+                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 text-sm shadow-xs"
+                        >
+                            <option value="">Select Time</option>
+                            {Array.from({ length: 28 }, (_, index) => {
+                                const hours = Math.floor(index / 2) + 10;
+                                const minutes = index % 2 === 0 ? "00" : "30";
+                                const time = `${hours > 12 ? hours - 12 : hours}:${minutes} ${hours >= 12 ? "PM" : "AM"}`;
+                                return (
+                                    <option key={time} value={time}>
+                                        {time}
+                                    </option>
+                                );
+                            })}
+                        </select>
+
+                        <label>Guests</label>
+                        <select
+                        name="pax"
+                        className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+                        value={selectedPax || ""} 
+                        onChange={handlePaxChange}
+                        >
+                            <option value=""></option>
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4 Guests</option>
+                            <option value="5">5 Guests</option>
+                            <option value="6">6 Guests</option>
+                            <option value="7">7 Guests</option>
+                            <option value="8">8 Guests</option>
+                            <option value="9">9 Guests</option>
+                            <option value="10">10 Guests</option>
+                        </select>
 
                         <div className="flex justify-around mt-3">
                             <button 
                                 disabled={saving}
                                 type="submit"
-                                    className={`${saving ? "bg-gray-400" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"} text-black w-2/5 px-6 py-3 rounded-md transition`}
+                                    className={`bg-[#e0d8ad] hover:scale-105 hover:bg-white text-black w-2/5 px-6 py-3 rounded-md transition`}
                             >
-                                Submit Booking
-                            </button>
-                            <button 
-                                type="button"
-                                onClick={onClose}
-                                className="bg-[#e0d8ad] text-black w-2/5 px-6 py-3 rounded-md hover:scale-105 hover:bg-white transition"
-                            >
-                                Cancel
+                                Next
                             </button>
                         </div>
+
                     </form>
+                    )}
+
+                    {step === 2 && (
+                        <form onSubmit={submitServices} className="flex flex-col space-y-4 px-10 overflow-auto max-h-[60vh]">
+                            {Array.from({ length: selectedPax }, (_, guestIndex) => (
+                                <div key={guestIndex} className="flex flex-col space-y-4 border-b pb-4 mb-4">
+                                    <h4 className="font-semibold text-[#e0d8ad]">Guest {guestIndex + 1}</h4>
+
+                                    {Array.from({ length: formData[`services-${guestIndex}`]?.length || 1 }, (_, serviceIndex) => (
+                                        <div key={serviceIndex} className="flex items-center space-x-2">
+                                            <select
+                                                id={`service-${guestIndex}-${serviceIndex}`}
+                                                name={`service-${guestIndex}-${serviceIndex}`}
+                                                className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
+                                                value={formData[`services-${guestIndex}`]?.[serviceIndex] || ""}
+                                                onChange={(e) => {
+                                                    const updatedServices = [...(formData[`services-${guestIndex}`] || [])];
+                                                    updatedServices[serviceIndex] = e.target.value;
+                                                    setFormData((prev) => ({
+                                                        ...prev,
+                                                        [`services-${guestIndex}`]: updatedServices,
+                                                    }));
+                                                }}
+                                                required
+                                            >
+                                                <option value=""></option>
+                                                {services
+                                                    .filter((service) => service.status !== "unavailable")
+                                                    .map((service) => (
+                                                        <option key={service.id} value={service.id}>
+                                                            {service.name} - ₱{service.price}
+                                                        </option>
+                                                    ))}
+                                            </select>
+
+                                            {/* Delete Button */}
+                                            {formData[`services-${guestIndex}`]?.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const updatedServices = [...(formData[`services-${guestIndex}`] || [])];
+                                                        updatedServices.splice(serviceIndex, 1); // Remove the selected service
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            [`services-${guestIndex}`]: updatedServices,
+                                                        }));
+                                                    }}
+                                                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md transition"
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const updatedServices = [...(formData[`services-${guestIndex}`] || []), ""];
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                [`services-${guestIndex}`]: updatedServices,
+                                            }));
+                                        }}
+                                        disabled={(formData[`services-${guestIndex}`]?.length || 0) >= 5} // Disable button if 5 services are selected
+                                        className={`mt-2 ${
+                                            (formData[`services-${guestIndex}`]?.length || 0) >= 5
+                                                ? "hidden"
+                                                : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
+                                        } text-black px-4 py-2 rounded-md transition`}
+                                    >
+                                        Add Service
+                                    </button>
+                                </div>
+                            ))}
+
+                            <div className="flex justify-around mt-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setStep(1)}
+                                    className="bg-gray-400 hover:scale-105 hover:bg-gray-500 text-white w-2/5 px-6 py-3 rounded-md transition"
+                                >
+                                    Back
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className={`${
+                                        saving ? "bg-gray-400" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
+                                    } text-black w-2/5 px-6 py-3 rounded-md transition`}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                    
                 </div>
             </div>
         </div>

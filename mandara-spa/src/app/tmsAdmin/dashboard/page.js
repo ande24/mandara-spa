@@ -683,13 +683,13 @@ useEffect(() => {
 
           <div className="flex-1 p-6 pt-6 ">
 
-            <div className="flex justify-between w-full p-5 px-10 items-center mb-6 bg-white shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
-              <h1 className="text-4xl text-gray-700 font-bold">{userData.branch_location}</h1>
+            <div className="flex justify-between w-full p-5 px-10 items-center mb-6 bg-yellow-50 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <h1 className="text-4xl font-bold">{userData.branch_location}</h1>
               <input 
                 type="date" 
                 value={selectedDate} 
                 onChange={(e) => changeDate(selectedDate, e.target.value)} 
-                className="border p-2 text-gray-700 rounded scale-90 hover:scale-102 transition-all mb"
+                className="border p-2 rounded scale-90 hover:scale-102 transition-all mb"
               />
             </div>
 

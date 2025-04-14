@@ -12,7 +12,7 @@ export default function Timeline({ bookingsToday }) {
     else {
       return (
       
-        <div className=" p-6  w-full">
+        <div className=" p-6 bg-white rounded-md w-full">
           <div className="space-y-4">
             {bookingsToday.map((booking) => (
               <div key={booking.id} className="flex items-start space-x-4">
