@@ -99,7 +99,8 @@ const ManageTransactions = () => {
     }, [branchData, db, userData]);
 
     useEffect(() => {
-        if (!userData || !userData?.branch_id || !branchData || !services) return;
+        if (services) {
+        if (!services || !userData || !userData?.branch_id || !branchData ) return;
 
         const branchRef = doc(db, "branches", userData.branch_id);
         const transactionCollection = collection(branchRef, "transactions");
@@ -142,7 +143,7 @@ const ManageTransactions = () => {
                             serviceName: serviceName,
                             servicePrice: servicePrice,
                             sales: data.service_income,
-                            services: bookingData.services,
+                            servicesList: bookingData.services,
                             items: data.items_used
                                 ? data.items_used.map(item => ({
                                     id: item.id,
@@ -162,6 +163,7 @@ const ManageTransactions = () => {
         });
 
         return () => unsubscribe();
+        }
     }, [userData, branchData, db, services]);
 
     const handleRemoveTransaction = async (e, transactionId) => {
@@ -202,7 +204,7 @@ const ManageTransactions = () => {
                                         >
                                             <div className="flex flex-col">
                                                 <p className="font-semibold">Booking {transaction.booking}</p>
-                                                {transaction.services.map((service, index) => (
+                                                {transaction.servicesList.map((service, index) => (
                                                     <div key={index}>{service}</div>
                                                 ))}
                                                 <p className="font-semibold">{transaction.sales ?`Total = ₱${transaction.sales} ` : "" }</p>

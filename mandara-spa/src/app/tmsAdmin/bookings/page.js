@@ -148,6 +148,7 @@ const ManageBookings = () => {
                             email: customerEmail,
                             pax: data.no_of_customers,
                             services: data.services,
+                            notes: data.additional_notes
                         };
                     })
             );
@@ -246,6 +247,8 @@ const ManageBookings = () => {
                                                 ))}
 
                                                 <p className="font-semibold">Total: ₱{booking.total}</p>
+                                                <br />
+                                                <p>Additional Notes: {booking.notes}</p>
                                                 <p className="text-sm text-gray-600">{booking.date} | {booking.time} | {booking.status}</p>
                                             </div>
                                             <div className="flex items-center">
