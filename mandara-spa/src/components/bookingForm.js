@@ -22,7 +22,7 @@ const BookingForm = ({ onClose }) => {
 
     const [services, setServices] = useState([]);
     const [selectedPax, setSelectedPax] = useState(null);
-    const [selectedService, setSelectedService] = useState(null);
+    const [selectedServices, setSelectedService] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [show, setShow] = useState(false)
     const [showError, setShowError] = useState(false);
@@ -34,10 +34,13 @@ const BookingForm = ({ onClose }) => {
     const [formData, setFormData] = useState({
         date: "",
         time: "",
-        pax: "", 
-        service: "",
+        name: "", 
+        number: "",
         branch: "",
-        category: "", 
+        services: [],
+        notes: "",
+        email: "",
+        isInitialized: false
     });
 
     useEffect(() => {
@@ -74,6 +77,18 @@ const BookingForm = ({ onClose }) => {
             fetchUserData();
         }
     }, [user, db]);
+
+    useEffect(() => {
+        if (userData && !formData.isInitialized) {
+            setFormData((prev) => ({
+                ...prev,
+                name: userData.user_name || "",
+                number: userData.user_number || "",
+                email: userData.user_email || "",
+                isInitialized: true, // Add a flag to indicate that the form has been initialized
+            }));
+        }
+    }, [userData]);
 
     useEffect(() => {
         if (userData && selectedBranch) {
@@ -200,9 +215,21 @@ const BookingForm = ({ onClose }) => {
         //     setShowError(true);
         //     return;
         // }
+        console.log("formdata: ", formData)
 
         setStep(3);
     }
+
+    const calculateTotal = () => {
+        let subtotal = 0;
+        Array.from({ length: selectedPax }, (_, guestIndex) => {
+            formData.services?.[guestIndex]?.forEach(serviceId => {
+                const service = services.find(s => s.id === serviceId);
+                if (service) subtotal += Number(service.price);
+            });
+        });
+        return subtotal;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -210,29 +237,33 @@ const BookingForm = ({ onClose }) => {
 
         console.log(formData)
         
-        if (selectedBranch === "" || !formData.date || !formData.time || selectedPax === "" ) {
-            setErrorMsg("Please fill in all required fields.");
-            setShowError(true);
-            setSaving(false)
-            return;
-        }
-        
         try {
             console.log("select", selectedBranch)
             const branchRef = doc(db, "branches", selectedBranch)
-            const docRef = await addDoc(collection(branchRef, "bookings"), {
-                customer_id: auth.currentUser.uid,
-                booked_time: formData.time,
-                booked_date: formData.date,
-                no_of_customers: formData.pax,
-                service_id: formData.service,
-                booking_status: "pending"
-            });
-            console.log("Booking successful with ID:", docRef.id);
+            // const docRef = await addDoc(collection(branchRef, "bookings"), {
+            //     customer_id: auth.currentUser.uid,
+            //     booked_time: formData.time,
+            //     booked_date: formData.date,
+            //     no_of_customers: formData.pax,
+            //     services: formData.services,
+            //     customer_name: formData.name,
+            //     customer_number: formData.number,
+            //     customer_email: formData.email,
+            //     additional_notes: formData.notes,
+            //     booking_status: "pending"
+            // });
+            // console.log("Booking successful with ID:", docRef.id);
 
-            console.log(formData)
+            const serviceNames = formData.services.flatMap((guestServices) =>
+                guestServices.map((serviceId) => {
+                    const service = services.find((s) => s.id === serviceId);
+                    return service ? service.name : null;
+                })
+            ).filter((name) => name !== null);
 
-            const serviceRef = doc(branchRef, "services", formData.service);
+            console.log("Service Names:", serviceNames);
+
+            const serviceRef = doc(branchRef, "services", formData.services);
             const serviceSnap = await getDoc(serviceRef);
 
             const branchSnap = await getDoc(branchRef);
@@ -293,8 +324,8 @@ const BookingForm = ({ onClose }) => {
             {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
 
             <div className={`fixed top-0 left-0 w-full h-full transition-all bg-white opacity-80 ${show ? "scale-100" : "scale-0"}`}></div>
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-                <div className={`relative flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
+            <div className="fixed top-20 inset-x-0 flex items-center justify-center">
+                <div className={` top-10 inset-x-0 relative flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
                     <button 
                         type="button"
                         onClick={onClose}
@@ -344,8 +375,10 @@ const BookingForm = ({ onClose }) => {
                                     <span className="hidden sm:inline"> Services </span>
 
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-6 w-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
-</svg>
+                                    <path strokeLinecap="round" 
+                                            strokeLinejoin="round" 
+                                            d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+                                    </svg>
 
                                 </li>
 
@@ -377,7 +410,7 @@ const BookingForm = ({ onClose }) => {
                         <label>Location</label>
                         <select 
                             className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
-                            value={selectedBranch ? selectedBranch.id : ""}
+                            value={formData.branch || ""}
                             onChange={handleBranchChange}
                         >
                             <option value=""></option>
@@ -387,41 +420,6 @@ const BookingForm = ({ onClose }) => {
                                 <option key={branch.id} value={branch.id}>{branch.name} - {branch.hours}</option>
                             ))}
                         </select>
-
-                        {/* <label>Service Category:</label>
-                        <select
-                            name="category"
-                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
-                            value={selectedCategory || ""} 
-                            onChange={handleCategoryChange}
-                        >
-                            <option value="">Select Category</option>
-                            <option value="signature">The Mandara Spa Signature Rituals</option>
-                            <option value="massage_therapy">The Mandara Spa Body Rituals (Massage Therapy)</option>
-                            <option value="body_scrub">The Mandara Spa Body Rituals (Body Scrub and Wraps)</option>
-                            <option value="healing">The Mandara Spa Body Rituals (Traditional Healing Massage)</option>
-                            <option value="hand_and_foot">The Mandara Spa Hand and Foot Rituals</option>
-                            <option value="facial">The Mandara Spa Facial Rituals</option>
-                            <option value="other">Other Mandara Treats</option>
-                            <option value="special">Special Offers</option>
-                        </select>
-                        
-                        <label>Service:</label>
-                        <select 
-                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 pe-12 text-sm shadow-xs"
-                            value={selectedService ? selectedService.id : ""}
-                            onChange={handleServiceChange}
-                        >
-                            <option value="">Select Service</option>
-                            {services
-                            .filter(service => service.status !== "unavailable" && service.category === selectedCategory)
-                            .map(service => (
-                                <option key={service.id} value={service.id}>{service.name} {service.price ? `- ₱${service.price}` : ""}</option>
-                            ))}
-                            
-                        </select> */}
-                        
-                        
 
                         <label>Date</label>
                         <input 
@@ -485,24 +483,26 @@ const BookingForm = ({ onClose }) => {
                     )}
 
                     {step === 2 && (
-                        <form onSubmit={submitServices} className="flex flex-col space-y-4 px-10 overflow-auto max-h-[60vh]">
+                        <>
+                        <form onSubmit={submitServices} id="form2" className="flex flex-col space-y-4 px-10 overflow-y-auto overflow-x-hidden max-h-[50vh]">
                             {Array.from({ length: selectedPax }, (_, guestIndex) => (
                                 <div key={guestIndex} className="flex flex-col space-y-4 border-b pb-4 mb-4">
                                     <h4 className="font-semibold text-[#e0d8ad]">Guest {guestIndex + 1}</h4>
 
-                                    {Array.from({ length: formData[`services-${guestIndex}`]?.length || 1 }, (_, serviceIndex) => (
+                                    {Array.from({ length: formData.services?.[guestIndex]?.length || 1 }, (_, serviceIndex) => (
                                         <div key={serviceIndex} className="flex items-center space-x-2">
                                             <select
                                                 id={`service-${guestIndex}-${serviceIndex}`}
                                                 name={`service-${guestIndex}-${serviceIndex}`}
                                                 className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
-                                                value={formData[`services-${guestIndex}`]?.[serviceIndex] || ""}
+                                                value={formData.services?.[guestIndex]?.[serviceIndex] || ""}
                                                 onChange={(e) => {
-                                                    const updatedServices = [...(formData[`services-${guestIndex}`] || [])];
-                                                    updatedServices[serviceIndex] = e.target.value;
+                                                    const updatedServices = [...(formData.services || [])];
+                                                    updatedServices[guestIndex] = updatedServices[guestIndex] || [];
+                                                    updatedServices[guestIndex][serviceIndex] = e.target.value;
                                                     setFormData((prev) => ({
                                                         ...prev,
-                                                        [`services-${guestIndex}`]: updatedServices,
+                                                        services: updatedServices,
                                                     }));
                                                 }}
                                                 required
@@ -518,15 +518,15 @@ const BookingForm = ({ onClose }) => {
                                             </select>
 
                                             {/* Delete Button */}
-                                            {formData[`services-${guestIndex}`]?.length > 1 && (
+                                            {formData.services?.[guestIndex]?.length > 1 && (
                                                 <button
                                                     type="button"
                                                     onClick={() => {
-                                                        const updatedServices = [...(formData[`services-${guestIndex}`] || [])];
-                                                        updatedServices.splice(serviceIndex, 1); // Remove the selected service
+                                                        const updatedServices = [...(formData.services || [])];
+                                                        updatedServices[guestIndex].splice(serviceIndex, 1); // Remove the selected service
                                                         setFormData((prev) => ({
                                                             ...prev,
-                                                            [`services-${guestIndex}`]: updatedServices,
+                                                            services: updatedServices,
                                                         }));
                                                     }}
                                                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md transition"
@@ -540,43 +540,154 @@ const BookingForm = ({ onClose }) => {
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            const updatedServices = [...(formData[`services-${guestIndex}`] || []), ""];
+                                            const updatedServices = [...(formData.services || [])];
+                                            updatedServices[guestIndex] = updatedServices[guestIndex] || [];
+                                            updatedServices[guestIndex].push(""); // Add a new empty service
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                [`services-${guestIndex}`]: updatedServices,
+                                                services: updatedServices,
                                             }));
-                                        }}
-                                        disabled={(formData[`services-${guestIndex}`]?.length || 0) >= 5} // Disable button if 5 services are selected
-                                        className={`mt-2 ${
-                                            (formData[`services-${guestIndex}`]?.length || 0) >= 5
-                                                ? "hidden"
-                                                : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
-                                        } text-black px-4 py-2 rounded-md transition`}
+                                        }} 
+                                        className={`mt-2 bg-[#e0d8ad] hover:scale-105 hover:bg-white text-black px-4 py-2 rounded-md transition`}
                                     >
                                         Add Service
                                     </button>
                                 </div>
                             ))}
 
-                            <div className="flex justify-around mt-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setStep(1)}
-                                    className="bg-gray-400 hover:scale-105 hover:bg-gray-500 text-white w-2/5 px-6 py-3 rounded-md transition"
-                                >
-                                    Back
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={saving}
-                                    className={`${
-                                        saving ? "bg-gray-400" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
-                                    } text-black w-2/5 px-6 py-3 rounded-md transition`}
-                                >
-                                    Next
-                                </button>
-                            </div>
+                            
                         </form>
+                            <div className="flex justify-around mt-3">
+                            <button
+                                type="button"
+                                onClick={() => setStep(1)}
+                                className="bg-gray-400 hover:scale-105 hover:bg-gray-500 text-white w-2/5 px-6 py-3 rounded-md transition"
+                            >
+                                Back
+                            </button>
+                            <button
+                                type="submit"
+                                form="form2"
+                                disabled={saving}
+                                className={`${
+                                    saving ? "bg-gray-400" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
+                                } text-black w-2/5 px-6 py-3 rounded-md transition`}
+                            >
+                                Next
+                            </button>
+                        </div>
+                        </>
+                    )}
+
+                    {step === 3 && (
+                    <>
+                        <div className="flex flex-col space-y-6 px-10 overflow-y-auto overflow-x-hidden max-h-[50vh]">
+                            {/* Booking Summary */}
+                            <h3 className="text-xl font-bold text-[#e0d8ad] text-center">Booking Summary</h3>
+                            <div className="bg-gray-100 p-4 rounded-lg shadow-md text-xs text-zinc-800">
+                                <p><strong>Date:</strong> {formData.date}</p>
+                                <p><strong>Time:</strong> {formData.time}</p>
+                                <p><strong>Location:</strong> {branches.find(branch => branch.id === selectedBranch)?.name}</p>
+                                <p><strong>No. of Guests:</strong> {selectedPax}</p>
+                                {Array.from({ length: selectedPax }, (_, guestIndex) => (
+                                    <div key={guestIndex} className="mt-4">
+                                        <p className="font-semibold">Guest {guestIndex + 1}</p>
+                                        <ul className="list-none">
+                                            {formData.services?.[guestIndex]?.map((serviceId, index) => {
+                                                const service = services.find(s => s.id === serviceId);
+                                                return (
+                                                    <li key={index}>
+                                                        <div className="flex justify-between items-center">
+                                                            <p>{service?.name}</p>
+                                                            <p>₱{service?.price}</p>
+                                                        </div>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    </div>
+                                ))}
+                                <hr className="my-4" />
+                                <div className="flex justify-between font-bold">
+                                    <p><strong>Total:</strong></p>
+                                    <p>₱{calculateTotal()}</p>
+                                </div>
+                            </div>
+
+                            {/* Contact Information Form */}
+                            <h3 className="text-xl font-bold text-[#e0d8ad] text-center">Contact Information</h3>
+                            <form onSubmit={handleSubmit} id="form3" className="flex flex-col [#e0d8ad] space-y-4">
+                                <div className="flex flex-col sm:flex-row sm:space-x-4">
+                                    <div className="flex-1">
+                                        <label className="block text-sm font-medium">Full Name</label>
+                                        <input
+                                            type="text"
+                                            name="firstName"
+                                            value={formData.name || ""}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row sm:space-x-4">
+                                    <div className="flex-1">
+                                        <label className="block text-sm font-medium">Contact No.</label>
+                                        <input
+                                            type="tel"
+                                            name="contactNo"
+                                            value={formData.number || ""}
+                                            onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <label className="block text-sm font-medium">Email Address</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email || ""}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium">Additional Notes</label>
+                                    <textarea
+                                        name="notes"
+                                        value={formData.notes || ""}
+                                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                        className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
+                                        rows="4"
+                                    ></textarea>
+                                </div>
+                            </form>
+
+                            
+                        </div>
+                        <div className="flex justify-around mt-3">
+                            <button
+                                type="button"
+                                onClick={() => setStep(2)}
+                                className="bg-gray-400 hover:scale-105 hover:bg-gray-500 text-white w-2/5 px-6 py-3 rounded-md transition"
+                            >
+                                Back
+                            </button>
+                            <button
+                                type="submit"
+                                form="form3"
+                                disabled={saving}
+                                className={`${
+                                    saving ? "bg-gray-400" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
+                                } text-black w-2/5 px-6 py-3 rounded-md transition`}
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </>
                     )}
                     
                 </div>
