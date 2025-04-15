@@ -191,21 +191,16 @@ const ManageInv = ({onClose, bookingData}) => {
                         item_quantity: newQuantity
                     });
                 }
-
-                setItems(prevItems => 
-                    prevItems.map(item => 
-                        item.id === selectedItem ? 
-                            { ...item, name: formData.name, price: formData.price, quantity: formData.quantity} : item
-                    )
-                );
             }
 
-            const userSnap = await getDoc(doc(db, "users", bookingData.customer_id))
-            const serviceSnap = await getDoc(doc(branchRef, "services", bookingData.service_id))
 
-            const income = Number(bookingData.no_of_customers) * Number(serviceSnap.data().service_price);
+            const userSnap = await getDoc(doc(db, "users", bookingData.customer_id))
+
+            const income = bookingData.total;
             
             const transactionsRef = collection(branchRef, "transactions");
+
+            
 
             await addDoc(transactionsRef, {
                 bookingId: bookingData.id,

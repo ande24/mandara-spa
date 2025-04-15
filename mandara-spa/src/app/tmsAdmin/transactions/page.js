@@ -142,6 +142,7 @@ const ManageTransactions = () => {
                             serviceName: serviceName,
                             servicePrice: servicePrice,
                             sales: data.service_income,
+                            services: bookingData.services,
                             items: data.items_used
                                 ? data.items_used.map(item => ({
                                     id: item.id,
@@ -201,9 +202,11 @@ const ManageTransactions = () => {
                                         >
                                             <div className="flex flex-col">
                                                 <p className="font-semibold">Booking {transaction.booking}</p>
-                                                <p>{transaction.serviceName} {transaction.servicePrice ? `(₱${transaction.servicePrice}) x ${transaction.pax}` : ""}</p>
-                                                <p>{transaction.servicePrice ?`= ₱${transaction.sales} Total Sales` : "" }</p>
-
+                                                {transaction.services.map((service, index) => (
+                                                    <div key={index}>{service}</div>
+                                                ))}
+                                                <p className="font-semibold">{transaction.sales ?`Total = ₱${transaction.sales} ` : "" }</p>
+                                                <br />
                                                 <p>Items used:</p>
                                                 {transaction.items.map((item) => (
                                                     <p key={item.id}>{item.name} (₱{item.price}) x {item.quantity}</p>

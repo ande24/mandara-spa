@@ -172,7 +172,7 @@ const BookingForm = ({ onClose }) => {
         const selectedPax = e.target.value;
         setSelectedPax(selectedPax);
 
-        setFormData((prev) => ({ ...prev, pax: selectedPax }))
+        setFormData((prev) => ({ ...prev, pax: selectedPax, services: Array.from({ length: selectedPax }, () => []), }))
     };
 
     const handleCategoryChange = async (e) => {
@@ -240,31 +240,31 @@ const BookingForm = ({ onClose }) => {
         try {
             console.log("select", selectedBranch)
             const branchRef = doc(db, "branches", selectedBranch)
-            // const docRef = await addDoc(collection(branchRef, "bookings"), {
-            //     customer_id: auth.currentUser.uid,
-            //     booked_time: formData.time,
-            //     booked_date: formData.date,
-            //     no_of_customers: formData.pax,
-            //     services: formData.services,
-            //     customer_name: formData.name,
-            //     customer_number: formData.number,
-            //     customer_email: formData.email,
-            //     additional_notes: formData.notes,
-            //     booking_status: "pending"
-            // });
-            // console.log("Booking successful with ID:", docRef.id);
 
-            const serviceNames = formData.services.flatMap((guestServices) =>
-                guestServices.map((serviceId) => {
-                    const service = services.find((s) => s.id === serviceId);
-                    return service ? service.name : null;
-                })
-            ).filter((name) => name !== null);
+            const formattedServices = formData.services.map((guestServices, guestIndex) => {
+                const serviceNames = guestServices
+                    .map((serviceId) => {
+                        const service = services.find((s) => s.id === serviceId);
+                        return service ? `${service.name} - ₱${service.price}` : null;
+                    })
+                    .filter((name) => name !== null); 
+                return `Guest ${guestIndex + 1}: ${serviceNames.join(", ")}`;
+            });
 
-            console.log("Service Names:", serviceNames);
-
-            const serviceRef = doc(branchRef, "services", formData.services);
-            const serviceSnap = await getDoc(serviceRef);
+            const docRef = await addDoc(collection(branchRef, "bookings"), {
+                customer_id: auth.currentUser.uid,
+                booked_time: formData.time,
+                booked_date: formData.date,
+                no_of_customers: formData.pax,
+                services: formattedServices,
+                customer_name: formData.name,
+                customer_number: formData.number,
+                customer_email: formData.email,
+                additional_notes: formData.notes,
+                booking_status: "pending",
+                total: calculateTotal(formData.services)
+            });
+            console.log("Booking successful with ID:", docRef.id);
 
             const branchSnap = await getDoc(branchRef);
 
@@ -274,48 +274,40 @@ const BookingForm = ({ onClose }) => {
                 date: formData.date,
                 time: formData.time,
                 pax: selectedPax,
-                service: serviceSnap.data().service_name,
+                services: formattedServices,
+                total: calculateTotal(formData.services),
                 location: branchSnap.data().branch_location,
-                name: userData.user_name,
+                name: formData.name,
+                notes: formData.notes,
                 id: selectedBranch,
-            }
+            };
 
             const response = await fetch('/api/send', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newData),
-              });
-            
-            setSuccessMsg("We sent you a booking request confirmation email.")
-            setShowSuccess(true);
-            
-            
-            setTimeout(() => {
-                setFormData({ pax: "", date: "", time: "", service: "", branch: "", category: ""});
-                setSelectedCategory(null) 
-                setSelectedBranch(null)
-                setSelectedService(null)
-                onClose();
-            }, 2000);
+            });
 
-            setSaving(false)
+            setSuccessMsg("We sent you a booking request confirmation email.");
+            setShowSuccess(true);
+
+            setTimeout(() => {
+                setFormData({ date: "", time: "", services: [] });
+                setSelectedPax(null);
+                setSelectedBranch(null);
+                setSelectedService(null);
+                setSaving(false);
+                onClose();
+            }, 3000);
+
             
-            return docRef.id;
         } catch (error) {
             setErrorMsg(error.message);
-
             setShowError(true);
-            
-            setTimeout(() => {
-                setSelectedCategory(null) 
-                setSelectedBranch(null)
-                setSelectedService(null)
-                setFormData({ pax: "", date: "", time: "", service: "", branch: "", category: ""}); 
-            }, 2000);
+            setSaving(false);
         }
-        setSaving(false)
     };
 
     return (

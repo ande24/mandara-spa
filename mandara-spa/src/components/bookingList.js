@@ -142,7 +142,7 @@ const ManageBookings = ({onClose}) => {
                             price: servicePrice,
                             email: customerEmail,
                             pax: data.no_of_customers,
-                            service: serviceName,
+                            services: data.services,
                         };
                     })
             );
@@ -234,7 +234,10 @@ const ManageBookings = ({onClose}) => {
                                             <div className="flex flex-col">
                                                 <p className="font-semibold">{booking.id} : {booking.customer} : {booking.email}</p>
                                                 <p>{booking.service}</p>
-                                                <p>No. of customers: {booking.pax} {booking.price ? `x ₱${booking.price} = ₱${booking.total}` : ""}</p>
+                                                <ul>
+                                                    ${services.map(service => `<li>${service}</li>`).join('')}
+                                                </ul>
+                                                <p>Total: {booking.total}</p>
                                                 <p className="text-sm text-gray-600">{booking.date} | {booking.time} | {booking.status}</p>
                                             </div>
                                             <div className="flex items-center">

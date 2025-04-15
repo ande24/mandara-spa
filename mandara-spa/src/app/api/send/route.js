@@ -4,7 +4,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req, res) {
     const requestBody = await req.text();
-    const { date, time, pax, location, service, name, id, mobile, landline } = JSON.parse(requestBody);
+    const { date, time, pax, location, services, name, id, mobile, landline, notes, total } = JSON.parse(requestBody);
+
   try {
     const { data, error } = await resend.emails.send({
       from: 'The Mandara Spa <themandaraspa@resend.dev>',
@@ -75,7 +76,12 @@ export async function POST(req, res) {
                 <p><strong>Date:</strong> ${date}</p>
                 <p><strong>Time:</strong> ${time}</p>
                 <p><strong>Location:</strong> ${location}</p>
-                <p><strong>Service:</strong> ${service}</p>
+                <p><strong>Services:</strong></p>
+                <ul>
+                    ${services.map(service => `<li>${service}</li>`).join('')}
+                </ul>
+                <p><strong>Total Price: </strong> ₱${total}</p>
+                <p><strong>Additional Notes:</strong> ${notes}</p>
                 <p>In the event of scheduling conflicts, we will reach out to discuss alternative arrangements.<p>
                 <p>For cancellations and other concerns, feel free to contact us at <strong>${landline ? landline : "8869 9910"}</strong> or <strong>${mobile ? mobile : "+63 915 844 3003"}</strong>.</p>
                 <p>See you there!</p>

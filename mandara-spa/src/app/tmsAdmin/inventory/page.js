@@ -128,6 +128,9 @@ const ManageInv = () => {
         const branchRef = doc(db, "branches", userData.branch_id);
         const itemRef = collection(branchRef, "inventory");
 
+        console.log("items: ", items);
+        console.log("formdata: ", formData);
+
         try {
             const existingItem = items.find(item => item.name.toLowerCase() === formData.name.toLowerCase());
 
