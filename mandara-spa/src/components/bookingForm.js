@@ -282,6 +282,9 @@ const BookingForm = ({ onClose }) => {
                 id: selectedBranch,
             };
 
+            setSuccessMsg("We sent you a booking request confirmation email.");
+            setShowSuccess(true);
+
             const response = await fetch('/api/send', {
                 method: 'POST',
                 headers: {
@@ -289,9 +292,6 @@ const BookingForm = ({ onClose }) => {
                 },
                 body: JSON.stringify(newData),
             });
-
-            setSuccessMsg("We sent you a booking request confirmation email.");
-            setShowSuccess(true);
 
             setTimeout(() => {
                 setFormData({ date: "", time: "", services: [] });
@@ -311,13 +311,17 @@ const BookingForm = ({ onClose }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center z-50 transition-all">
-            {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
-            {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
+        <div className="flex flex-col relative items-center justify-center z-50 transition-all">
+            
 
             <div className={`fixed top-0 left-0 w-full h-full transition-all bg-white opacity-80 ${show ? "scale-100" : "scale-0"}`}></div>
-            <div className="fixed top-20 inset-x-0 flex items-center justify-center">
-                <div className={` top-10 inset-x-0 relative flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
+            
+            <div className="fixed top-0 inset-x-0 flex items-center justify-center">
+            {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
+            {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
+                <div className={` top-30 inset-x-0 relative flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
+                    
+                    
                     <button 
                         type="button"
                         onClick={onClose}
@@ -476,7 +480,7 @@ const BookingForm = ({ onClose }) => {
 
                     {step === 2 && (
                         <>
-                        <form onSubmit={submitServices} id="form2" className="flex flex-col space-y-4 px-10 overflow-y-auto overflow-x-hidden max-h-[50vh]">
+                        <form onSubmit={submitServices} id="form2" className="flex flex-col space-y-4 pl-10 pr-6 overflow-y-auto overflow-x-hidden max-h-[50vh]">
                             {Array.from({ length: selectedPax }, (_, guestIndex) => (
                                 <div key={guestIndex} className="flex flex-col space-y-4 border-b pb-4 mb-4">
                                     <h4 className="font-semibold text-[#e0d8ad]">Guest {guestIndex + 1}</h4>
@@ -504,7 +508,7 @@ const BookingForm = ({ onClose }) => {
                                                     .filter((service) => service.status !== "unavailable")
                                                     .map((service) => (
                                                         <option key={service.id} value={service.id}>
-                                                            {service.name} - ₱{service.price}
+                                                            {service.name} {`${service.price ? `- ₱${service.price}` : ""}`}
                                                         </option>
                                                     ))}
                                             </select>
@@ -573,7 +577,7 @@ const BookingForm = ({ onClose }) => {
 
                     {step === 3 && (
                     <>
-                        <div className="flex flex-col space-y-6 px-10 overflow-y-auto overflow-x-hidden max-h-[50vh]">
+                        <div className="flex flex-col space-y-6 pl-10 pr-6 overflow-y-auto overflow-x-hidden max-h-[50vh]">
                             {/* Booking Summary */}
                             <h3 className="text-xl font-bold text-[#e0d8ad] text-center">Booking Summary</h3>
                             <div className="bg-gray-100 p-4 rounded-lg shadow-md text-xs text-zinc-800">
