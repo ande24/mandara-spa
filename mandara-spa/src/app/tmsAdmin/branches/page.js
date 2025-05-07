@@ -75,7 +75,6 @@ const BranchSelect = () => {
 
             <div className="flex flex-col justify-around p-4 z-10 bottom-35 min-w-lg min-h-80 mx-auto bg-white shadow-lg rounded-lg">
                 <h2 className="text-xl font-bold text-center">View a branch</h2>
-                {/* {message  && <p className="mb-2 text-green-500">{message}</p>} */}
                 <form onSubmit={directBranch} className="flex flex-col space-y-5">
                     <select 
                         className="border  input-field rounded-lg"
@@ -92,14 +91,13 @@ const BranchSelect = () => {
                     </select>
 
                     <button type="submit" className="mandara-btn p-2 py-5">Continue</button>
-
-                    <button 
-                                className="mandara-btn p-2 py-5"
-                                onClick={() => {router.push("/tmsAdmin/dashboard")}}
-                            >
-                                Close
-                            </button>
                 </form>
+                <button 
+                    className="mandara-btn p-2 py-5"
+                    onClick={() => {router.push("/tmsAdmin/dashboard")}}
+                >
+                    Close
+                </button>
             </div>
         </div>
     );

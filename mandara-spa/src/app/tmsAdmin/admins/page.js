@@ -9,7 +9,7 @@ import SignUp from "@/firebase/auth/signup";
 
 const Image = dynamic(() => import("next/image"), { ssr: false });
 
-const EditAdmins = ({}) => {
+const EditAdmins = () => {
     const router = useRouter();
     const db = getFirestore(firebase_app);
     const [branches, setBranches] = useState([]);

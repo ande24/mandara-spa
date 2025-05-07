@@ -12,7 +12,7 @@ const Image = dynamic(() => import("next/image"));
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
 
-const EditBranch = ({onClose}) => {
+const EditBranch = () => {
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
@@ -57,7 +57,7 @@ const EditBranch = ({onClose}) => {
     }, [user]);
 
     useEffect(() => {
-        if (user) {
+        if (user && userData) {
             const fetchBranchData = async () => {
                 try {
                     console.log(userData)

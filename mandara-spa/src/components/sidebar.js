@@ -1,12 +1,6 @@
 "use client"
 
 import { useState } from "react";
-import EditBranch from "@/components/detailsForm";
-import ManageService from "@/components/serviceForm";
-import ManageInv from "@/components/inventoryForm";
-import ManageBookings from "@/components/bookingList";
-import ManageTransactions from "@/components/transactionList";
-import ViewMessages from "@/components/messageList";
 import { useRouter } from "next/navigation";
 
 export default function Sidebar({ admin }) {
@@ -19,7 +13,7 @@ export default function Sidebar({ admin }) {
             
         {isOpen && <div className="fixed inset-0 bg-black opacity-80 z-40" onClick={() => setIsOpen(false)}></div>}
         
-        <div className={`fixed top-0 left-0 w-64 bg-white shadow-lg h-full z-50 transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className={`fixed top-0 left-0 w-64 bg-white shadow-lg h-full z-51 transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
             <button className="m-6 p-2 bg-[#301414] w-52 text-white rounded-lg" onClick={() => setIsOpen(false)}>Close</button>
             <nav className="p-4">
             <ul>
