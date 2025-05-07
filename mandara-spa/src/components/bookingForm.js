@@ -85,7 +85,7 @@ const BookingForm = ({ onClose }) => {
                 name: userData.user_name || "",
                 number: userData.user_number || "",
                 email: userData.user_email || "",
-                isInitialized: true, // Add a flag to indicate that the form has been initialized
+                isInitialized: true, 
             }));
         }
     }, [userData]);
@@ -197,7 +197,7 @@ const BookingForm = ({ onClose }) => {
 
     const submitDetails = async (e) =>  {
         e.preventDefault();
-        if (selectedBranch === "" || !formData.date || !formData.time || selectedPax === "" ) {
+        if (selectedBranch === "" || !formData.date || selectedPax === "" ) {
             setErrorMsg("Please fill in all required fields.");
             setShowError(true);
             return;
@@ -423,27 +423,6 @@ const BookingForm = ({ onClose }) => {
                             value={formData.date} onChange={handleChange} required
                             className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 text-sm shadow-xs"
                         />
-                        
-                        <label>Time</label>
-                        <select
-                            name="time"
-                            value={formData.time}
-                            onChange={handleChange}
-                            required
-                            className="w-full bg-gray-200 rounded-lg text-black border-gray-200 p-4 text-sm shadow-xs"
-                        >
-                            <option value="">Select Time</option>
-                            {Array.from({ length: 28 }, (_, index) => {
-                                const hours = Math.floor(index / 2) + 10;
-                                const minutes = index % 2 === 0 ? "00" : "30";
-                                const time = `${hours > 12 ? hours - 12 : hours}:${minutes} ${hours >= 12 ? "PM" : "AM"}`;
-                                return (
-                                    <option key={time} value={time}>
-                                        {time}
-                                    </option>
-                                );
-                            })}
-                        </select>
 
                         <label>Guests</label>
                         <select
