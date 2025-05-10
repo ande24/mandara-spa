@@ -96,7 +96,7 @@ export default function Page() {
         
       <div className="flex-col lg:flex-row lg:flex-grow flex justify-center items-center h-full w-full bg-white xl:bg-white lg:bg-[#401414]">
         <div className="flex flex-col w-full lg:min-h-250 lg:w-1/2 lg:max-w-full xl:w-1/3 md:max-w-xl justify-center items-center p-6 pb-10 shadow-lg xl:shadow-md rounded-bl-lg shadow-black h-full text-[#e0d8ad] bg-[#401414] z-10">
-          <div className="flex flex-col w-full font-serif space-y-1 hover:shadow-lg hover:bg-[#502424] hover:scale-105 transition-all p-4 shadow-[#502424] rounded-b-2xl">
+          <div className="flex flex-col w-full font-serif space-y-1 hover:shadow-lg hover:bg-[#502424] hover:scale-105 transition-all p-4 shadow-[#502424] rounded-2xl">
             <h2 className="text-base sm:text-xl text-center font-semibold mb-2">SM North</h2>
             <p className="flex items-center gap-4 text-xs sm:text-sm">
               <FaMapMarkerAlt className="m-1 h-3 w-3 sm:h-min sm:w-min min-w-3 min-h-3" /> 2nd Floor, SM North Towers, SM North Edsa Quezon City
@@ -282,7 +282,7 @@ export default function Page() {
             </form> 
         </div>
       </div>
-      <div id="footer" className="w-screen">
+      <div id="footer" className="w-screen z-100">
         <Footer/>
       </div>
     </div>

@@ -273,7 +273,7 @@ export default function Page() {
         </div>
     </div>
 
-    <div id="footer" className="w-screen">
+    <div id="footer" className="w-screen z-100">
       <Footer/>
     </div>
 

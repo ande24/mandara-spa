@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 const Image = dynamic(() => import("next/image"));
@@ -38,53 +38,46 @@ const EditBranch = () => {
 
     useEffect(() => {
         if (user) {
-            const fetchUserData = async () => {
-                try {
-                    const docRef = doc(db, "users", user.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        setUserData(docSnap.data());
-                    } else {
-                        console.log("No user data found in Firestore");
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
+            const userRef = doc(db, "users", user.uid);
+            const unsubscribe = onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    setUserData(docSnap.data());
+                } else {
+                    console.log("No user data found in Firestore");
                 }
-            };
-    
-            fetchUserData();
+            }, (error) => {
+                console.error("Error fetching user data:", error);
+            });
+
+            return () => unsubscribe();
         }
     }, [user]);
 
     useEffect(() => {
-        if (user && userData) {
-            const fetchBranchData = async () => {
-                try {
-                    console.log(userData)
-                    const branchRef = doc(db, "branches", userData.branch_id); 
-                    const branchSnap = await getDoc(branchRef);
-                    if (branchSnap.exists()) {
-                        const data = branchSnap.data();
-                        setFormData({
-                            branch_address: data.branch_address || "",
-                            branch_desc: data.branch_desc || "",
-                            branch_landline: data.branch_landline || "",
-                            branch_location: data.branch_location || "",
-                            branch_location_link: data.branch_location_link || "",
-                            branch_mobile: data.branch_mobile || "",
-                            branch_hours: data.branch_hours ||  "",
-                        });
-                    } else {
-                        console.log("No branch data found");
-                    }
-                } catch (error) {
-                    console.error("Error fetching branch data:", error);
-                } 
-            };
+        if (userData) {
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const unsubscribe = onSnapshot(branchRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setFormData({
+                        branch_address: data.branch_address || "",
+                        branch_desc: data.branch_desc || "",
+                        branch_landline: data.branch_landline || "",
+                        branch_location: data.branch_location || "",
+                        branch_location_link: data.branch_location_link || "",
+                        branch_mobile: data.branch_mobile || "",
+                        branch_hours: data.branch_hours || "",
+                    });
+                } else {
+                    console.log("No branch data found");
+                }
+            }, (error) => {
+                console.error("Error fetching branch data:", error);
+            });
 
-            fetchBranchData();
+            return () => unsubscribe();
         }
-    }, [userData, user]);
+    }, [userData]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -112,7 +105,7 @@ const EditBranch = () => {
                 <div className="bg-white p-6 rounded-lg shadow-md max-w-7xl w-full h-full max-h-150">
                     <h2 className="text-2xl font-bold text-gray-800 mb-1 text-center">Edit Branch Details</h2>
                     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg">
-                    <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 gap-4">
                             <div>
                                 <label className="block text-gray-700 font-semibold">Branch Location:</label>
                                 <input disabled type="text" name="branch_location" value={formData.branch_location} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -121,10 +114,10 @@ const EditBranch = () => {
                                 <label className="block text-gray-700 font-semibold">Branch Address:</label>
                                 <input type="text" name="branch_address" value={formData.branch_address} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-gray-700 font-semibold">Operating Hours:</label>
-                                <input name="branch_hours" value={formData.branch_hours} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <input placeholder="e.g., Mon-Thu (11am - 10pm), Fri-Sun (10am - 11pm)" name="branch_hours" value={formData.branch_hours} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             </div>
                             <div>
                                 <label className="block text-gray-700 font-semibold">Google Maps Embed Link:</label>
@@ -144,7 +137,7 @@ const EditBranch = () => {
                             </div>
                             <div className="flex justify-center items-center space-x-4 mt-4 h-min">
                                 <button type="submit" disabled={saving} className="w-2/5 p-3 rounded-lg h-full text-white text-md  transition mandara-btn">Save Changes</button>
-                                <button onClick={() => {router.push("/tmsAdmin/dashboard")}} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
+                                <button onClick={() => { router.push("/tmsAdmin/dashboard") }} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
                             </div>
                         </div>
                     </form>

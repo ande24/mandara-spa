@@ -32,7 +32,6 @@ export default function Page() {
   const [transactions, setTransactions] = useState([]);
   const [services, setServices] = useState([]);
 
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isBusinessAdmin, setIsBusinessAdmin] = useState(false);
 
   const [dailyCustomers, setDailyCustomers] = useState(0);
@@ -122,17 +121,13 @@ export default function Page() {
 
 
   useEffect(() => {
-      if (user && auth) {
-          console.log("FETCHING USER DATA")
-          console.log("user: ", user.uid)
-          console.log("userData: ", userData)
+      if (user) {
           const fetchUserData = async () => {
               try {
                   const docRef = doc(db, "users", user.uid);
                   const docSnap = await getDoc(docRef);
                   if (docSnap.exists()) {
                       setUserData(docSnap.data());
-                      // console.log("userData: ", docSnap.data());
                   } else {
                       console.log("No user data found in Firestore");
                   }
@@ -143,8 +138,7 @@ export default function Page() {
 
           fetchUserData();
       }
-  }, [user, auth]);
-
+  }, [user]);
 
 
   useEffect(() => {
@@ -153,12 +147,10 @@ export default function Page() {
           console.log(userData.user_role);
           if (userData.user_role === "business_admin") {
               console.log("business admin");
-              setIsAdmin(true);
               setIsBusinessAdmin(true);
               return;
           }
           else if (userData.user_role === "branch_admin") {
-              setIsAdmin(true);
               return;
           }
           else {
@@ -694,33 +686,33 @@ useEffect(() => {
             </div>
 
             <div className="grid grid-cols-3 gap-6 mb-6">
-              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div onClick={() => {router.push('transactions')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Monthly Income:</h3>
                 <p className="text-2xl font-bold">{`₱${monthlyIncome} `}<span className={`${monthlyIncome > prevMonthlyIncome ? "text-green-500" : monthlyIncome === prevMonthlyIncome ? "text-gray-600" : "text-red-500"} text-sm`}>{monthlyIncomeDiff}</span></p>
               </div>
-              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div onClick={() => {router.push('bookings')}} className="bg-yellow-50 p-4 cursor-pointer shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Monthly Bookings:</h3>
                 <p className="text-2xl font-bold">{monthlyBookings} <span className={`${monthlyBookings > prevMonthlyBookings ? "text-green-500" : monthlyBookings === prevMonthlyBookings ? "text-gray-600" : "text-red-500"} text-sm`}>{monthlyBookingsDiff}</span></p>
               </div>
-              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div onClick={() => {router.push('transactions')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h3 className="text-lg font-semibold">Customers Served Today:</h3>
                 <p className="text-2xl font-bold">{dailyCustomers} <span className={`${dailyCustomers > prevDailyCustomers ? "text-green-500" : dailyCustomers === prevDailyCustomers ? "text-gray-600" : "text-red-500"} text-sm`}>{dailyCustomersDiff}</span></p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6 mb-6">
-              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div onClick={() => {router.push('transactions')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
               <h2 className="text-lg font-bold mb-2">Daily Income:</h2>
                 <ChartItem chartData={incomeRange} endDate={selectedDate}/>
               </div>
-              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div onClick={() => {router.push('bookings')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h2 className="text-lg font-bold mb-2">Daily Bookings:</h2>
                 <Timeline bookingsToday={bookingsToday}/>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <div className="bg-yellow-50 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+              <div onClick={() => {router.push('inventory')}} className="bg-yellow-50 p-4 cursor-pointer shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h2 className="text-lg font-bold mb-2">Inventory Alerts</h2>
                 {itemsOut.length === 0 && itemsLow.length === 0 ? (
                   <p className="text-green-600">All good!</p>

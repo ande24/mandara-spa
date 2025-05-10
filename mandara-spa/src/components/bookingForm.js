@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { getFirestore, query, orderBy } from "firebase/firestore";
-import { addDoc, collection, doc, getDocs, getDoc } from "firebase/firestore"; 
+import React, { useState, useEffect, useCallback } from "react";
+import { getFirestore, query, orderBy, collection, doc, onSnapshot, addDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import firebase_app from "../firebase/config";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import SuccessMessage from "./success";
 import ErrorMessage from "./error";
+import { FaTrash } from "react-icons/fa";
 
 const BookingForm = ({ onClose }) => {
     const db = getFirestore(firebase_app);
@@ -22,8 +22,6 @@ const BookingForm = ({ onClose }) => {
 
     const [services, setServices] = useState([]);
     const [selectedPax, setSelectedPax] = useState(null);
-    const [selectedServices, setSelectedService] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(null);
     const [show, setShow] = useState(false)
     const [showError, setShowError] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -43,6 +41,8 @@ const BookingForm = ({ onClose }) => {
         isInitialized: false
     });
 
+    const [timeSlots, setTimeSlots] = useState([]); // Store available time slots for the selected day
+
     useEffect(() => {
         setTimeout(() => {
             setShow(true)
@@ -59,22 +59,20 @@ const BookingForm = ({ onClose }) => {
 
     useEffect(() => {
         if (user) {
-            const fetchUserData = async () => {
-                try {
-                    const docRef = doc(db, "users", user.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        console.log("user: ", docSnap.data());
-                        setUserData(docSnap.data());
-                    } else {
-                        console.log("No user data found in Firestore");
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
+            const userRef = doc(db, "users", user.uid);
+            const unsubscribe = onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    console.log("user: ", docSnap.data());
+                    setUserData(docSnap.data());
+                } else {
+                    console.log("No user data found in Firestore");
+                    setUserData(null);
                 }
-            };
-    
-            fetchUserData();
+            }, (error) => {
+                console.error("Error fetching user data:", error);
+            });
+
+            return () => unsubscribe();
         }
     }, [user, db]);
 
@@ -88,81 +86,122 @@ const BookingForm = ({ onClose }) => {
                 isInitialized: true, 
             }));
         }
-    }, [userData]);
-
-    useEffect(() => {
-        if (userData && selectedBranch) {
-            const fetchBranchData = async () => {
-                try {
-                    const branchRef = doc(db, "branches", selectedBranch); 
-                    const branchSnap = await getDoc(branchRef);
-                    if (branchSnap.exists()) {
-                        setBranchData(branchSnap.data());
-                    } else {
-                        console.log("No branch data found");
-                    }
-                } catch (error) {
-                    console.error("Error fetching branch data:", error);
-                } 
-            };
-
-            fetchBranchData();
-        }
-    }, [userData, db, selectedBranch]);
-
-    useEffect(() => {
-        const fetchBranches = async () => {
-            const branchCollection = collection(db, "branches");
-            const branchSnapshot = await getDocs(branchCollection);
-            const branchList = branchSnapshot.docs
-            .filter(doc => doc.id !== "schema")
-            .map(doc => ({
-                id: doc.id,
-                name: doc.data().branch_location,
-                hours: doc.data().branch_hours
-            }));
-            console.log(branchList);
-            setBranches(branchList);
-        };
-        fetchBranches();
-    }, [db]);
+    }, [userData, formData]);
 
     useEffect(() => {
         if (selectedBranch) {
-            const fetchServices = async () => {
-                try {
-                    const branchRef = doc(db, "branches", selectedBranch);
-                    console.log(branchRef)
-                    const serviceCollection = query(collection(branchRef, "services"), orderBy("service_name"));
-                    console.log(serviceCollection)
-                    const serviceSnapshot = await getDocs(serviceCollection);
-                    const serviceList = serviceSnapshot.docs
-                        .filter(doc => doc.id !== "placeholder")
-                        .map(doc => ({
-                            id: doc.id,
-                            name: doc.data().service_name,
-                            price: doc.data().service_price,
-                            desc: doc.data().service_desc,
-                            duration: doc.data().service_duration,
-                            category: doc.data().service_category,
-                            status: doc.data().service_status
-                        }));
-    
-                    console.log("services: ", serviceList);
-                    setServices(serviceList);
-                } catch (error) {
-                    console.error("Error fetching services:", error);
+            const branchRef = doc(db, "branches", selectedBranch);
+            const unsubscribe = onSnapshot(branchRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    setBranchData(docSnap.data());
+                } else {
+                    console.log("No branch data found");
+                    setBranchData(null);
                 }
-            };
-            fetchServices();
+            }, (error) => {
+                console.error("Error fetching branch data:", error);
+            });
+
+            return () => unsubscribe();
         }
-    }, [selectedBranch, db]);
+    }, [db, selectedBranch]);
+
+    useEffect(() => {
+        const branchCollection = collection(db, "branches");
+        const unsubscribe = onSnapshot(branchCollection, (snapshot) => {
+            const branchList = snapshot.docs
+                .filter(doc => doc.id !== "schema")
+                .map(doc => ({
+                    id: doc.id,
+                    name: doc.data().branch_location,
+                    hours: doc.data().branch_hours
+                }));
+            console.log(branchList);
+            setBranches(branchList);
+        }, (error) => {
+            console.error("Error fetching branches:", error);
+        });
+
+        return () => unsubscribe();
+    }, [db]);
+
+    const formatDuration = (duration) => {
+        const hours = Math.floor(duration / 60);
+        const minutes = duration % 60;
+
+        if (hours === 1) {
+            return minutes > 0 ? `${hours} hr, ${minutes} mins` : `${hours} hr`;
+        } else if (hours > 1) {
+            return minutes > 0 ? `${hours} hrs, ${minutes} mins` : `${hours} hrs`;
+        } else {
+            return `${minutes} mins`;
+        }
+    };
+
+    useEffect(() => {
+        if (selectedBranch) {
+            const branchRef = doc(db, "branches", selectedBranch);
+            const serviceCollection = query(collection(branchRef, "services"), orderBy("service_name"));
+            const unsubscribe = onSnapshot(serviceCollection, (snapshot) => {
+                const serviceList = snapshot.docs
+                    .filter(doc => doc.id !== "placeholder")
+                    .map(doc => ({
+                        id: doc.id,
+                        name: doc.data().service_name,
+                        price: doc.data().service_price,
+                        desc: doc.data().service_desc,
+                        duration: doc.data().service_duration,
+                        category: doc.data().service_category,
+                        status: doc.data().service_status,
+                        fduration: formatDuration(doc.data().service_duration)
+                    }))
+                    .sort((a, b) => {
+                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                        
+
+                        return a.duration - b.duration;
+                    });
+
+                console.log("services: ", serviceList);
+                setServices(serviceList);
+            }, (error) => {
+                console.error("Error fetching services:", error);
+            });
+
+            return () => unsubscribe();
+        }
+    }, [db, selectedBranch]);
 
     useEffect(() => {
         const today = new Date();
         today.setDate(today.getDate() + 1); 
         setMinDate(today.toISOString().split("T")[0]); 
     }, []);
+
+    useEffect(() => {
+        const fetchTimeSlots = async () => {
+            if (!formData.date || !selectedBranch) return;
+
+            const dayOfWeek = new Date(formData.date).toLocaleString("en-US", { weekday: "long" }); 
+            const branchRef = doc(db, "branches", selectedBranch);
+            const scheduleRef = doc(branchRef, "schedule", dayOfWeek);
+
+            try {
+                const scheduleSnap = await getDoc(scheduleRef);
+                if (scheduleSnap.exists()) {
+                    setTimeSlots(scheduleSnap.data().slots || []); 
+                } else {
+                    console.log(`No schedule found for ${dayOfWeek}`);
+                    setTimeSlots([]);
+                }
+            } catch (error) {
+                console.error("Error fetching time slots:", error);
+            }
+        };
+
+        fetchTimeSlots();
+    }, [formData.date, selectedBranch, db]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -174,19 +213,6 @@ const BookingForm = ({ onClose }) => {
 
         setFormData((prev) => ({ ...prev, pax: selectedPax, services: Array.from({ length: selectedPax }, () => []), }))
     };
-
-    const handleCategoryChange = async (e) => {
-        const selectedCat = e.target.value;
-        setSelectedCategory(selectedCat);
-
-        setFormData((prev) => ({ ...prev, category: selectedCat }))
-    };
-
-    const handleServiceChange = async (e) => {
-        const selectedId = e.target.value;
-        setSelectedService(selectedId);
-        setFormData((prev) => ({ ...prev, service: selectedId }))
-      };
 
     const handleBranchChange = async (e) => {
         const selectedB = e.target.value;
@@ -210,11 +236,6 @@ const BookingForm = ({ onClose }) => {
 
     const submitServices = async (e) =>  {
         e.preventDefault();
-        // if (selectedBranch === "" || !formData.date || !formData.time || selectedPax === "" ) {
-        //     setErrorMsg("Please fill in all required fields.");
-        //     setShowError(true);
-        //     return;
-        // }
         console.log("formdata: ", formData)
 
         setStep(3);
@@ -261,7 +282,7 @@ const BookingForm = ({ onClose }) => {
                 customer_number: formData.number,
                 customer_email: formData.email,
                 additional_notes: formData.notes,
-                booking_status: "pending",
+                booking_status: "Pending",
                 total: calculateTotal(formData.services)
             });
             console.log("Booking successful with ID:", docRef.id);
@@ -297,7 +318,6 @@ const BookingForm = ({ onClose }) => {
                 setFormData({ date: "", time: "", services: [] });
                 setSelectedPax(null);
                 setSelectedBranch(null);
-                setSelectedService(null);
                 setSaving(false);
                 onClose();
             }, 3000);
@@ -310,6 +330,51 @@ const BookingForm = ({ onClose }) => {
         }
     };
 
+    const handleServiceChange = (guestIndex, serviceIndex, serviceId) => {
+        const updatedServices = [...(formData.services || [])];
+        updatedServices[guestIndex] = updatedServices[guestIndex] || [];
+        updatedServices[guestIndex][serviceIndex] = {
+            ...updatedServices[guestIndex][serviceIndex], 
+            serviceId, 
+        };
+        setFormData((prev) => ({
+            ...prev,
+            services: updatedServices,
+        }));
+    };
+
+    const handleAddService = (guestIndex) => {
+        const updatedServices = [...(formData.services || [])];
+        updatedServices[guestIndex] = updatedServices[guestIndex] || [];
+        updatedServices[guestIndex].push("");
+        setFormData((prev) => ({
+            ...prev,
+            services: updatedServices,
+        }));
+    };
+
+    const handleDeleteService = (guestIndex, serviceIndex) => {
+        const updatedServices = [...(formData.services || [])];
+        updatedServices[guestIndex].splice(serviceIndex, 1);
+        setFormData((prev) => ({
+            ...prev,
+            services: updatedServices,
+        }));
+    };
+
+    const handleTimeSlotChange = (guestIndex, serviceIndex, timeSlot) => {
+        const updatedServices = [...(formData.services || [])];
+        updatedServices[guestIndex] = updatedServices[guestIndex] || [];
+        updatedServices[guestIndex][serviceIndex] = {
+            ...updatedServices[guestIndex][serviceIndex],
+            timeSlot,
+        };
+        setFormData((prev) => ({
+            ...prev,
+            services: updatedServices,
+        }));
+    };
+
     return (
         <div className="flex flex-col relative items-center justify-center z-50 transition-all">
             
@@ -319,7 +384,7 @@ const BookingForm = ({ onClose }) => {
             <div className="fixed top-0 inset-x-0 flex items-center justify-center">
             {showError && <ErrorMessage message={errorMsg} onClose={() => setShowError(false)}/>}
             {showSuccess && <SuccessMessage message={successMsg} onClose={() => setShowSuccess(false)}/>}
-                <div className={` top-30 inset-x-0 relative flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-lg w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
+                <div className={` top-30 inset-x-0 relative flex flex-col p-6 text-[#e0d8ad] rounded-lg transition-all shadow-md max-w-xl w-full bg-[#502424] ${show ? "scale-100" : "scale-0"}`}>
                     
                     
                     <button 
@@ -459,71 +524,67 @@ const BookingForm = ({ onClose }) => {
 
                     {step === 2 && (
                         <>
-                        <form onSubmit={submitServices} id="form2" className="flex flex-col space-y-4 pl-10 pr-6 overflow-y-auto overflow-x-hidden max-h-[50vh]">
+                        <form onSubmit={submitServices} id="form2" className="flex flex-col space-y-4 overflow-y-auto overflow-x-hidden max-h-[50vh]">
                             {Array.from({ length: selectedPax }, (_, guestIndex) => (
                                 <div key={guestIndex} className="flex flex-col space-y-4 border-b pb-4 mb-4">
                                     <h4 className="font-semibold text-[#e0d8ad]">Guest {guestIndex + 1}</h4>
 
                                     {Array.from({ length: formData.services?.[guestIndex]?.length || 1 }, (_, serviceIndex) => (
-                                        <div key={serviceIndex} className="flex items-center space-x-2">
+                                        <div key={serviceIndex} className="flex items-center space-x-4">
                                             <select
                                                 id={`service-${guestIndex}-${serviceIndex}`}
                                                 name={`service-${guestIndex}-${serviceIndex}`}
-                                                className="w-full bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-sm shadow-xs"
-                                                value={formData.services?.[guestIndex]?.[serviceIndex] || ""}
-                                                onChange={(e) => {
-                                                    const updatedServices = [...(formData.services || [])];
-                                                    updatedServices[guestIndex] = updatedServices[guestIndex] || [];
-                                                    updatedServices[guestIndex][serviceIndex] = e.target.value;
-                                                    setFormData((prev) => ({
-                                                        ...prev,
-                                                        services: updatedServices,
-                                                    }));
-                                                }}
+                                                className="flex-5 w-3/4 bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-xs shadow-xs"
+                                                value={formData.services?.[guestIndex]?.[serviceIndex]?.serviceId || ""}
+                                                onChange={(e) => handleServiceChange(guestIndex, serviceIndex, e.target.value)}
                                                 required
                                             >
-                                                <option value=""></option>
+                                                <option value="">Select Service</option>
                                                 {services
                                                     .filter((service) => service.status !== "unavailable")
                                                     .map((service) => (
                                                         <option key={service.id} value={service.id}>
-                                                            {service.name} {`${service.price ? `- ₱${service.price}` : ""}`}
+                                                            {service.name} ({service.fduration}) {`${service.price ? `- ₱${service.price}` : ""}`}
                                                         </option>
                                                     ))}
                                             </select>
 
-                                            {/* Delete Button */}
-                                            {formData.services?.[guestIndex]?.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        const updatedServices = [...(formData.services || [])];
-                                                        updatedServices[guestIndex].splice(serviceIndex, 1); // Remove the selected service
-                                                        setFormData((prev) => ({
-                                                            ...prev,
-                                                            services: updatedServices,
-                                                        }));
-                                                    }}
-                                                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md transition"
-                                                >
-                                                    Delete
-                                                </button>
-                                            )}
+                                            <select
+                                                id={`timeSlot-${guestIndex}-${serviceIndex}`}
+                                                name={`timeSlot-${guestIndex}-${serviceIndex}`}
+                                                className="flex-2 w-1/4 bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-xs shadow-xs"
+                                                value={formData.services?.[guestIndex]?.[serviceIndex]?.timeSlot || ""}
+                                                onChange={(e) => handleTimeSlotChange(guestIndex, serviceIndex, e.target.value)}
+                                                required
+                                            >
+                                                <option value="">Select Time Slot</option>
+                                                {timeSlots.map((slot, index) => (
+                                                    <option key={index} value={slot}>
+                                                        {slot.start} - {slot.end}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDeleteService(guestIndex, serviceIndex)}
+                                                className="text-red-500 hover:text-red-700 transition"
+                                                aria-label="Remove Service"
+                                            >
+                                                {serviceIndex > 0 ? (
+                                                    <FaTrash size={16} />
+                                                ) : (
+                                                    <FaTrash size={16} opacity={0} />
+                                                )}
+                                            </button>
                                         </div>
                                     ))}
 
                                     <button
                                         type="button"
-                                        onClick={() => {
-                                            const updatedServices = [...(formData.services || [])];
-                                            updatedServices[guestIndex] = updatedServices[guestIndex] || [];
-                                            updatedServices[guestIndex].push(""); // Add a new empty service
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                services: updatedServices,
-                                            }));
-                                        }} 
-                                        className={`mt-2 bg-[#e0d8ad] hover:scale-105 hover:bg-white text-black px-4 py-2 rounded-md transition`}
+                                        onClick={() => handleAddService(guestIndex)} 
+                                        className={`mt-2 w-1/3 self-center bg-[#e0d8ad] hover:scale-105 hover:bg-white text-black px-4 py-2 rounded-md transition`}
                                     >
                                         Add Service
                                     </button>

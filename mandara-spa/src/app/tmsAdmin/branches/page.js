@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -17,6 +17,7 @@ const BranchSelect = () => {
     const [user, setUser] = useState("");
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [saving, setSaving] = useState(false);
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -26,19 +27,19 @@ const BranchSelect = () => {
     }, [auth]);
 
     useEffect(() => {
-        const fetchBranches = async () => {
-            const branchCollection = collection(db, "branches");
-            const branchSnapshot = await getDocs(branchCollection);
-            const branchList = branchSnapshot.docs
-            .filter(doc => doc.id !== "schema")
-            .map(doc => ({
-                id: doc.id,
-                name: doc.data().branch_location
-            }));
+        const branchCollection = collection(db, "branches");
+        const unsubscribe = onSnapshot(branchCollection, (snapshot) => {
+            const branchList = snapshot.docs
+                .filter(doc => doc.id !== "schema")
+                .map(doc => ({
+                    id: doc.id,
+                    name: doc.data().branch_location
+                }));
             console.log(branchList);
             setBranches(branchList);
-        };
-        fetchBranches();
+        });
+
+        return () => unsubscribe();
     }, [db]);
 
     const directBranch = async (e) => {
@@ -54,7 +55,7 @@ const BranchSelect = () => {
 
         try {
             const userRef = doc(db, "users", user.uid);
-            
+
             await updateDoc(userRef, {
                 branch_id: selectedBranch.id,
                 branch_location: selectedBranch.name

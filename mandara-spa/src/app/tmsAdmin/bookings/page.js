@@ -1,9 +1,9 @@
-"use client"; 
+"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, onSnapshot, doc, getDocs, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -12,7 +12,7 @@ const AddTransaction = dynamic(() => import("@/components/transactionForm"), { s
 
 const ManageBookings = () => {
     const router = useRouter();
-    const auth = getAuth(firebase_app)
+    const auth = getAuth(firebase_app);
     const db = getFirestore(firebase_app);
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
@@ -25,6 +25,59 @@ const ManageBookings = () => {
 
     const [saving, setSaving] = useState(false);
 
+    const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString("en-CA"));
+
+    useEffect(() => {
+        const getDateAndMonth = () => {
+            const now = new Date();
+
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, "0");
+            const dd = String(now.getDate()).padStart(2, "0");
+
+            setSelectedDate(`${yyyy}-${mm}-${dd}`);
+        };
+
+        getDateAndMonth();
+    }, []);
+
+    const changeDate = (prevDate, date) => {
+        const [year, month, day] = date.split("-").map(Number);
+        const [pyear, pmonth, pday] = prevDate.split("-").map(Number);
+
+        if (!date) {
+            if (pday === 1) {
+                if (pmonth === 2) {
+                    const isLeapYear = (pyear % 4 === 0 && pyear % 100 !== 0) || (pyear % 400 === 0);
+                    const nday = isLeapYear ? 29 : 28;
+                    date = `${pyear}-${String(pmonth)}-${nday}`;
+                } else if ([4, 6, 9, 11].includes(pmonth)) {
+                    const nday = 30;
+                    date = `${pyear}-${String(pmonth)}-${nday}`;
+                } else {
+                    const nday = 31;
+                    date = `${pyear}-${String(pmonth)}-${nday}`;
+                }
+            }
+            else {
+                const nday = 1;
+                date = `${pyear}-${String(pmonth)}-${nday}`;
+            }
+        }
+
+        const newDate = new Date(date);
+
+        if (!newDate) {
+            window.alert("You tried to input an invalid date!", "Try adjusting the day value before changing the month or year.")
+            return;
+        }
+
+        newDate.setHours(8, 0, 0, 0);
+
+        const formattedDate = newDate.toISOString().split("T")[0];
+        setSelectedDate(formattedDate);
+    };
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -35,70 +88,64 @@ const ManageBookings = () => {
 
     useEffect(() => {
         if (user) {
-            const fetchUserData = async () => {
-                try {
-                    const docRef = doc(db, "users", user.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        setUserData(docSnap.data());
-                    } else {
-                        console.log("No user data found in Firestore");
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
+            const userRef = doc(db, "users", user.uid);
+            const unsubscribe = onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    console.log("user: ", docSnap.data());
+                    setUserData(docSnap.data());
+                } else {
+                    console.log("No user data found in Firestore");
+                    setUserData(null);
                 }
-            };
-    
-            fetchUserData();
+            }, (error) => {
+                console.error("Error fetching user data:", error);
+            });
+
+            return () => unsubscribe();
         }
     }, [user, db]);
 
     useEffect(() => {
         if (userData && userData.branch_id) {
-            const fetchBranchData = async () => {
-                try {
-                    const branchRef = doc(db, "branches", userData.branch_id); 
-                    const branchSnap = await getDoc(branchRef);
-                    if (branchSnap.exists()) {
-                        setBranchData(branchSnap.data());
-                    } else {
-                        console.log("No branch data found");
-                    }
-                } catch (error) {
-                    console.error("Error fetching branch data:", error);
-                } 
-            };
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const unsubscribe = onSnapshot(branchRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    setBranchData(docSnap.data());
+                } else {
+                    console.log("No branch data found");
+                    setBranchData(null);
+                }
+            }, (error) => {
+                console.error("Error fetching branch data:", error);
+            });
 
-            fetchBranchData();
+            return () => unsubscribe();
         }
     }, [userData, db]);
 
     useEffect(() => {
         if (userData?.branch_id && userData && branchData) {
-            const fetchServices = async () => {
-                try {
-                    const branchRef = doc(db, "branches", userData.branch_id);
-                    const serviceCollection = collection(branchRef, "services");
-                    const serviceSnapshot = await getDocs(serviceCollection);
-                    const serviceList = serviceSnapshot.docs
-                        .filter(docu => docu.id !== "placeholder")
-                        .map(docu => ({
-                            id: docu.id,
-                            name: docu.data().service_name,
-                            price: docu.data().service_price,
-                            desc: docu.data().service_desc,
-                            duration: docu.data().service_duration,
-                            category: docu.data().service_category,
-                            status: docu.data().service_status
-                        }));
-    
-                    console.log("services: ", serviceList);
-                    setServices(serviceList);
-                } catch (error) {
-                    console.error("Error fetching services:", error);
-                }
-            };
-            fetchServices();
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const serviceCollection = collection(branchRef, "services");
+            const unsubscribe = onSnapshot(serviceCollection, (snapshot) => {
+                const serviceList = snapshot.docs
+                    .filter(docu => docu.id !== "placeholder")
+                    .map(docu => ({
+                        id: docu.id,
+                        name: docu.data().service_name,
+                        price: docu.data().service_price,
+                        desc: docu.data().service_desc,
+                        duration: docu.data().service_duration,
+                        category: docu.data().service_category,
+                        status: docu.data().service_status
+                    }));
+
+                console.log("services: ", serviceList);
+                setServices(serviceList);
+            }, (error) => {
+                console.error("Error fetching services:", error);
+            });
+            return () => unsubscribe();
         }
     }, [branchData, db, userData]);
 
@@ -108,59 +155,38 @@ const ManageBookings = () => {
         const branchRef = doc(db, "branches", userData.branch_id);
         const bookingCollection = collection(branchRef, "bookings");
 
-        const unsubscribe = onSnapshot(bookingCollection, async (snapshot) => {
-            const bookingList = await Promise.all(
-                snapshot.docs
-                    .filter(docu => docu.id !== "placeholder")
-                    .map(async (docu) => {
-                        const data = docu.data();
-                        
-                        let customerName = "", customerEmail = "";
-                        if (data.customer_id) {
-                            const customerSnap = await getDoc(doc(db, "users", data.customer_id));
-                            if (customerSnap.exists()) {
-                                customerName = customerSnap.data().user_name; 
-                                customerEmail = customerSnap.data().user_email;
-                            }
-                        }
+        const unsubscribe = onSnapshot(bookingCollection, (snapshot) => {
+            const bookingList = snapshot.docs
+                .filter(docu => docu.id !== "placeholder" && docu.data().booked_date === selectedDate)
+                .map(docu => {
+                    const data = docu.data();
 
-                        let serviceName = "", servicePrice = "";
-                        if (data.service_id) {
-                            const serviceRef = doc(branchRef, "services", data.service_id);
-                            const serviceSnap = await getDoc(serviceRef);
-                            if (serviceSnap.exists()) {
-                                serviceName = serviceSnap.data().service_name;
-                                servicePrice = serviceSnap.data().service_price;
-                            }
-                        }
-
-                        let total = data.no_of_customers * Number(servicePrice)
-
-                        return {
-                            id: docu.id,
-                            date: data.booked_date,
-                            dateObject: new Date(data.booked_date),
-                            time: data.booked_time,
-                            status: data.booking_status,
-                            customer: customerName,
-                            total: data.total,
-                            price: servicePrice,
-                            email: customerEmail,
-                            pax: data.no_of_customers,
-                            services: data.services,
-                            notes: data.additional_notes
-                        };
-                    })
-            );
+                    return {
+                        id: docu.id,
+                        date: data.booked_date,
+                        dateObject: new Date(data.booked_date),
+                        time: data.booked_time,
+                        status: data.booking_status,
+                        customer: data.customer_name,
+                        total: data.total,
+                        price: data.service_price,
+                        email: data.customer_email,
+                        pax: data.no_of_customers,
+                        services: data.services,
+                        notes: data.additional_notes
+                    };
+                });
 
             bookingList.sort((a, b) => b.dateObject - a.dateObject);
 
             console.log("Updated bookings:", bookingList);
             setBookings(bookingList);
+        }, (error) => {
+            console.error("Error fetching bookings:", error);
         });
 
         return () => unsubscribe();
-    }, [userData?.branch_id, userData, branchData, services, db]);
+    }, [userData, branchData, services, db, selectedDate]);
 
     const toggleStatus = async (bookingId, newStatus) => {
         setSaving(true)
@@ -172,25 +198,32 @@ const ManageBookings = () => {
                 booking_status: newStatus
             });
 
-            setBookings(prevBookings => 
-                prevBookings.map(booking => 
+            setBookings(prevBookings =>
+                prevBookings.map(booking =>
                     booking.id === bookingId ? { ...booking, status: newStatus } : booking
                 )
             );
-            
 
-            if (newStatus === "completed") {
-                const bookingSnap = await getDoc(bookingRef);
-                const bookingData = { id: bookingSnap.id, ...bookingSnap.data() };
-                setSelectedBooking(bookingData)
-
-                setTimeout(() => setShowTransaction(true), 0);
+            if (newStatus === "Completed") {
+                // Fetch the booking data using onSnapshot for real-time updates
+                const unsubscribe = onSnapshot(bookingRef, (bookingSnap) => {
+                    if (bookingSnap.exists()) {
+                        const bookingData = { id: bookingSnap.id, ...bookingSnap.data() };
+                        setSelectedBooking(bookingData);
+                        setTimeout(() => setShowTransaction(true), 0);
+                    } else {
+                        console.log("Booking not found");
+                    }
+                    unsubscribe(); // Unsubscribe after fetching the data once
+                }, (error) => {
+                    console.error("Error fetching booking data:", error);
+                });
             }
 
-            alert("Service status updated!");
+            alert(`Booking status updated to ${newStatus}`);
         } catch (error) {
-            console.error("Error updating service status:", error);
-            alert("Error updating service status: " + error.message);
+            console.error("Error updating booking status:", error);
+            alert("Error updating booking status: " + error.message);
         }
         setSaving(false)
     }
@@ -205,7 +238,7 @@ const ManageBookings = () => {
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
             const bookingRef = doc(branchRef, "bookings", bookingId);
-        
+
             await deleteDoc(bookingRef);
 
             setBookings((prevBookings) => prevBookings.filter(booking => booking.id !== bookingId));
@@ -217,27 +250,39 @@ const ManageBookings = () => {
         setSaving(false)
     };
 
+    const handleTransactionClose = () => {
+        setShowTransaction(false);
+        setSelectedBooking(null);
+    };
+
     return (
         <div className="flex flex-col justify-center bg-[#301414] h-screen items-center ">
             <Image priority className="mt-20 z-50" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
             <div className="mt-[-150] w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
-                
-            {showTransaction && selectedBooking ? (<AddTransaction bookingData={selectedBooking} onClose={() => setShowTransaction(false)} />) : (
+
+                {showTransaction && selectedBooking ? (<AddTransaction bookingData={selectedBooking} onReset={() => { toggleStatus(selectedBooking.id, "Pending"); setShowTransaction(false); alert(`Transaction submission for Booking ${selectedBooking.id} canceled.`) }} onClose={handleTransactionClose} />) : (
                     <div className="bg-white p-6 mt-20 rounded-lg shadow-md max-w-6xl max-h-2/3 w-full overflow-y-auto">
                         <div className="flex flex-col justify-center items-center p-4 bg-white rounded-lg">
-                            <h3 className="text-lg font-bold">Booking List</h3>
+                            <div className="flex-row flex justify-between items-center w-full">
+                                <h3 className="text-lg font-bold ml-2">Booking List</h3>
+                                <input
+                                    type="date"
+                                    value={selectedDate}
+                                    onChange={(e) => changeDate(selectedDate, e.target.value)}
+                                    className="border p-2 rounded scale-90 hover:scale-102 transition-all"
+                                />
+                            </div>
                             {bookings.length > 0 ? (
                                 <ul className="flex flex-col space-y-2 max-h-[400px] overflow-y-auto m-2 rounded p-2 w-full">
                                     {bookings.map((booking) => (
-                                        <li 
-                                            key={booking.id} 
-                                            className={`flex justify-between items-center border p-3 rounded w-full ${
-                                                booking.status === "pending" 
-                                                    ? "bg-yellow-100 border-yellow-400" 
-                                                    : booking.status === "canceled" 
-                                                        ? "bg-red-100 border-red-400" 
-                                                        : "bg-green-100 border-green-400"
-                                            }`}
+                                        <li
+                                            key={booking.id}
+                                            className={`flex justify-between items-center border p-3 rounded w-full ${booking.status === "Pending"
+                                                ? "bg-yellow-100 border-yellow-400"
+                                                : booking.status === "Canceled"
+                                                    ? "bg-red-100 border-red-400"
+                                                    : "bg-green-100 border-green-400"
+                                                }`}
                                         >
                                             <div className="flex flex-col">
                                                 <p className="font-semibold">{booking.id} : {booking.customer} : {booking.email}</p>
@@ -255,23 +300,23 @@ const ManageBookings = () => {
                                                 <select
                                                     disabled={saving}
                                                     className="border p-1 mx-1 rounded-lg bg-white "
-                                                    value={booking.status || "pending"} 
+                                                    value={booking.status || "Pending"}
                                                     onChange={(e) => toggleStatus(booking.id, e.target.value)}
                                                 >
-                                                    <option value="pending">Pending</option>
-                                                    <option value="completed">Completed</option>
-                                                    <option value="canceled">Canceled</option>
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Completed">Completed</option>
+                                                    <option value="Canceled">Canceled</option>
                                                 </select>
-                                                <button 
+                                                <button
                                                     disabled={saving}
-                                                    className="bg-[#502424] text-white p-2 font-seri rounded-lg hover:bg-[#301414] mx-1 transition"
-                                                    onClick={(e) => toggleStatus(booking.id, "completed")}
+                                                    className="bg-[#502424] text-white p-2 font-serif rounded-lg hover:bg-[#301414] mx-1 transition"
+                                                    onClick={(e) => toggleStatus(booking.id, "Completed")}
                                                 >
                                                     Log Transaction
                                                 </button>
-                                                <button 
+                                                <button
                                                     disabled={saving}
-                                                    className="bg-[#502424]  text-white p-2 font-seri rounded-lg hover:bg-[#301414] mx-1 transition"
+                                                    className="bg-[#502424]  text-white p-2 font-serif rounded-lg hover:bg-[#301414] mx-1 transition"
                                                     onClick={(e) => handleRemoveBooking(e, booking.id)}
                                                 >
                                                     Remove
@@ -285,9 +330,9 @@ const ManageBookings = () => {
                             )}
                         </div>
                         <div className="flex justify-center items-center">
-                            <button 
+                            <button
                                 className="bg-[#502424] text-white p-3 m-3 mb-6 max-w-xs font-serif w-full hover:bg-[#301414] transition rounded-lg"
-                                onClick={() => {router.push("/tmsAdmin/dashboard")}}
+                                onClick={() => { router.push("/tmsAdmin/dashboard") }}
                             >
                                 Close
                             </button>

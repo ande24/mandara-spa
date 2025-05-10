@@ -1,12 +1,12 @@
-"use client"; 
+"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import firebase_app from "@/firebase/config";
-import { getFirestore, collection, doc, getDocs, getDoc, updateDoc, addDoc } from "firebase/firestore";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { getFirestore, collection, doc, onSnapshot, updateDoc, addDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const ManageInv = ({onClose, bookingData}) => {
-    const auth = getAuth(firebase_app)
+const ManageInv = ({ onClose, onReset, bookingData }) => {
+    const auth = getAuth(firebase_app);
     const db = getFirestore(firebase_app);
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
@@ -23,7 +23,7 @@ const ManageInv = ({onClose, bookingData}) => {
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        console.log(bookingData)
+        console.log(bookingData);
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
@@ -33,90 +33,84 @@ const ManageInv = ({onClose, bookingData}) => {
 
     useEffect(() => {
         if (user) {
-            const fetchUserData = async () => {
-                try {
-                    const docRef = doc(db, "users", user.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        setUserData(docSnap.data());
-                    } else {
-                        console.log("No user data found in Firestore");
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
+            const userRef = doc(db, "users", user.uid);
+            const unsubscribe = onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    console.log("user: ", docSnap.data());
+                    setUserData(docSnap.data());
+                } else {
+                    console.log("No user data found in Firestore");
+                    setUserData(null);
                 }
-            };
-    
-            fetchUserData();
+            }, (error) => {
+                console.error("Error fetching user data:", error);
+            });
+
+            return () => unsubscribe();
         }
     }, [user, db]);
 
     useEffect(() => {
         if (userData) {
-            const fetchBranchData = async () => {
-                try {
-                    const branchRef = doc(db, "branches", userData.branch_id); 
-                    const branchSnap = await getDoc(branchRef);
-                    if (branchSnap.exists()) {
-                        setBranchData(branchSnap.data());
-                    } else {
-                        console.log("No branch data found");
-                    }
-                } catch (error) {
-                    console.error("Error fetching branch data:", error);
-                } 
-            };
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const unsubscribe = onSnapshot(branchRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    setBranchData(docSnap.data());
+                } else {
+                    console.log("No branch data found");
+                    setBranchData(null);
+                }
+            }, (error) => {
+                console.error("Error fetching branch data:", error);
+            });
 
-            fetchBranchData();
+            return () => unsubscribe();
         }
     }, [userData, db]);
 
     useEffect(() => {
         if (branchData && userData) {
-            const fetchItems = async () => {
-                try {
-                    const branchRef = doc(db, "branches", userData.branch_id);
-                    const itemCollection = collection(branchRef, "inventory");
-                    const itemSnapshot = await getDocs(itemCollection);
-                    const itemList = itemSnapshot.docs
-                        .filter(doc => doc.id !== "placeholder")
-                        .map(doc => ({
-                            id: doc.id,
-                            name: doc.data().item_name,
-                            quantity: doc.data().item_quantity,
-                            price: doc.data().item_price
-                        }));
-    
-                    setItems(itemList);
-                } catch (error) {
-                    console.error("Error fetching images:", error);
-                }
-            };
-            fetchItems();
+            const branchRef = doc(db, "branches", userData.branch_id);
+            const itemCollection = collection(branchRef, "inventory");
+            const unsubscribe = onSnapshot(itemCollection, (snapshot) => {
+                const itemList = snapshot.docs
+                    .filter(doc => doc.id !== "placeholder")
+                    .map(doc => ({
+                        id: doc.id,
+                        name: doc.data().item_name,
+                        quantity: doc.data().item_quantity,
+                        price: doc.data().item_price
+                    }));
+
+                setItems(itemList);
+            }, (error) => {
+                console.error("Error fetching items:", error);
+            });
+            return () => unsubscribe();
         }
     }, [branchData, db, userData]);
 
     useEffect(() => {
-        const fetchItemData = async () => {
-          if (selectedItem && userData) {
+        if (selectedItem && userData) {
             const branchRef = doc(db, "branches", userData.branch_id);
             const docRef = doc(branchRef, "inventory", selectedItem);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const itemData = docSnap.data();
-                setFormData({
-                    name: itemData.item_name || "",  
-                });
-            }
-          }
-        };
-    
-        fetchItemData();
-      }, [selectedItem, db, userData]);
+            const unsubscribe = onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const itemData = docSnap.data();
+                    setFormData({
+                        name: itemData.item_name || "",
+                    });
+                }
+            }, (error) => {
+                console.error("Error fetching item data:", error);
+            });
+            return () => unsubscribe();
+        }
+    }, [selectedItem, db, userData]);
 
     const handleAddItem = async (e) => {
         e.preventDefault();
-        setSaving(true)
+        setSaving(true);
 
         const selectedItemData = items.find(item => item.id === selectedItem);
 
@@ -134,7 +128,7 @@ const ManageInv = ({onClose, bookingData}) => {
                     price: selectedItemData.price
                 };
 
-                usedItems.push(newItem);
+                setUsedItems(prevItems => [...prevItems, newItem]);
             }
 
             alert("Item added successfully!");
@@ -145,12 +139,12 @@ const ManageInv = ({onClose, bookingData}) => {
         } catch (error) {
             alert("Error adding item: " + error.message);
         }
-        setSaving(false)
+        setSaving(false);
     };
 
     const handleRemoveItem = async (e, itemId) => {
         e.preventDefault();
-        setSaving(true)
+        setSaving(true);
 
         try {
             setUsedItems(prevItems => prevItems.filter(item => item.id !== itemId));
@@ -159,7 +153,7 @@ const ManageInv = ({onClose, bookingData}) => {
         } catch (error) {
             alert("Error adding item: " + error.message);
         }
-        setSaving(false)
+        setSaving(false);
     };
 
     const handleSubmitTransaction = async (e) => {
@@ -168,22 +162,23 @@ const ManageInv = ({onClose, bookingData}) => {
 
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
-            
+
             for (const usedItem of usedItems) {
                 const itemRef = doc(branchRef, "inventory", usedItem.id);
+                // Get current quantity using getDoc
                 const itemSnap = await getDoc(itemRef);
 
                 if (itemSnap.exists()) {
                     const currentQuantity = itemSnap.data().item_quantity;
-                    console.log(itemSnap.data())
-                    if (currentQuantity === 0 ) {
-                        alert(`Item \"${itemSnap.data().item_name}\" is already out of stock.`)
-                        setSaving(false)
-                        return
+                    console.log(itemSnap.data());
+                    if (currentQuantity === 0) {
+                        alert(`Item "${itemSnap.data().item_name}" is already out of stock.`);
+                        setSaving(false);
+                        return;
                     } else if (currentQuantity < usedItem.quantity) {
-                        alert(`Item \"${itemSnap.data().item_name}\" has insufficient stock.`)
-                        setSaving(false)
-                        return
+                        alert(`Item "${itemSnap.data().item_name}" has insufficient stock.`);
+                        setSaving(false);
+                        return;
                     }
                     const newQuantity = Math.max(0, currentQuantity - usedItem.quantity);
 
@@ -193,14 +188,9 @@ const ManageInv = ({onClose, bookingData}) => {
                 }
             }
 
-
-            const userSnap = await getDoc(doc(db, "users", bookingData.customer_id))
-
             const income = bookingData.total;
-            
-            const transactionsRef = collection(branchRef, "transactions");
 
-            
+            const transactionsRef = collection(branchRef, "transactions");
 
             await addDoc(transactionsRef, {
                 bookingId: bookingData.id,
@@ -217,8 +207,9 @@ const ManageInv = ({onClose, bookingData}) => {
                 quantity: "",
             });
 
-            setUsedItems([])
+            setUsedItems([]);
 
+            alert("Transaction completed successfully! Check transaction list for details.");
             onClose();
         } catch (error) {
             alert("Error updating item: " + error.message);
@@ -226,25 +217,17 @@ const ManageInv = ({onClose, bookingData}) => {
         }
     };
 
-    const handleItemChange = async (e) => {
+    const handleItemChange = useCallback(async (e) => {
         const selectedId = e.target.value;
-        const selectedItemData = items.find(item => item.id === selectedId);
-    
-        if (selectedItemData) {
-            setSelectedItem(selectedId);
-            setFormData({
-                name: selectedItemData.name || "",
-                quantity: "",
-            });
-        }
-    };
+        setSelectedItem(selectedId);
+    }, [setSelectedItem]);
 
     const handleChange = (e) => {
         setFormData({
-          ...formData,
-          [e.target.name]: e.target.value,
+            ...formData,
+            [e.target.name]: e.target.value,
         });
-      };
+    };
 
     return (
         <div className="flex justify-center items-center ">
@@ -258,11 +241,11 @@ const ManageInv = ({onClose, bookingData}) => {
                             <form onSubmit={handleAddItem} className="space-y-4">
                                 <div>
                                     <label className="block text-gray-700 font-semibold">Select an Item:</label>
-                                    <select 
-                                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                        name="dropdown" 
-                                        onChange={handleItemChange} 
-                                        value={""}
+                                    <select
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        name="dropdown"
+                                        onChange={handleItemChange}
+                                        value={selectedItem || ""}
                                     >
                                         <option value="">Select an Item</option>
                                         {items.map(item => (
@@ -273,12 +256,12 @@ const ManageInv = ({onClose, bookingData}) => {
 
                                 <div>
                                     <label className="block text-gray-700 font-semibold">Item:</label>
-                                    <input 
-                                        name="name" 
-                                        className="w-full p-3 mb-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                        type="text" 
-                                        value={formData.name || ""} 
-                                        onChange={handleChange} 
+                                    <input
+                                        name="name"
+                                        className="w-full p-3 mb-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        type="text"
+                                        value={formData.name || ""}
+                                        onChange={handleChange}
                                         required
                                         disabled
                                     />
@@ -286,37 +269,36 @@ const ManageInv = ({onClose, bookingData}) => {
 
                                 <div>
                                     <label className="block text-gray-700 mb-1 font-semibold">Quantity:</label>
-                                    <input 
-                                        name="quantity" 
-                                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                        type="number" 
-                                        value={formData.quantity || ""} 
-                                        onChange={handleChange} 
+                                    <input
+                                        name="quantity"
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        type="number"
+                                        value={formData.quantity || ""}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
 
                                 <div className="flex justify-between space-x-4">
-                                    <button 
+                                    <button
                                         disabled={saving}
-                                        type="submit" 
+                                        type="submit"
                                         className="w-full p-3 rounded-lg text-white font-serif transition bg-[#502424]  hover:bg-[#301414]"
                                     >
                                         Add Item
                                     </button>
-                                    <button 
-                                        onClick={handleSubmitTransaction} 
-                                        disabled={saving} 
-                                        className={`w-full p-3 rounded-lg text-white font-serif transition ${
-                                            saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#502424]  hover:bg-[#301414]"
-                                        }`}
+                                    <button
+                                        onClick={handleSubmitTransaction}
+                                        disabled={saving}
+                                        className={`w-full p-3 rounded-lg text-white font-serif transition ${saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#502424]  hover:bg-[#301414]"
+                                            }`}
                                     >
                                         Update Inventory
                                     </button>
                                 </div>
 
-                                <button 
-                                    onClick={() => onClose()} 
+                                <button
+                                    onClick={() => onReset()}
                                     className="w-full p-3 rounded-lg text-white font-serif bg-[#502424]  hover:bg-[#301414]"
                                 >
                                     Close
@@ -335,7 +317,7 @@ const ManageInv = ({onClose, bookingData}) => {
                                                     <p className="font-semibold">{item.name}</p>
                                                     <p>{item.quantity} units</p>
                                                 </div>
-                                                <button 
+                                                <button
                                                     disabled={saving}
                                                     className="bg-[#502424]  text-white p-2 rounded-lg font font-serif hover:bg-[#301414]"
                                                     onClick={(e) => handleRemoveItem(e, item.id)}

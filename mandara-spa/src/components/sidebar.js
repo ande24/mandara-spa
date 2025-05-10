@@ -23,6 +23,7 @@ export default function Sidebar({ admin }) {
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/details")}}>Branch Details</button></li>
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/services")}}>Services</button></li>
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/inventory")}}>Inventory</button></li>
+                <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/schedule")}}>Schedule</button></li>
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/bookings")}}>Bookings</button></li>
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/transactions")}}>Transactions</button></li>
                 <li><button className="p-2" onClick={() => {router.push("/tmsAdmin/messages")}}>Messages</button></li>
