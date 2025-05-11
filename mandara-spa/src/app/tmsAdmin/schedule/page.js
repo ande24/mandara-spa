@@ -17,13 +17,14 @@ const EditSchedule = () => {
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
 
-    const [beds, setBeds] = useState(1);
+    const [beds, setBeds] = useState(null);
     const [hours, setHours] = useState("");
     const [schedule, setSchedule] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [selectedDay, setSelectedDay] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
+    const [slotBeds, setSlotBeds] = useState(null);
 
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -80,23 +81,22 @@ const EditSchedule = () => {
             const scheduleRef = collection(branchRef, "schedule");
 
             try {
-                // Fetch branch data
                 const branchSnap = await getDoc(branchRef);
                 if (branchSnap.exists()) {
                     const branchData = branchSnap.data();
-                    setBeds(branchData.branch_capacity || 1); // Set beds
-                    setHours(branchData.branch_hours || ""); // Set operating hours
+                    setBeds(branchData.branch_capacity || 1); 
+                    setSlotBeds(branchData.branch_capacity || 1);
+                    setHours(branchData.branch_hours || ""); 
                 } else {
                     console.log("No branch data found.");
                 }
 
-                // Fetch schedule data
                 const scheduleSnap = await getDocs(scheduleRef);
                 const fetchedSchedule = {};
                 scheduleSnap.forEach((doc) => {
                     fetchedSchedule[doc.id] = doc.data().slots || [];
                 });
-                setSchedule(fetchedSchedule); // Set schedule
+                setSchedule(fetchedSchedule); 
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -111,7 +111,22 @@ const EditSchedule = () => {
             return;
         }
 
-        const timeSlot = { start: startTime, end: endTime }; // Store as an object
+        const start = new Date(`1970-01-01T${startTime}:00`);
+        const end = new Date(`1970-01-01T${endTime}:00`);
+        const duration = (end - start) / (1000 * 60); 
+
+        if (duration <= 0) {
+            alert("End time must be after start time.");
+            return;
+        }
+
+        const timeSlot = { 
+            start: startTime, 
+            end: endTime, 
+            beds: slotBeds, 
+            duration 
+        };
+
         setSchedule((prev) => ({
             ...prev,
             [selectedDay]: [...(prev[selectedDay] || []), timeSlot],
@@ -120,6 +135,7 @@ const EditSchedule = () => {
         setShowModal(false);
         setStartTime("");
         setEndTime("");
+        setSlotBeds(beds); 
     };
 
     const handleRemoveTimeSlot = (day, index) => {
@@ -135,18 +151,29 @@ const EditSchedule = () => {
             return;
         }
 
+        // Show confirmation alert
+        const confirmChanges = window.confirm(
+            "Changes to the schedule will only apply to new bookings. Existing bookings will retain their original schedule. Do you want to proceed?"
+        );
+
+        if (!confirmChanges) {
+            return; // Exit if the admin cancels
+        }
+
         const branchRef = doc(db, "branches", userData.branch_id);
         const scheduleRef = collection(branchRef, "schedule");
 
         try {
             for (const day of Object.keys(schedule)) {
-                const dayRef = doc(scheduleRef, day); 
-                await setDoc(dayRef, { slots: schedule[day] }); 
+                const dayRef = doc(scheduleRef, day);
+                await setDoc(dayRef, {
+                    slots: schedule[day],
+                });
             }
 
             await updateDoc(branchRef, { branch_capacity: beds, branch_hours: hours });
 
-            alert("Schedule and branch capacity updated successfully!");
+            alert("Schedule updated successfully!");
         } catch (error) {
             console.error("Error updating schedule:", error);
             alert("Failed to update schedule: " + error.message);
@@ -165,8 +192,9 @@ const EditSchedule = () => {
                         <input
                             type="number"
                             value={beds || ""}
+                            min="1"
                             required
-                            onChange={(e) => setBeds(Number(e.target.value))}
+                            onChange={(e) => {setBeds(Number(e.target.value)); setSlotBeds(Number(e.target.value));}}
                             className="w-1/4 p-2 border rounded-lg"
                         />
                     </div>
@@ -191,7 +219,7 @@ const EditSchedule = () => {
                                     {(schedule[day] || []).map((timeSlot, index) => (
                                         <li key={index} className="flex justify-between items-center bg-yellow-200 p-2 rounded-lg">
                                             <span className="text-xs">
-                                                {timeSlot.start} - {timeSlot.end} {/* Display start and end times */}
+                                                {timeSlot.start} - {timeSlot.end} ({timeSlot.beds}) 
                                             </span>
                                             <button
                                                 onClick={() => handleRemoveTimeSlot(day, index)}
@@ -243,6 +271,16 @@ const EditSchedule = () => {
                                     type="time"
                                     value={endTime}
                                     onChange={(e) => setEndTime(e.target.value)}
+                                    className="w-full p-2 border rounded-lg"
+                                />
+                            </div>
+                            <div>
+                                <label className="block font-semibold mb-1">Beds:</label>
+                                <input
+                                    type="number"
+                                    value={slotBeds || ""}
+                                    min="1"
+                                    onChange={(e) => setSlotBeds(Number(e.target.value))}
                                     className="w-full p-2 border rounded-lg"
                                 />
                             </div>
