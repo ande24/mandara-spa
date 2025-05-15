@@ -31,8 +31,9 @@ const BookingForm = ({ onClose }) => {
     const [errorMsg, setErrorMsg] = useState('');
     const [saving, setSaving] = useState(false)
 
-    const [timeSlots, setTimeSlots] = useState([]);
     const [isNewSchedule, setIsNewSchedule] = useState(false);
+    const [newScheduleRef, setNewScheduleRef] = useState(null);
+    const [timeSlots, setTimeSlots] = useState([]);
 
     const [formData, setFormData] = useState({
         date: "",
@@ -45,6 +46,8 @@ const BookingForm = ({ onClose }) => {
         email: "",
         isInitialized: false
     }); 
+
+    
 
     useEffect(() => {
         setTimeout(() => {
@@ -182,43 +185,7 @@ const BookingForm = ({ onClose }) => {
         setMinDate(today.toISOString().split("T")[0]); 
     }, []);
 
-    const fetchOrCreateSchedule = async () => {
-        if (!formData.date || !selectedBranch) return;
-
-        const formattedDate = new Date(formData.date).toLocaleDateString("en-US", {
-            month: "2-digit",
-            day: "2-digit",
-            year: "numeric",
-        }).replace(/\//g, "-");
-
-        const branchRef = doc(db, "branches", selectedBranch);
-        const scheduleRef = doc(branchRef, "schedule", formattedDate);
-
-        try {
-            const scheduleSnap = await getDoc(scheduleRef);
-
-            if (scheduleSnap.exists()) {
-                setTimeSlots(scheduleSnap.data().slots || []);
-            } else {
-                const dayOfWeek = new Date(formData.date).toLocaleString("en-US", { weekday: "long" });
-                const templateRef = doc(branchRef, "schedule", dayOfWeek);
-                const templateSnap = await getDoc(templateRef);
-
-                if (templateSnap.exists()) {
-                    const templateData = templateSnap.data();
-                    await setDoc(scheduleRef, templateData);
-                    setTimeSlots(templateData.slots || []);
-                    setIsNewSchedule(true); 
-                    
-                } else {
-                    console.log(`No template found for ${dayOfWeek}`);
-                    setTimeSlots([]);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching or creating schedule:", error);
-        }
-    };
+    
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -246,72 +213,54 @@ const BookingForm = ({ onClose }) => {
             return;
         }
 
-        await fetchOrCreateSchedule();
+        const date = new Date(formData.date);
+        const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}-${date.getFullYear()}`;
+        const branchRef = doc(db, "branches", selectedBranch);
+        const scheduleRef = doc(branchRef, "schedule", formattedDate);
+
+        try {
+            const scheduleSnap = await getDoc(scheduleRef);
+
+            if (scheduleSnap.exists()) {
+                console.log("Schedule exists:", scheduleSnap.data());
+                setNewScheduleRef(null);
+
+                if (scheduleSnap.data().slots) {
+                    setTimeSlots(scheduleSnap.data().slots);
+                }
+                setStep(2);
+            } else {
+                const dayOfWeek = new Date(formData.date).toLocaleDateString('en-US', { weekday: 'long' });
+                const templateRef = doc(branchRef, "schedule", dayOfWeek);
+                const templateSnap = await getDoc(templateRef);
+
+                if (templateSnap.exists()) {
+                    await setDoc(scheduleRef, templateSnap.data());
+                    console.log("New schedule created from template:", dayOfWeek);
+                    setNewScheduleRef(scheduleRef);
+                    setIsNewSchedule(true);
+
+                    if (templateSnap.data().slots) {
+                        setTimeSlots(templateSnap.data().slots);
+                    }
+                    setStep(2);
+                } else {
+                    setErrorMsg("Template for this day of the week does not exist.");
+                    setShowError(true);
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching or creating schedule:", error);
+            setErrorMsg(error.message);
+            setShowError(true);
+        }
 
         setStep(2);
     }
 
-    const getConsecutiveTimeSlots = (duration, availableSlots) => {
-        const combinations = [];
-        const validSlots = availableSlots.filter(slot => slot.beds > 0); // Exclude slots with beds = 0
-
-        for (let i = 0; i < validSlots.length; i++) {
-            let totalDuration = 0;
-            const combination = [];
-
-            for (let j = i; j < validSlots.length; j++) {
-                const currentSlot = validSlots[j];
-                const previousSlot = combination[combination.length - 1];
-
-                if (
-                    combination.length > 0 &&
-                    new Date(`1970-01-01T${previousSlot.end}:00`).getTime() !==
-                    new Date(`1970-01-01T${currentSlot.start}:00`).getTime()
-                ) {
-                    break; 
-                }
-
-                const start = new Date(`1970-01-01T${currentSlot.start}:00`);
-                const end = new Date(`1970-01-01T${currentSlot.end}:00`);
-                const slotDuration = (end - start) / (1000 * 60); 
-
-                totalDuration += slotDuration;
-                combination.push(currentSlot);
-
-                if (totalDuration >= duration) {
-                    combinations.push({
-                        start: combination[0].start, 
-                        end: combination[combination.length - 1].end, 
-                    });
-                    break; 
-                }
-            }
-        }
-
-        return combinations;
-    };
-
-    const validateSlots = () => {
-        const usedSlots = new Set();
-        for (const guest in selectedSlots) {
-            for (const service of selectedSlots[guest] || []) {
-                if (usedSlots.has(service.slot)) {
-                    return false;
-                }
-                usedSlots.add(service.slot);
-            }
-        }
-        return true; 
-    };
-
     const submitServices = async (e) =>  {
         e.preventDefault();
-
-        if (!validateSlots()) {
-        setErrorMsg("Overlapping time slots detected. Please adjust your selections.");
-        setShowError(true);
-        return;
-    }
 
         setStep(3);
     }
@@ -409,7 +358,7 @@ const BookingForm = ({ onClose }) => {
         const updatedServices = [...(formData.services || [])];
         updatedServices[guestIndex] = updatedServices[guestIndex] || [];
         updatedServices[guestIndex][serviceIndex] = {
-            ...updatedServices[guestIndex][serviceIndex], // Ensure existing data is preserved
+            ...updatedServices[guestIndex][serviceIndex],
             serviceId, // Update the serviceId
         };
         setFormData((prev) => ({
@@ -421,7 +370,7 @@ const BookingForm = ({ onClose }) => {
     const handleAddService = (guestIndex) => {
         const updatedServices = [...(formData.services || [])];
         updatedServices[guestIndex] = updatedServices[guestIndex] || [];
-        updatedServices[guestIndex].push({ serviceId: "", timeSlot: "" }); // Initialize with default values
+        updatedServices[guestIndex].push({ serviceId: "" }); // Initialize with default values
         setFormData((prev) => ({
             ...prev,
             services: updatedServices,
@@ -430,145 +379,154 @@ const BookingForm = ({ onClose }) => {
 
     const handleDeleteService = (guestIndex, serviceIndex) => {
         const updatedServices = [...(formData.services || [])];
-        const removedService = updatedServices[guestIndex]?.[serviceIndex];
-
-        // Remove the service from the guest's services
+        // Remove the service at serviceIndex for the guest
         if (updatedServices[guestIndex]) {
             updatedServices[guestIndex].splice(serviceIndex, 1);
         }
 
-        // Update the timeSlots to restore beds for the removed service's time slot
-        if (removedService?.timeSlot) {
-            const [start, end] = removedService.timeSlot.split("-");
-            setTimeSlots((prevTimeSlots) => {
-                const updatedTimeSlots = prevTimeSlots.map((slot) => ({ ...slot }));
-                const affectedSlots = updatedTimeSlots.filter(
-                    (slot) =>
-                        new Date(`1970-01-01T${slot.start}:00`).getTime() >= new Date(`1970-01-01T${start}:00`).getTime() &&
-                        new Date(`1970-01-01T${slot.end}:00`).getTime() <= new Date(`1970-01-01T${end}:00`).getTime()
-                );
-                affectedSlots.forEach((slot) => {
-                    slot.beds += 1; // Restore the bed count
-                });
-                return updatedTimeSlots;
-            });
-        }
+        setFormData((prev) => ({
+            ...prev,
+            services: updatedServices,
+        }));
 
-        // Update the selectedSlots state
+        // Remove the slot selection for this service as well
         setSelectedSlots((prev) => {
             const updatedSlots = { ...prev };
             if (updatedSlots[guestIndex]) {
+                updatedSlots[guestIndex] = [...updatedSlots[guestIndex]];
                 updatedSlots[guestIndex].splice(serviceIndex, 1);
+                // If no more services for this guest, remove the guest entry
                 if (updatedSlots[guestIndex].length === 0) {
-                    delete updatedSlots[guestIndex]; // Remove the guest if no services are left
+                    delete updatedSlots[guestIndex];
                 }
             }
             return updatedSlots;
         });
-
-        // Update the form data
-        setFormData((prev) => ({
-            ...prev,
-            services: updatedServices,
-        }));
     };
 
-    const handleTimeSlotChange = (guestIndex, serviceIndex, newTimeSlot) => {
-        const updatedServices = [...(formData.services || [])];
-        updatedServices[guestIndex] = updatedServices[guestIndex] || [];
-        const previousTimeSlot = updatedServices[guestIndex][serviceIndex]?.timeSlot;
-
-        // Update the selected service with the new time slot
-        updatedServices[guestIndex][serviceIndex] = {
-            ...updatedServices[guestIndex][serviceIndex],
-            timeSlot: newTimeSlot,
-        };
-
-        // Helper function to get all slots within a range
-        const getSlotsInRange = (start, end, slots) => {
-            const startTime = new Date(`1970-01-01T${start}:00`).getTime();
-            const endTime = new Date(`1970-01-01T${end}:00`).getTime();
-            return slots.filter(slot => {
-                const slotStart = new Date(`1970-01-01T${slot.start}:00`).getTime();
-                const slotEnd = new Date(`1970-01-01T${slot.end}:00`).getTime();
-                return slotStart >= startTime && slotEnd <= endTime;
-            });
-        };
-
-        // Update the local copy of timeSlots
-        setTimeSlots((prevTimeSlots) => {
-            // Create a deep copy of the timeSlots array
-            const updatedTimeSlots = prevTimeSlots.map(slot => ({ ...slot }));
-
-            // Restore beds for the previously selected slot range
-            if (previousTimeSlot) {
-                const [prevStart, prevEnd] = previousTimeSlot.split("-");
-                const previousSlots = getSlotsInRange(prevStart, prevEnd, updatedTimeSlots);
-                previousSlots.forEach(slot => {
-                    slot.beds += 1; // Increment beds for the previous range
-                });
+    const deleteNewSchedule = async () => {
+        console.log("Deleting new schedule...");
+        if (isNewSchedule && newScheduleRef) {
+            try {
+                await deleteDoc(newScheduleRef);
+                setIsNewSchedule(false);
+                setNewScheduleRef(null);
+                console.log("New schedule deleted.");
+            } catch (error) {
+                console.error("Error deleting new schedule:", error);
             }
-
-            // Deduct beds for the newly selected slot range
-            if (newTimeSlot) {
-                const [newStart, newEnd] = newTimeSlot.split("-");
-                const newSlots = getSlotsInRange(newStart, newEnd, updatedTimeSlots);
-                newSlots.forEach(slot => {
-                    slot.beds -= 1; // Decrement beds for the new range
-                });
-            }
-
-            return updatedTimeSlots;
-        });
-
-        // Update the selected slots state
-        setSelectedSlots((prev) => {
-            const updatedSlots = { ...prev };
-            if (!updatedSlots[guestIndex]) {
-                updatedSlots[guestIndex] = [];
-            }
-            updatedSlots[guestIndex][serviceIndex] = {
-                service: updatedServices[guestIndex][serviceIndex]?.serviceId || "",
-                slot: newTimeSlot,
-            };
-            return updatedSlots;
-        });
-
-        // Update the form data
-        setFormData((prev) => ({
-            ...prev,
-            services: updatedServices,
-        }));
+        }
     };
 
     const handleCancelBooking = async () => {
-        console.log("Canceling booking...");
-        console.log("new schedule: ", isNewSchedule);
-        if (isNewSchedule && formData.date && selectedBranch) {
-            console.log("Deleting schedule document...");
-            const formattedDate = new Date(formData.date).toLocaleDateString("en-US", {
-                month: "2-digit",
-                day: "2-digit",
-                year: "numeric",
-            }).replace(/\//g, "-");
-
-            const branchRef = doc(db, "branches", selectedBranch);
-            const scheduleRef = doc(branchRef, "schedule", formattedDate);
-
-            try {
-                await deleteDoc(scheduleRef); 
-                console.log(`Deleted schedule document for ${formattedDate}`);
-            } catch (error) {
-                console.error("Error deleting schedule document:", error);
-            }
-        }
-
+        await deleteNewSchedule();
         setFormData({ date: "", time: "", services: [] });
         setSelectedPax(null);
         setSelectedBranch(null);
         setIsNewSchedule(false);
         onClose();
     };
+
+    const handleTimeSlotChange = (guestIndex, serviceIndex, timeSlot) => {
+        const updatedServices = [...(formData.services || [])];
+        updatedServices[guestIndex] = updatedServices[guestIndex] || [];
+        updatedServices[guestIndex][serviceIndex] = {
+            ...updatedServices[guestIndex][serviceIndex],
+            timeSlot,
+        };
+    
+        setFormData((prev) => ({
+            ...prev,
+            services: updatedServices,
+        }));
+    
+        setSelectedSlots((prev) => {
+            const updatedSlots = { ...prev };
+            updatedSlots[guestIndex] = updatedSlots[guestIndex] || [];
+            updatedSlots[guestIndex][serviceIndex] = {
+                service: services.find((s) => s.id === updatedServices[guestIndex][serviceIndex].serviceId)?.name || "N/A",
+                slot: timeSlot,
+            };
+            return updatedSlots;
+        });
+    };
+
+    const getAllConsecutiveSlotCombos = (slots, neededDuration) => {
+        const combos = [];
+        for (let i = 0; i < slots.length; i++) {
+            let total = 0;
+            const combo = [];
+            for (let j = i; j < slots.length; j++) {
+                // Ensure slots are contiguous: the start of the next slot must match the end of the previous slot
+                if (combo.length > 0 && slots[j].start !== combo[combo.length - 1].end) {
+                    break;
+                }
+                // Disallow combos where any slot's duration is >= neededDuration
+                if (Number(slots[j].duration) >= Number(neededDuration) && combo.length > 1) {
+                    break;
+                }
+                combo.push(slots[j]);
+                total += Number(slots[j].duration);
+                if (total >= Number(neededDuration)) {
+                    combos.push([...combo]);
+                    break; // Only take the smallest combo that fits
+                }
+            }
+        }
+        return combos;
+    };
+
+    const slotBeds = {};
+
+    const slotSelectionCounts = {};
+    Object.values(selectedSlots).forEach(guestServices => {
+        guestServices?.forEach(service => {
+            if (service?.slot) {
+                const [spanStart, spanEnd] = service.slot.split("-");
+                let inSpan = false;
+                timeSlots.forEach(slot => {
+                    // Check if slot is within the span
+                    // slot.start >= spanStart && slot.end <= spanEnd
+                    if (
+                        (slot.start >= spanStart && slot.end <= spanEnd)
+                    ) {
+                        const slotKey = `${slot.start}-${slot.end}`;
+                        slotSelectionCounts[slotKey] = (slotSelectionCounts[slotKey] || 0) + 1;
+                    }
+                });
+            }
+        });
+    });
+
+    if (Array.isArray(timeSlots)) {
+        timeSlots.forEach(slot => {
+            const slotKey = `${slot.start}-${slot.end}`;
+            slotBeds[slotKey] = slot.beds;
+        });
+    }
+
+    const anyOverbooked = timeSlots.some(slot => {
+        const slotKey = `${slot.start}-${slot.end}`;
+        const selectedCount = slotSelectionCounts[slotKey] || 0;
+        return slot.beds - selectedCount < 0;
+    });
+
+    const getSlotKey = (slot) => `${slot.start}-${slot.end}`;
+
+    const getSlotIndexByKey = (slots, key) => slots.findIndex(slot => getSlotKey(slot) === key);
+
+    const getConsecutiveSlots = (slots, startIndex, neededDuration) => {
+        let total = 0;
+        const result = [];
+        for (let i = startIndex; i < slots.length; i++) {
+            result.push(slots[i]);
+            total += slots[i].duration;
+            if (total >= neededDuration) break;
+        }
+        return total >= neededDuration ? result : [];
+    };
+
+
 
     return (
         <div className="flex flex-col relative items-center justify-center z-50 transition-all">
@@ -731,7 +689,7 @@ const BookingForm = ({ onClose }) => {
                                             <select
                                                 id={`service-${guestIndex}-${serviceIndex}`}
                                                 name={`service-${guestIndex}-${serviceIndex}`}
-                                                className="flex-5 w-3/4 bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-xs shadow-xs"
+                                                className="flex-5 w-2/4 bg-gray-200 text-black rounded-lg border-gray-200 p-4 text-xs shadow-xs"
                                                 value={formData.services?.[guestIndex]?.[serviceIndex]?.serviceId || ""}
                                                 onChange={(e) => handleServiceChange(guestIndex, serviceIndex, e.target.value)}
                                                 required
@@ -745,7 +703,6 @@ const BookingForm = ({ onClose }) => {
                                                         </option>
                                                     ))}
                                             </select>
-
                                             <select
                                                 id={`timeSlot-${guestIndex}-${serviceIndex}`}
                                                 name={`timeSlot-${guestIndex}-${serviceIndex}`}
@@ -753,40 +710,48 @@ const BookingForm = ({ onClose }) => {
                                                 value={formData.services?.[guestIndex]?.[serviceIndex]?.timeSlot || ""}
                                                 onChange={(e) => handleTimeSlotChange(guestIndex, serviceIndex, e.target.value)}
                                                 required
-                                                disabled={!formData.services?.[guestIndex]?.[serviceIndex]?.serviceId} 
                                             >
                                                 <option value="">Select Time Slot</option>
-                                                {formData.services?.[guestIndex]?.[serviceIndex]?.timeSlot &&
-                                                    !timeSlots.some(
-                                                        (slot) =>
-                                                            slot.start === formData.services[guestIndex][serviceIndex].timeSlot.split("-")[0] &&
-                                                            slot.end === formData.services[guestIndex][serviceIndex].timeSlot.split("-")[1]
-                                                    ) && (
-                                                        <option
-                                                            value={formData.services[guestIndex][serviceIndex].timeSlot}
-                                                        >
-                                                            {formData.services[guestIndex][serviceIndex].timeSlot}
-                                                        </option>
-                                                    )}
-                                                {formData.services?.[guestIndex]?.[serviceIndex]?.serviceId &&
-                                                    (services.find((s) => s.id === formData.services[guestIndex][serviceIndex].serviceId)?.duration || 0) <= 30
-                                                    ? timeSlots
-                                                          .filter((slot) => slot.beds > 0)
-                                                          .map((slot, index) => (
-                                                              <option key={index} value={`${slot.start}-${slot.end}`}>
-                                                                  {slot.start} - {slot.end}
-                                                              </option>
-                                                          ))
-                                                    : getConsecutiveTimeSlots(
-                                                          services.find((s) => s.id === formData.services[guestIndex][serviceIndex].serviceId)?.duration || 0,
-                                                          timeSlots
-                                                      ).map((combination, index) => (
-                                                          <option key={index} value={`${combination.start}-${combination.end}`}>
-                                                              {combination.start} - {combination.end}
-                                                          </option>
-                                                      ))}
-                                            </select>
+                                                {(() => {
+                                                    const serviceId = formData.services?.[guestIndex]?.[serviceIndex]?.serviceId;
+                                                    const service = services.find(s => s.id === serviceId);
+                                                    if (!service || !service.duration || !Array.isArray(timeSlots) || timeSlots.length === 0) return null;
 
+                                                    const combos = getAllConsecutiveSlotCombos(timeSlots, service.duration);
+                                                    if (!combos.length) return <option disabled>No available slots</option>;
+
+                                                    // To avoid duplicate slot keys, use a Set
+                                                    const seen = new Set();
+
+                                                    return combos.map((combo, idx) => {
+                                                        const slotKey = `${combo[0].start}-${combo[combo.length - 1].end}`;
+                                                        if (seen.has(slotKey)) return null;
+                                                        seen.add(slotKey);
+
+                                                        // Count selected for this span
+                                                        let selectedCount = 0;
+                                                        Object.values(selectedSlots).forEach(guestServices => {
+                                                            guestServices?.forEach(sel => {
+                                                                if (sel?.slot === slotKey) selectedCount++;
+                                                            });
+                                                        });
+
+                                                        // Minimum beds available across all slots in the span
+                                                        const minBeds = Math.min(...combo.map(s => s.beds));
+                                                        const bedsAvailable = minBeds - selectedCount;
+
+                                                        return (
+                                                            <option
+                                                                key={slotKey}
+                                                                value={slotKey}
+                                                            >
+                                                                {combo[0].start} - {combo[combo.length - 1].end}
+                                                                
+                                                            </option>
+                                                        );
+                                                    });
+                                                })()}
+                                            </select>
                                             
                                             <button
                                                 type="button"
@@ -818,7 +783,7 @@ const BookingForm = ({ onClose }) => {
                             <div className="flex justify-around mt-3">
                             <button
                                 type="button"
-                                onClick={() => setStep(1)}
+                                onClick={async () => {await deleteNewSchedule(); setStep(1)}}
                                 className="bg-gray-400 hover:scale-105 hover:bg-gray-500 text-white w-2/5 px-6 py-3 rounded-md transition"
                             >
                                 Back
@@ -826,9 +791,9 @@ const BookingForm = ({ onClose }) => {
                             <button
                                 type="submit"
                                 form="form2"
-                                disabled={saving}
+                                disabled={saving || anyOverbooked}
                                 className={`${
-                                    saving ? "bg-gray-400" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
+                                    saving || anyOverbooked ? "bg-gray-400 text-white" : "bg-[#e0d8ad] hover:scale-105 hover:bg-white"
                                 } text-black w-2/5 px-6 py-3 rounded-md transition`}
                             >
                                 Next
@@ -946,51 +911,67 @@ const BookingForm = ({ onClose }) => {
                         </div>
                     </>
                     )}
-                    
-                </div>
-                <div className="bg-gray-100 p-4 rounded-lg shadow-md text-xs text-zinc-800 mt-4">
-    <h3 className="text-lg font-bold text-center">Available Time Slots (Debug)</h3>
-    {timeSlots.length > 0 ? (
-        <ul className="list-disc pl-5">
-            {timeSlots.map((slot, index) => (
-                <li key={index}>
-                    <p>
-                        <strong>Start:</strong> {slot.start} | <strong>End:</strong> {slot.end} | <strong>Beds:</strong> {slot.beds}
-                    </p>
-                </li>
-            ))}
-        </ul>
-    ) : (
-        <p>No available slots.</p>
-    )}
-</div>
-
-<div className="bg-gray-100 p-4 rounded-lg shadow-md text-xs text-zinc-800 mt-4">
-    <h3 className="text-lg font-bold text-center">Selected Slots (Debug)</h3>
-    {Object.keys(selectedSlots).length > 0 ? (
-        <ul className="list-disc pl-5">
-            {Object.entries(selectedSlots).map(([guestIndex, services], guestKey) => (
-                <li key={guestKey}>
-                    <p><strong>Guest {parseInt(guestIndex) + 1}:</strong></p>
-                    <ul className="pl-5">
-                        {services.map((service, serviceKey) => (
-                            <li key={serviceKey}>
-                                <p>
-                                    <strong>Service:</strong> {service.service || "N/A"} | <strong>Slot:</strong> {service.slot || "N/A"}
-                                </p>
-                            </li>
-                        ))}
-                    </ul>
-                </li>
-            ))}
-        </ul>
-    ) : (
-        <p>No slots selected.</p>
-    )}
-</div>
+                
+                
+                    </div>
+                    {step === 2 && (
+                        <div className="bg-white p-6 rounded-r-lg shadow-lg text-sm text-zinc-800 w-full max-w-xl mt-20 border border-gray-300">
+                            <h3 className="text-lg font-bold text-center mb-4 text-[#502424]">Live Time Slot Availability</h3>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full border-collapse">
+                                    <thead>
+                                        <tr>
+                                            <th className="px-2 py-1 border-b text-center font-semibold">Time</th>
+                                            <th className="px-2 py-1 border-b text-center font-semibold">Beds</th>
+                                            <th className="px-2 py-1 border-b text-center font-semibold">Selected</th>
+                                            <th className="px-2 py-1 border-b text-center font-semibold">Available</th>
+                                            <th className="px-2 py-1 border-b text-center font-semibold">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {timeSlots.map((slot, idx) => {
+                                            const slotKey = `${slot.start}-${slot.end}`;
+                                            const selectedCount = slotSelectionCounts[slotKey] || 0;
+                                            const bedsAvailable = slot.beds - selectedCount;
+                                            const isOverbooked = bedsAvailable < 0;
+                                            return (
+                                                <tr key={idx} className={isOverbooked ? "bg-red-100" : idx % 2 === 0 ? "bg-gray-50" : ""}>
+                                                    <td className="px-2 py-1 border-b text-center">{slot.start} - {slot.end}</td>
+                                                    <td className="px-2 py-1 border-b text-center">{slot.beds}</td>
+                                                    <td className="px-2 py-1 border-b text-center">{selectedCount}</td>
+                                                    <td className={`px-2 py-1 border-b text-center font-bold ${isOverbooked ? "text-red-600" : "text-green-700"}`}>
+                                                        {bedsAvailable}
+                                                    </td>
+                                                    <td className="px-2 py-1 border-b text-center">
+                                                        {isOverbooked ? (
+                                                            <span className="inline-block px-2 py-1 bg-red-200 text-red-800 rounded font-semibold text-xs">
+                                                                Overbooked
+                                                            </span>
+                                                        ) : bedsAvailable === 0 ? (
+                                                            <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 rounded font-semibold text-xs">
+                                                                Full
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-block px-2 py-1 bg-green-100 text-green-800 rounded font-semibold text-xs">
+                                                                Available
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="mt-2 text-xs text-gray-500 text-center">
+                                <span className="font-semibold text-red-600">Overbooked</span> slots must be resolved before proceeding.
+                            </div>
+                        </div>
+                    )}
+                    </div>
+                
             </div>
                 
-        </div>
     );
 };
 
