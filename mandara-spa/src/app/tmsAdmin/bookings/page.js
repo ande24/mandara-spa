@@ -160,20 +160,34 @@ const ManageBookings = () => {
                 .filter(docu => docu.id !== "placeholder" && docu.data().booked_date === selectedDate)
                 .map(docu => {
                     const data = docu.data();
-
                     return {
                         id: docu.id,
-                        date: data.booked_date,
+                        additional_notes: data.additional_notes || "",
+                        booked_date: data.booked_date || "",
+                        booking_status: data.booking_status || "",
+                        customer_email: data.customer_email || "",
+                        customer_id: data.customer_id || "",
+                        customer_name: data.customer_name || "",
+                        customer_number: data.customer_number || "",
+                        no_of_customers: data.no_of_customers || "",
+                        total: data.total || 0,
+                        services: Array.isArray(data.services) ? data.services.map(guestObj => ({
+                            guest: guestObj.guest,
+                            services: Array.isArray(guestObj.services) ? guestObj.services.map(svc => ({
+                                duration: svc.duration,
+                                id: svc.id,
+                                name: svc.name,
+                                price: svc.price,
+                                timeSlot: svc.timeSlot,
+                                slots: svc.slots
+                            })) : []
+                        })) : [],
+                        // For sorting and legacy display:
                         dateObject: new Date(data.booked_date),
-                        time: data.booked_time,
-                        status: data.booking_status,
-                        customer: data.customer_name,
-                        total: data.total,
-                        price: data.service_price,
-                        email: data.customer_email,
-                        pax: data.no_of_customers,
-                        services: data.services,
-                        notes: data.additional_notes
+                        time: data.booked_time || "",
+                        price: data.service_price || "",
+                        pax: data.no_of_customers || "",
+                        notes: data.additional_notes || ""
                     };
                 });
 
@@ -205,7 +219,6 @@ const ManageBookings = () => {
             );
 
             if (newStatus === "Completed") {
-                // Fetch the booking data using onSnapshot for real-time updates
                 const unsubscribe = onSnapshot(bookingRef, (bookingSnap) => {
                     if (bookingSnap.exists()) {
                         const bookingData = { id: bookingSnap.id, ...bookingSnap.data() };
@@ -214,13 +227,12 @@ const ManageBookings = () => {
                     } else {
                         console.log("Booking not found");
                     }
-                    unsubscribe(); // Unsubscribe after fetching the data once
+                    
+                    unsubscribe(); 
                 }, (error) => {
                     console.error("Error fetching booking data:", error);
                 });
             }
-
-            alert(`Booking status updated to ${newStatus}`);
         } catch (error) {
             console.error("Error updating booking status:", error);
             alert("Error updating booking status: " + error.message);
@@ -277,7 +289,7 @@ const ManageBookings = () => {
                                     {bookings.map((booking) => (
                                         <li
                                             key={booking.id}
-                                            className={`flex justify-between items-center border p-3 rounded w-full ${booking.status === "Pending"
+                                            className={`flex justify-between items-center border p-3 rounded w-full ${booking.booking_status === "Pending"
                                                 ? "bg-yellow-100 border-yellow-400"
                                                 : booking.status === "Canceled"
                                                     ? "bg-red-100 border-red-400"
@@ -285,22 +297,28 @@ const ManageBookings = () => {
                                                 }`}
                                         >
                                             <div className="flex flex-col">
-                                                <p className="font-semibold">{booking.id} : {booking.customer} : {booking.email}</p>
-
-                                                {booking.services.map((service, index) => (
-                                                    <div key={index}>{service}</div>
-                                                ))}
-
+                                                <p className="font-semibold">{booking.id} : {booking.customer_name} : {booking.customer_email}</p>
+                                                {Array.isArray(booking.services) && booking.services.map((guestObj, guestIdx) => (
+                                                    <div key={guestIdx} className="mb-2">
+                                                      <div className="font-bold">Guest {guestObj.guest}</div>
+                                                      {Array.isArray(guestObj.services) && guestObj.services.map((service, svcIdx) => (
+                                                        <div key={svcIdx} className="ml-4">
+                                                          <span className="">{service.name}</span>
+                                                          <span className="ml-2 text-xs text-gray-600">(₱{service.price}, {service.duration} min, {service.timeSlot})</span>
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                                  ))}
                                                 <p className="font-semibold">Total: ₱{booking.total}</p>
                                                 <br />
-                                                <p>Additional Notes: {booking.notes}</p>
-                                                <p className="text-sm text-gray-600">{booking.date} | {booking.time} | {booking.status}</p>
+                                                <p>Additional Notes: {booking.additional_notes}</p>
+                                                <p className="text-sm text-gray-600">{booking.booked_date} | {booking.booking_status}</p>
                                             </div>
                                             <div className="flex items-center">
                                                 <select
                                                     disabled={saving}
                                                     className="border p-1 mx-1 rounded-lg bg-white "
-                                                    value={booking.status || "Pending"}
+                                                    value={booking.booking_status}
                                                     onChange={(e) => toggleStatus(booking.id, e.target.value)}
                                                 >
                                                     <option value="Pending">Pending</option>

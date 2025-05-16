@@ -223,11 +223,12 @@ const ManageService = () => {
             const serviceRef = doc(branchRef, "services", serviceId);
 
             const serviceDoc = await getDoc(serviceRef);
+            console.log("Service Document: ", serviceDoc.data());
 
-            if (newStatus === "available" & (!serviceDoc.data().price || !serviceDoc.data().duration)) {
-                if (!window.confirm("Service is missing price or duration. Do you want to continue?")) {
-                    return 
-                }
+            if (newStatus === "available" && (!serviceDoc.data().service_price || !serviceDoc.data().service_duration)) {
+                window.alert("Service is missing price or duration. Please fill them in before marking as available."); 
+                setSaving(false);
+                return;
             }
             await updateDoc(serviceRef, {
                 service_status: newStatus
@@ -239,7 +240,6 @@ const ManageService = () => {
                 )
             );
 
-            alert("Service status updated!");
         } catch (error) {
             console.error("Error updating service status:", error);
             alert("Error updating service status: " + error.message);
@@ -396,7 +396,7 @@ const ManageService = () => {
                                                     <div className="flex flex-row gap-x-1">
                                                         <p className={`${service.price ? "" : "text-red-600"}`}>{service.price ? `₱${service.price} ` : "NO PRICE "}</p>
                                                         <p>|</p>
-                                                        <p className={`${service.duration ? "" : "text-red-600"}`}>{service.duration ? `₱${service.duration} ` : "NO DURATION "}</p>
+                                                        <p className={`${service.duration ? "" : "text-red-600"}`}>{service.duration ? `${service.duration} mins` : "NO DURATION "}</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center space-x-2">

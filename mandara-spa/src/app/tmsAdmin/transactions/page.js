@@ -264,8 +264,16 @@ const ManageTransactions = () => {
                                     >
                                         <div className="flex flex-col">
                                             <p className="font-semibold">Booking {transaction.booking}</p>
-                                            {transaction.servicesList.map((service, index) => (
-                                                <div key={index}>{service}</div>
+                                            {Array.isArray(transaction.servicesList) && transaction.servicesList.map((guestObj, guestIdx) => (
+                                                <div key={guestIdx} className="mb-2">
+                                                    <div className="font-bold">Guest {guestObj.guest}</div>
+                                                    {Array.isArray(guestObj.services) && guestObj.services.map((service, svcIdx) => (
+                                                        <div key={svcIdx} className="ml-4">
+                                                            <span className="">{service.name}</span>
+                                                            <span className="ml-2 text-xs text-gray-600">(₱{service.price}, {service.duration} min, {service.timeSlot})</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             ))}
                                             <p className="font-semibold">{transaction.sales ? `Total = ₱${transaction.sales} ` : ""}</p>
                                             <br />

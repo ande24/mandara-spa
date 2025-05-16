@@ -151,13 +151,12 @@ const EditSchedule = () => {
             return;
         }
 
-        // Show confirmation alert
         const confirmChanges = window.confirm(
-            "Changes to the schedule will only apply to new bookings. Existing bookings will retain their original schedule. Do you want to proceed?"
+            "Changes to the schedule will only apply to days with no current bookings. Days with existing bookings will retain their original schedule. Do you want to proceed?"
         );
 
         if (!confirmChanges) {
-            return; // Exit if the admin cancels
+            return; 
         }
 
         const branchRef = doc(db, "branches", userData.branch_id);
@@ -165,9 +164,11 @@ const EditSchedule = () => {
 
         try {
             for (const day of Object.keys(schedule)) {
+                // Sort slots by start time before saving
+                const sortedSlots = (schedule[day] || []).slice().sort((a, b) => a.start.localeCompare(b.start));
                 const dayRef = doc(scheduleRef, day);
                 await setDoc(dayRef, {
-                    slots: schedule[day],
+                    slots: sortedSlots,
                 });
             }
 
@@ -178,6 +179,19 @@ const EditSchedule = () => {
             console.error("Error updating schedule:", error);
             alert("Failed to update schedule: " + error.message);
         }
+    };
+
+    const handleClose = () => {
+        const daysWithoutSlots = daysOfWeek.filter(day => !schedule[day] || schedule[day].length === 0);
+        if (daysWithoutSlots.length > 0) {
+            if (window.confirm(
+                `The following days have no time slots: ${daysWithoutSlots.join(", ")}.\n\nCustomers will not be able to make any bookings for these days. Are you sure you want to exit?`
+            )) {
+                router.push("/tmsAdmin/dashboard");
+            }
+            return;
+        }
+        router.push("/tmsAdmin/dashboard");
     };
 
     return (
@@ -216,20 +230,23 @@ const EditSchedule = () => {
                             <div key={day} className="border p-3 rounded-lg flex flex-col items-center">
                                 <h3 className="font-bold mb-2 text-center">{day}</h3>
                                 <ul className="space-y-2">
-                                    {(schedule[day] || []).map((timeSlot, index) => (
-                                        <li key={index} className="flex justify-between items-center bg-yellow-200 p-2 rounded-lg">
-                                            <span className="text-xs">
-                                                {timeSlot.start} - {timeSlot.end} ({timeSlot.beds}) 
-                                            </span>
-                                            <button
-                                                onClick={() => handleRemoveTimeSlot(day, index)}
-                                                className="text-red-500 hover:text-red-700 ml-2"
-                                                aria-label="Remove Time Slot"
-                                            >
-                                                <X size={16} />
-                                            </button>
-                                        </li>
-                                    ))}
+                                    {(schedule[day] || [])
+                                        .slice()
+                                        .sort((a, b) => a.start.localeCompare(b.start))
+                                        .map((timeSlot, index) => (
+                                            <li key={index} className="flex justify-between items-center bg-yellow-200 p-2 rounded-lg">
+                                                <span className="text-xs">
+                                                    {timeSlot.start} - {timeSlot.end} ({timeSlot.beds})
+                                                </span>
+                                                <button
+                                                    onClick={() => handleRemoveTimeSlot(day, index)}
+                                                    className="text-red-500 hover:text-red-700 ml-2"
+                                                    aria-label="Remove Time Slot"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            </li>
+                                        ))}
                                 </ul>
                                 <button
                                     onClick={() => {
@@ -247,7 +264,7 @@ const EditSchedule = () => {
 
                 <div className="flex justify-center items-center space-x-4 w-full p-4">
                     <button onClick={updateSchedule} className="w-1/5 p-3 rounded-lg h-full text-white text-md  transition mandara-btn">Save Changes</button>
-                    <button onClick={() => { router.push("/tmsAdmin/dashboard") }} className="w-1/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
+                    <button onClick={handleClose} className="w-1/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
                 </div>
             </div>
 

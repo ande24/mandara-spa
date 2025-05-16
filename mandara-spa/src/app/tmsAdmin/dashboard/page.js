@@ -29,6 +29,7 @@ export default function Page() {
   const [itemsOut, setItemsOut] = useState([]);
 
   const [bookings, setBookings] = useState([]);
+  const [schedule, setSchedule] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [services, setServices] = useState([]);
 
@@ -220,8 +221,8 @@ export default function Page() {
 
   useEffect(() => {
     if (items.length > 0) {
-      setItemsLow(items.filter(item => item.quantity < 10 && item.quantity > 0));
-      setItemsOut(items.filter(item => item.quantity === 0));
+      setItemsLow(items.filter(item => Number(item.quantity) < 10 && Number(item.quantity) > 0));
+      setItemsOut(items.filter(item => Number(item.quantity) === 0));
     }
   }, [items]);
 
@@ -243,7 +244,7 @@ export default function Page() {
                   }));
               
   
-              // console.log("items: ", itemList);
+              console.log("items: ", itemList);
               setItems(itemList);
           }, (error) => {
               console.error("Error fetching items:", error);
@@ -317,7 +318,27 @@ export default function Page() {
       return () => unsubscribe();
   }, [userData, branchData, services]);
 
+  useEffect(() => {
+    if (!userData?.branch_id || !selectedDate) return;
 
+    const branchRef = doc(db, "branches", userData.branch_id);
+    const dateObj = new Date(selectedDate);
+    const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}-${dateObj.getFullYear()}`;
+    const scheduleRef = doc(branchRef, "schedule", formattedDate);
+
+    const unsubscribe = onSnapshot(scheduleRef, (docSnap) => {
+      if (docSnap.exists()) {
+        console.log("Schedule data:", docSnap.data());
+        setSchedule(docSnap.data().slots || []);
+      } else {
+        setSchedule([]);
+      }
+    });
+
+    console.log("schedule: ", formattedDate, schedule)
+
+    return () => unsubscribe();
+  }, [userData, selectedDate]);
   
   useEffect(() => {
     if (!userData?.branch_id || !branchData) return;
@@ -577,7 +598,6 @@ useEffect(() => {
   
 
   const changeDate = (prevDate, date) => {
-    // Check if the date is valid
     const [year, month, day] = date.split("-").map(Number);
     const [pyear, pmonth, pday] = prevDate.split("-").map(Number);
 
@@ -700,19 +720,19 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 mb-6">
-              <div onClick={() => {router.push('transactions')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+            <div className="grid grid-cols-7 gap-6 mb-6">
+              <div onClick={() => {router.push('transactions')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all col-span-2">
               <h2 className="text-lg font-bold mb-2">Daily Income:</h2>
                 <ChartItem chartData={incomeRange} endDate={selectedDate}/>
               </div>
-              <div onClick={() => {router.push('bookings')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
-                <h2 className="text-lg font-bold mb-2">Daily Bookings:</h2>
-                <Timeline bookingsToday={bookingsToday}/>
+              <div onClick={() => {router.push('bookings')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all col-span-5">
+                <h2 className="text-lg font-bold mb-2">Today's Schedule:</h2>
+                {schedule && <Timeline schedule={schedule} bookings={bookingsToday}/>}
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
-              <div onClick={() => {router.push('inventory')}} className="bg-yellow-50 p-4 cursor-pointer shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
+            <div className="grid grid-cols-5 gap-6">
+              <div onClick={() => {router.push('inventory')}} className="bg-yellow-50 p-4 col-span-2 cursor-pointer shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all">
                 <h2 className="text-lg font-bold mb-2">Inventory Alerts</h2>
                 {itemsOut.length === 0 && itemsLow.length === 0 ? (
                   <p className="text-green-600">All good!</p>
@@ -728,7 +748,7 @@ useEffect(() => {
                 )}
               </div>
 
-              <div className="bg-yellow-50 col-span-2 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all flex flex-col">
+              <div className="bg-yellow-50 col-span-3 p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all flex flex-col">
                 <h2 className="text-lg font-bold mb-2">Best Performing Branches</h2>
                 <div className="flex gap-10">
                   <div className="w-1/2">

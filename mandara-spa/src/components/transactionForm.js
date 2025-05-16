@@ -160,6 +160,14 @@ const ManageInv = ({ onClose, onReset, bookingData }) => {
         e.preventDefault();
         setSaving(true);
 
+        if (usedItems.length === 0) {
+            const proceed = window.confirm("No items are used for this transaction. Do you want to proceed?");
+            if (!proceed) {
+                setSaving(false);
+                return;
+            }
+        }
+
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
 
