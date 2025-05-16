@@ -726,7 +726,7 @@ useEffect(() => {
                 <ChartItem chartData={incomeRange} endDate={selectedDate}/>
               </div>
               <div onClick={() => {router.push('bookings')}} className="bg-yellow-50 cursor-pointer p-4 shadow-md hover:scale-102 rounded-lg hover:shadow-lg transition-all col-span-5">
-                <h2 className="text-lg font-bold mb-2">Today's Schedule:</h2>
+                <h2 className="text-lg font-bold mb-2">Schedule Today:</h2>
                 {schedule && <Timeline schedule={schedule} bookings={bookingsToday}/>}
               </div>
             </div>
