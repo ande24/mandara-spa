@@ -598,6 +598,7 @@ const BookingForm = ({ onClose }) => {
                         <button 
                             type="button"
                             onClick={handleCancelBooking}
+                            disabled={saving}
                             className="absolute top-5 right-5 p-2 rounded-md hover:scale-120 transition-all"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#e0d8ad]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
