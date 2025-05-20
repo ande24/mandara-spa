@@ -25,6 +25,7 @@ const EditSchedule = () => {
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [slotBeds, setSlotBeds] = useState(null);
+    const [editingSlot, setEditingSlot] = useState({ day: null, index: null });
 
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -105,7 +106,7 @@ const EditSchedule = () => {
         fetchData();
     }, [userData, db]);
 
-    const handleAddTimeSlot = () => {
+    const handleAddOrEditTimeSlot = () => {
         if (!startTime || !endTime) {
             alert("Please select both start and end times.");
             return;
@@ -113,35 +114,56 @@ const EditSchedule = () => {
 
         const start = new Date(`1970-01-01T${startTime}:00`);
         const end = new Date(`1970-01-01T${endTime}:00`);
-        const duration = (end - start) / (1000 * 60); 
+        const duration = (end - start) / (1000 * 60);
 
         if (duration <= 0) {
             alert("End time must be after start time.");
             return;
         }
 
-        const timeSlot = { 
-            start: startTime, 
-            end: endTime, 
-            beds: slotBeds, 
-            duration 
+        const timeSlot = {
+            start: startTime,
+            end: endTime,
+            beds: slotBeds,
+            duration
         };
 
-        setSchedule((prev) => ({
-            ...prev,
-            [selectedDay]: [...(prev[selectedDay] || []), timeSlot],
-        }));
+        setSchedule((prev) => {
+            // If editingSlot is set, edit that slot
+            if (
+                editingSlot.day !== null &&
+                editingSlot.index !== null &&
+                prev[editingSlot.day] &&
+                prev[editingSlot.day][editingSlot.index]
+            ) {
+                const updatedSlots = [...prev[editingSlot.day]];
+                updatedSlots[editingSlot.index] = timeSlot;
+                return {
+                    ...prev,
+                    [editingSlot.day]: updatedSlots,
+                };
+            } else {
+                // Otherwise, add to selectedDay
+                return {
+                    ...prev,
+                    [selectedDay]: [...(prev[selectedDay] || []), timeSlot],
+                };
+            }
+        });
 
         setShowModal(false);
         setStartTime("");
         setEndTime("");
-        setSlotBeds(beds); 
+        setSlotBeds(beds);
+        setEditingSlot({ day: null, index: null });
     };
 
-    const handleRemoveTimeSlot = (day, index) => {
+    const handleRemoveTimeSlot = (day, slot) => {
         setSchedule((prev) => ({
             ...prev,
-            [day]: prev[day].filter((_, i) => i !== index),
+            [day]: prev[day].filter(
+                s => !(s.start === slot.start && s.end === slot.end && s.beds === slot.beds)
+            ),
         }));
     };
 
@@ -194,6 +216,27 @@ const EditSchedule = () => {
         router.push("/tmsAdmin/dashboard");
     };
 
+    const openAddSlotModal = (day) => {
+        setSelectedDay(day);
+        setStartTime("");
+        setEndTime("");
+        setSlotBeds(beds);
+        setEditingSlot({ day: null, index: null });
+        setShowModal(true);
+    };
+
+    const openEditSlotModal = (day, slot) => {
+        const originalIndex = (schedule[day] || []).findIndex(
+            s => s.start === slot.start && s.end === slot.end && s.beds === slot.beds
+        );
+        setSelectedDay(day);
+        setStartTime(slot.start);
+        setEndTime(slot.end);
+        setSlotBeds(slot.beds);
+        setEditingSlot({ day, index: originalIndex });
+        setShowModal(true);
+    };
+
     return (
         <div className="flex flex-col items-center p-20">
             <Image priority className="mb-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
@@ -233,13 +276,17 @@ const EditSchedule = () => {
                                     {(schedule[day] || [])
                                         .slice()
                                         .sort((a, b) => a.start.localeCompare(b.start))
-                                        .map((timeSlot, index) => (
-                                            <li key={index} className="flex justify-between items-center bg-yellow-200 p-2 rounded-lg">
+                                        .map((timeSlot) => (
+                                            <li
+                                                key={timeSlot.start + "-" + timeSlot.end}
+                                                className="flex justify-between items-center bg-yellow-200 p-2 rounded-lg cursor-pointer"
+                                                onClick={() => openEditSlotModal(day, timeSlot)}
+                                            >
                                                 <span className="text-xs">
                                                     {timeSlot.start} - {timeSlot.end} ({timeSlot.beds})
                                                 </span>
                                                 <button
-                                                    onClick={() => handleRemoveTimeSlot(day, index)}
+                                                    onClick={e => { e.stopPropagation(); handleRemoveTimeSlot(day, timeSlot); }}
                                                     className="text-red-500 hover:text-red-700 ml-2"
                                                     aria-label="Remove Time Slot"
                                                 >
@@ -249,10 +296,7 @@ const EditSchedule = () => {
                                         ))}
                                 </ul>
                                 <button
-                                    onClick={() => {
-                                        setSelectedDay(day);
-                                        setShowModal(true);
-                                    }}
+                                    onClick={() => openAddSlotModal(day)}
                                     className="mt-2 text-white p-2 rounded-lg flex justify-center items-center"
                                 >
                                     <CirclePlus size={30} color="#502424" />
@@ -310,10 +354,10 @@ const EditSchedule = () => {
                                 Cancel
                             </button>
                             <button
-                                onClick={handleAddTimeSlot}
+                                onClick={handleAddOrEditTimeSlot}
                                 className="px-4 py-2 text-white rounded-lg mandara-btn"
                             >
-                                Add
+                                {editingSlot.day !== null ? "Save" : "Add"}
                             </button>
                         </div>
                     </div>

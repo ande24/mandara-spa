@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase_app from "@/firebase/config";
-import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot, query, orderBy } from "firebase/firestore";
+import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot, query, orderBy, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 const Image = dynamic(() => import("next/image"), { ssr: false });
@@ -142,25 +142,48 @@ export default function Page() {
   }, [user]);
 
 
-  useEffect(() => {
-      if (userData) {
-          console.log(userData);
-          console.log(userData.user_role);
-          if (userData.user_role === "business_admin") {
-              console.log("business admin");
-              setIsBusinessAdmin(true);
-              return;
-          }
-          else if (userData.user_role === "branch_admin") {
-              return;
-          }
-          else {
+ useEffect(() => {
+    if (userData) {
+        console.log(userData);
+        console.log(userData.user_role);
+        if (userData.user_role === "business_admin") {
+            console.log("business admin");
+            setIsBusinessAdmin(true);
+
+            // If branch_id or branch_location is missing, update Firestore and local state
+            if (!userData.branch_id || !userData.branch_location) {
+                const defaultBranchId = "3SnbiOcdXEKJD11OZ427";
+                const defaultBranchLocation = "BGC 3rd Avenue";
+                setUserData(prev => ({
+                    ...prev,
+                    branch_id: prev.branch_id || defaultBranchId,
+                    branch_location: prev.branch_location || defaultBranchLocation
+                }));
+
+                (async () => {
+                  if (user && user.uid) {
+                    const userRef = doc(db, "users", user.uid);
+                    await updateDoc(userRef, {
+                        branch_id: userData.branch_id || defaultBranchId,
+                        branch_location: userData.branch_location || defaultBranchLocation
+                    }).catch((err) => {
+                        console.error("Failed to update user doc with default branch info:", err);
+                    });
+                }
+                })();
+            }
+            return;
+        }
+        else if (userData.user_role === "branch_admin") {
+            return;
+        }
+        else {
             console.log("not admin");
             router.push("/");
             return;
-          }
-      }
-  }, [userData, router])
+        }
+    }
+}, [userData, router, user, db]);
 
 
   useEffect(() => {
