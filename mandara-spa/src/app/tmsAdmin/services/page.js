@@ -26,7 +26,7 @@ const ManageService = () => {
 
     const [services, setServices] = useState([]);
     const [serviceData, setServiceData] = useState(null);
-    const [selectedService, setSelectedService] = useState(null);
+    const [selectedService, setSelectedService] = useState("");
 
     const [saving, setSaving] = useState(false);
 
@@ -123,21 +123,10 @@ const ManageService = () => {
                 service_name: formData.name,
                 service_duration: formData.duration,
                 service_price: formData.price,
-                service_status: "available",
+                service_status: `${formData.price && formData.duration ? "available" : "unavailable"}`,
                 service_desc: formData.desc,
                 service_category: formData.category
             });
-
-            const newService = {
-                id: docRef.id,
-                name: formData.name,
-                duration: formData.duration,
-                price: formData.price,
-                desc: formData.desc,
-                category: formData.category
-            };
-
-            setServices(prevServices => [...prevServices, newService]);
 
             alert("Service added successfully!");
             setFormData({
@@ -210,8 +199,7 @@ const ManageService = () => {
                 category: ""
             });
         } catch (error) {
-            setMessage("Error updating service: " + error.message);
-            alert("Failed to update service.");
+            alert("Error updating service: " + error.message);
             setSaving(false);
         }
     };
@@ -250,10 +238,24 @@ const ManageService = () => {
     const handleServiceChange = async (e) => {
         const selectedId = e.target.value;
         setSelectedService(selectedId);
-        setServiceData(services.find(service => service.id === selectedId));
-
-        if (serviceData) {
-            setFormData(serviceData);
+        const foundService = services.find(service => service.id === selectedId);
+        setServiceData(foundService);
+        if (foundService) {
+            setFormData({
+                name: foundService.name || "",
+                duration: foundService.duration || "",
+                price: foundService.price || "",
+                desc: foundService.desc || "",
+                category: foundService.category || ""
+            });
+        } else {
+            setFormData({
+                name: "",
+                duration: "",
+                price: "",
+                desc: "",
+                category: ""
+            });
         }
     };
 
@@ -343,6 +345,7 @@ const ManageService = () => {
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={formData.category || ""}
                                         onChange={handleChange}
+                                        required
                                     >
                                         <option value=""></option>
                                         <option value="signature">The Mandara Spa Signature Rituals</option>
@@ -398,6 +401,7 @@ const ManageService = () => {
                                                         <p>|</p>
                                                         <p className={`${service.duration ? "" : "text-red-600"}`}>{service.duration ? `${service.duration} mins` : "NO DURATION "}</p>
                                                     </div>
+                                                    <p className={`text-xs ${service.desc ? "" : "text-red-600"}`}>{service.desc ? `${service.desc}` : "NO DESCRIPTION "}</p>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <select

@@ -90,6 +90,7 @@ const EditBranch = () => {
         try {
             const branchRef = doc(db, "branches", userData.branch_id);
             await updateDoc(branchRef, formData);
+            alert("Branch details updated successfully!");
         } catch (error) {
             alert("Error updating branch:", error);
         } finally {

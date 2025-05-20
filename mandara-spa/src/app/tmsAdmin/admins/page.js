@@ -85,6 +85,84 @@ const EditAdmins = () => {
         }
 
         try {
+            // Check if user with this email already exists
+            const usersRef = collection(db, "users");
+            let existingUser = null;
+            let existingUserId = null;
+            const unsubscribe = onSnapshot(usersRef, (snapshot) => {
+                unsubscribe(); // Only need one fetch
+                snapshot.forEach((docu) => {
+                    const data = docu.data();
+                    if (data.user_email === adminEmail) {
+                        existingUser = data;
+                        existingUserId = docu.id;
+                    }
+                });
+            });
+            // Wait for snapshot to finish
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            if (existingUser) {
+                if (existingUser.user_role === "customer") {
+                    // Update their branch_id and branch_location, and promote to branch_admin
+                    await updateDoc(doc(db, "users", existingUserId), {
+                        branch_id: selectedBranch.id,
+                        branch_location: selectedBranch.name,
+                        user_role: "branch_admin"
+                    });
+                    // Add to branch_admins array
+                    const branchRef = doc(db, "branches", selectedBranch.id);
+                    await updateDoc(branchRef, {
+                        branch_admins: arrayUnion(existingUserId)
+                    });
+                    alert(`Account ${existingUser.user_email} promoted to branch admin for branch: ${selectedBranch.name}`);
+                    setAdminEmail("");
+                    setAdminPassword("");
+                    setSaving(false);
+                    return;
+                } else if (existingUser.user_role === "branch_admin") {
+                    // Check if already admin of this branch
+                    if (existingUser.branch_id === selectedBranch.id) {
+                        alert("This user is already an admin of this branch.");
+                        setSaving(false);
+                        return;
+                    }
+                    // Confirm transfer
+                    const proceed = window.confirm(`This user is already a branch admin of another branch: ${existingUser.branch_location}. If you proceed, they will no longer be an admin of that branch. Continue?`);
+                    if (!proceed) {
+                        setSaving(false);
+                        return;
+                    }
+                    // Remove from old branch's branch_admins
+                    const oldBranchRef = doc(db, "branches", existingUser.branch_id);
+                    await updateDoc(oldBranchRef, {
+                        branch_admins: arrayRemove(existingUserId)
+                    });
+                    // Update user to new branch
+                    await updateDoc(doc(db, "users", existingUserId), {
+                        branch_id: selectedBranch.id,
+                        branch_location: selectedBranch.name
+                    });
+                    // Add to new branch's branch_admins
+                    const branchRef = doc(db, "branches", selectedBranch.id);
+                    await updateDoc(branchRef, {
+                        branch_admins: arrayUnion(existingUserId)
+                    });
+                    alert(`Admin ${existingUser.user_email} transferred to this branch!`);
+                    setAdminEmail("");
+                    setAdminPassword("");
+                    setSaving(false);
+                    return;
+                }
+            }
+
+            if (!adminPassword) {
+                alert("Please provide a password for the new admin.");
+                setSaving(false);
+                return;
+            }
+
+            // If new admin, sign up and add to branch
             const { res, err } = await SignUp(adminEmail, adminPassword);
 
             if (err) {
@@ -189,13 +267,12 @@ const EditAdmins = () => {
                                     required
                                 />
 
-                                <label className="text-sm font-medium text-gray-600">Password:</label>
+                                <label className="text-sm font-medium text-gray-600">Password (if new account):</label>
                                 <input
                                     className="border p-2 rounded-lg border-gray-300 bg-white focus:ring-2 focus:ring-red-400"
                                     type="password"
                                     value={adminPassword}
                                     onChange={(e) => setAdminPassword(e.target.value)}
-                                    required
                                 />
 
                                 <button
