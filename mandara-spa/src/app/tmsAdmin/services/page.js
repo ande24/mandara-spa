@@ -120,12 +120,12 @@ const ManageService = () => {
 
         try {
             const docRef = await addDoc(servicesRef, {
-                service_name: formData.name,
-                service_duration: formData.duration,
-                service_price: formData.price,
+                service_name: formData.name || "",
+                service_duration: formData.duration || "",
+                service_price: formData.price || "",
                 service_status: `${formData.price && formData.duration ? "available" : "unavailable"}`,
-                service_desc: formData.desc,
-                service_category: formData.category
+                service_desc: formData.desc || "",
+                service_category: formData.category || ""
             });
 
             alert("Service added successfully!");
@@ -272,7 +272,7 @@ const ManageService = () => {
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#301414] bg-opacity-50">
                     <Image priority className="fixed top-10 z-10" src={"/images/mandara_gold.png"} width={200} height={200} alt={"The Mandara Spa Logo"} />
 
-                    <div className="flex flex-col md:flex-row mt-20 justify-between gap-6">
+                    <div className="flex flex-col md:flex-row mt-20 justify-center gap-6">
                         <div className="md:w-1/3 bg-white p-3 rounded-lg shadow-md">
                             <h3 className="text-lg font-bold text-black mb-4 text-center">Choose Service</h3>
                             <form onSubmit={handleAddService} className="space-y-4">
@@ -297,7 +297,7 @@ const ManageService = () => {
                                         name="name"
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         type="text"
-                                        value={formData.name}
+                                        value={formData.name || ""}
                                         onChange={handleChange}
                                         required
                                     />
@@ -310,7 +310,7 @@ const ManageService = () => {
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         type="number"
                                         min="1"
-                                        value={formData.duration}
+                                        value={formData.duration ?? ""}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -322,7 +322,7 @@ const ManageService = () => {
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         type="number"
                                         min="1"
-                                        value={formData.price}
+                                        value={formData.price ?? ""}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -333,7 +333,7 @@ const ManageService = () => {
                                         name="desc"
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         type="text"
-                                        value={formData.desc}
+                                        value={formData.desc || ""}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -386,7 +386,7 @@ const ManageService = () => {
                             </form>
                         </div>
 
-                        <div className="w-full md:w-2/3 bg-white p-3 rounded-lg shadow-md">
+                        <div className="w-full md:w-1/2 bg-white p-3 rounded-lg shadow-md">
                             <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Manage Services</h3>
                             <div className="max-h-[70vh] overflow-y-auto border border-gray-300 rounded-lg p-4">
                                 {services.length > 0 ? (

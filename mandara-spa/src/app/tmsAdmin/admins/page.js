@@ -84,6 +84,13 @@ const EditAdmins = () => {
             return;
         }
 
+        // Show alert and confirmation before creating the account
+        const proceed = window.confirm("After creating this account, the user will be logged out. Continue?");
+        if (!proceed) {
+            setSaving(false);
+            return;
+        }
+
         try {
             // Check if user with this email already exists
             const usersRef = collection(db, "users");
@@ -182,10 +189,17 @@ const EditAdmins = () => {
                 branch_admins: arrayUnion(res.user.uid)
             });
 
-            alert("Branch admin added successfully!");
+            alert("Branch admin added successfully! You will now be logged out.");
             setAdminEmail("");
             setAdminPassword("");
             setSaving(false);
+            // Log out and redirect
+            if (typeof window !== "undefined") {
+                const auth = (await import("firebase/auth")).getAuth(firebase_app);
+                await auth.signOut();
+                window.location.href = "/tmsAdmin";
+            }
+            return;
         } catch (error) {
             setSaving(false);
             alert("Error adding admin: " + error.message);

@@ -138,7 +138,7 @@ const EditBranch = () => {
                             </div>
                             <div className="flex justify-center items-center space-x-4 mt-4 h-min">
                                 <button type="submit" disabled={saving} className="w-2/5 p-3 rounded-lg h-full text-white text-md  transition mandara-btn">Save Changes</button>
-                                <button onClick={() => { router.push("/tmsAdmin/dashboard") }} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
+                                <button type="button" onClick={() => { router.push("/tmsAdmin/dashboard") }} className="w-2/5 rounded-lg p-3 text-white font-serif h-full text-md mandara-btn">Close</button>
                             </div>
                         </div>
                     </form>

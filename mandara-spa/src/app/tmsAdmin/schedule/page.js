@@ -248,7 +248,7 @@ const EditSchedule = () => {
                         <label className="block font-semibold mb-1">Number of Beds:</label>
                         <input
                             type="number"
-                            value={beds || ""}
+                            value={beds ?? ""}
                             min="1"
                             required
                             onChange={(e) => {setBeds(Number(e.target.value)); setSlotBeds(Number(e.target.value));}}
@@ -315,13 +315,13 @@ const EditSchedule = () => {
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                        <h2 className="text-lg font-semibold mb-4">Add Time Slot for {selectedDay}</h2>
+                        <h2 className="text-lg font-semibold mb-4">Add/Edit Time Slot for {selectedDay}</h2>
                         <div className="space-y-4">
                             <div>
                                 <label className="block font-semibold mb-1">Start:</label>
                                 <input
                                     type="time"
-                                    value={startTime}
+                                    value={startTime || ""}
                                     onChange={(e) => setStartTime(e.target.value)}
                                     className="w-full p-2 border rounded-lg"
                                 />
@@ -330,7 +330,7 @@ const EditSchedule = () => {
                                 <label className="block font-semibold mb-1">End:</label>
                                 <input
                                     type="time"
-                                    value={endTime}
+                                    value={endTime || ""}
                                     onChange={(e) => setEndTime(e.target.value)}
                                     className="w-full p-2 border rounded-lg"
                                 />
@@ -339,7 +339,7 @@ const EditSchedule = () => {
                                 <label className="block font-semibold mb-1">Beds:</label>
                                 <input
                                     type="number"
-                                    value={slotBeds || ""}
+                                    value={slotBeds ?? ""}
                                     min="1"
                                     onChange={(e) => setSlotBeds(Number(e.target.value))}
                                     className="w-full p-2 border rounded-lg"
